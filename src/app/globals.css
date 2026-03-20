@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --ink: #0a0a0f;
+    --ink-soft: #14141c;
+    --cream: #f5f3ee;
+    --cream-soft: #eae8e2;
+    --cream-muted: #d4d0c8;
+    --sage: #4a7c59;
+    --amber: #d4956a;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  * {
+    border-color: var(--cream-muted);
+  }
+
+  ::selection {
+    background: #d4956a33;
+    color: #0a0a0f;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-2xl shadow-card border border-cream-soft;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-ink text-cream font-medium text-sm
+           transition-all duration-200 hover:bg-ink-soft hover:shadow-float active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cream-soft text-ink font-medium text-sm
+           border border-cream-muted transition-all duration-200 hover:bg-cream hover:shadow-card active:scale-[0.98];
+  }
+
+  .btn-sage {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sage text-white font-medium text-sm
+           transition-all duration-200 hover:bg-sage-dark hover:shadow-float active:scale-[0.98];
+  }
+
+  .input {
+    @apply w-full px-4 py-2.5 rounded-xl border border-cream-muted bg-white text-ink text-sm
+           placeholder:text-ink/30 focus:outline-none focus:ring-2 focus:ring-sage/30 focus:border-sage
+           transition-all duration-200;
+  }
+
+  .label {
+    @apply block text-xs font-medium text-ink/50 mb-1.5 uppercase tracking-wider;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium;
+  }
+}
+
+@layer utilities {
+  .animate-delay-100 { animation-delay: 100ms; }
+  .animate-delay-200 { animation-delay: 200ms; }
+  .animate-delay-300 { animation-delay: 300ms; }
+  .animate-delay-400 { animation-delay: 400ms; }
+}
