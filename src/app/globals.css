@@ -75,14 +75,13 @@
 
   .btn-secondary {
     @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-[13px] transition-all duration-200 active:scale-[0.98];
-    background: #ffffff;
+    background: #EDE986;
     color: #0f0f0f;
-    border: 1.5px solid #f0f0f0;
+    border: none;
   }
 
   .btn-secondary:hover {
-    background: #fdf9f7;
-    border-color: #e0e0e0;
+    background: #e5e076;
   }
 
   .input {
