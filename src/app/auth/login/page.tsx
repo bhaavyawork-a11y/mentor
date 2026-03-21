@@ -21,30 +21,43 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-cream flex">
+    <div className="min-h-screen flex" style={{ background: "#fdf9f7" }}>
       {/* Left panel */}
-      <div className="hidden lg:flex w-1/2 bg-ink flex-col justify-between p-12">
-        <Link href="/" className="font-display font-semibold text-lg text-cream tracking-tight">
-          mentor<span className="text-sage">.</span>
+      <div
+        className="hidden lg:flex w-1/2 flex-col justify-between p-12"
+        style={{ background: "#0f0f0f" }}
+      >
+        <Link href="/" style={{ fontSize: "20px", fontWeight: 800, color: "#ffffff" }}>
+          mentor<span style={{ color: "#EDE986" }}>.</span>
         </Link>
         <div>
-          <blockquote className="text-cream/80 text-xl leading-relaxed font-light mb-6 max-w-sm">
+          <blockquote
+            className="text-xl leading-relaxed font-light mb-6 max-w-sm"
+            style={{ color: "#ffffff99" }}
+          >
             "I went from senior engineer to engineering director in 8 months
             with the clarity Mentor gave me."
           </blockquote>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-sage/30 flex items-center justify-center text-sage font-semibold text-sm">
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center text-[13px] font-bold"
+              style={{ background: "#EDE986", color: "#0f0f0f" }}
+            >
               AK
             </div>
             <div>
-              <p className="text-cream text-sm font-medium">Ananya Kumar</p>
-              <p className="text-cream/40 text-xs">Engineering Director, Stripe</p>
+              <p className="text-[13px] font-medium" style={{ color: "#ffffff" }}>Ananya Kumar</p>
+              <p className="text-[11px]" style={{ color: "#ffffff66" }}>Engineering Director, Stripe</p>
             </div>
           </div>
         </div>
         <div className="grid grid-cols-3 gap-3">
           {["Goal Setting", "Expert Mentors", "Career Tracking"].map((t) => (
-            <div key={t} className="px-3 py-2 rounded-lg bg-white/5 text-cream/40 text-xs text-center">
+            <div
+              key={t}
+              className="px-3 py-2 rounded-lg text-[11px] text-center"
+              style={{ background: "#ffffff0d", color: "#ffffff66" }}
+            >
               {t}
             </div>
           ))}
@@ -54,14 +67,18 @@ export default function LoginPage() {
       {/* Right panel */}
       <div className="flex-1 flex items-center justify-center px-8">
         <div className="w-full max-w-sm">
-          <Link href="/" className="lg:hidden inline-block font-display font-semibold text-lg text-ink tracking-tight mb-12">
-            mentor<span className="text-sage">.</span>
+          <Link
+            href="/"
+            className="lg:hidden inline-block mb-12"
+            style={{ fontSize: "20px", fontWeight: 800, color: "#0f0f0f" }}
+          >
+            mentor<span style={{ color: "#EDE986" }}>.</span>
           </Link>
 
-          <h1 className="font-display text-2xl font-semibold text-ink mb-2">
+          <h1 style={{ fontSize: "26px", fontWeight: 800, color: "#0f0f0f", marginBottom: "8px" }}>
             Welcome back
           </h1>
-          <p className="text-ink/50 text-sm mb-8">
+          <p className="text-[13px] mb-8" style={{ color: "#0f0f0f66" }}>
             Sign in to continue your career journey.
           </p>
 
@@ -69,32 +86,27 @@ export default function LoginPage() {
             onClick={handleLinkedInLogin}
             disabled={loading}
             className="w-full flex items-center justify-center gap-3 px-5 py-3.5 rounded-xl
-                       bg-[#0077B5] text-white font-medium text-sm transition-all duration-200
-                       hover:bg-[#006097] hover:shadow-float active:scale-[0.98] disabled:opacity-60"
+                       text-white font-medium text-[13px] transition-all duration-200
+                       hover:shadow-float active:scale-[0.98] disabled:opacity-60"
+            style={{ background: "#0077B5" }}
           >
             <Linkedin className="w-5 h-5" />
             {loading ? "Connecting…" : "Continue with LinkedIn"}
           </button>
 
           <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px bg-cream-muted" />
-            <span className="text-ink/30 text-xs">or</span>
-            <div className="flex-1 h-px bg-cream-muted" />
+            <div className="flex-1 h-px" style={{ background: "#f0f0f0" }} />
+            <span className="text-[11px]" style={{ color: "#0f0f0f44" }}>or</span>
+            <div className="flex-1 h-px" style={{ background: "#f0f0f0" }} />
           </div>
 
-          {/* Email magic link form */}
           <EmailForm />
 
-          <p className="text-center text-xs text-ink/30 mt-8">
+          <p className="text-center text-[11px] mt-8" style={{ color: "#0f0f0f44" }}>
             By continuing, you agree to our{" "}
-            <Link href="/terms" className="underline hover:text-ink/60">
-              Terms
-            </Link>{" "}
+            <Link href="/terms" className="underline hover:opacity-80">Terms</Link>{" "}
             and{" "}
-            <Link href="/privacy" className="underline hover:text-ink/60">
-              Privacy Policy
-            </Link>
-            .
+            <Link href="/privacy" className="underline hover:opacity-80">Privacy Policy</Link>.
           </p>
         </div>
       </div>
@@ -122,9 +134,8 @@ function EmailForm() {
   if (sent) {
     return (
       <div className="text-center py-4">
-        <p className="text-sm text-ink/60">
-          Magic link sent to <strong className="text-ink">{email}</strong>. Check
-          your inbox.
+        <p className="text-[13px]" style={{ color: "#0f0f0f66" }}>
+          Magic link sent to <strong style={{ color: "#0f0f0f" }}>{email}</strong>. Check your inbox.
         </p>
       </div>
     );

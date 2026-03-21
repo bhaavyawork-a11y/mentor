@@ -36,17 +36,17 @@ export default function BookingButton({
     }
   };
 
-  const sizeClasses =
-    size === "small"
-      ? "text-xs px-3 py-1.5"
-      : "text-sm px-4 py-2";
+  const sizeStyle = size === "small"
+    ? { fontSize: "11px", padding: "6px 12px" }
+    : { fontSize: "13px", padding: "8px 16px" };
 
   return (
     <div>
       <button
         onClick={handleCheckout}
         disabled={loading}
-        className={`btn-sage ${sizeClasses} disabled:opacity-60 gap-1.5`}
+        className="inline-flex items-center gap-1.5 rounded-xl font-medium transition-all duration-200 active:scale-[0.98] disabled:opacity-60"
+        style={{ ...sizeStyle, background: "#F2619C", color: "#ffffff" }}
       >
         {loading ? (
           <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -56,7 +56,7 @@ export default function BookingButton({
         {loading ? "Redirecting…" : label}
       </button>
       {error && (
-        <p className="text-xs text-red-500 mt-1">{error}</p>
+        <p className="text-[11px] text-red-500 mt-1">{error}</p>
       )}
     </div>
   );

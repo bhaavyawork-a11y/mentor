@@ -3,17 +3,15 @@ import { cn } from "@/lib/utils";
 export function Skeleton({ className }: { className?: string }) {
   return (
     <div
-      className={cn(
-        "rounded-lg bg-cream-soft animate-pulse",
-        className
-      )}
+      className={cn("rounded-lg animate-pulse", className)}
+      style={{ background: "#f0f0f0" }}
     />
   );
 }
 
 export function CardSkeleton() {
   return (
-    <div className="card p-6 space-y-3">
+    <div className="card space-y-3">
       <div className="flex gap-4">
         <Skeleton className="w-14 h-14 rounded-2xl shrink-0" />
         <div className="flex-1 space-y-2">

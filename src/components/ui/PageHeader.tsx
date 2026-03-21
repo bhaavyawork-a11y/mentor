@@ -11,9 +11,9 @@ export function PageHeader({ title, subtitle, action }: PageHeaderProps) {
       style={{ animationFillMode: "forwards" }}
     >
       <div>
-        <h1 className="font-display text-3xl font-semibold text-ink">{title}</h1>
+        <h1 style={{ fontSize: "26px", fontWeight: 800, color: "#0f0f0f" }}>{title}</h1>
         {subtitle && (
-          <p className="text-ink/50 mt-1 text-sm">{subtitle}</p>
+          <p className="mt-1 text-[13px]" style={{ color: "#0f0f0f66" }}>{subtitle}</p>
         )}
       </div>
       {action && <div className="shrink-0">{action}</div>}
