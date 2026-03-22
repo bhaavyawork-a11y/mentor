@@ -49,7 +49,7 @@ interface GeneratedResume {
 const uid = () => Math.random().toString(36).slice(2);
 
 const scoreColor = (n: number) =>
-  n >= 80 ? "#00C9A7" : n >= 60 ? "#FDE68A" : "#ff6b6b";
+  n >= 80 ? "#839958" : n >= 60 ? "#F7F4D5" : "#ff6b6b";
 
 const scoreLabel = (n: number) =>
   n >= 80 ? "Great" : n >= 60 ? "Fair" : "Needs work";
@@ -60,7 +60,7 @@ function ScoreCard({ label, score, reason }: { label: string; score: number; rea
   return (
     <div style={{
       backgroundColor: "#fff",
-      border: "1px solid #eee",
+      border: "1px solid #e8e4ce",
       borderRadius: 16,
       padding: "20px 24px",
       display: "flex",
@@ -75,12 +75,12 @@ function ScoreCard({ label, score, reason }: { label: string; score: number; rea
         }}>{scoreLabel(score)}</span>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <div style={{ flex: 1, height: 6, backgroundColor: "#eee", borderRadius: 99, overflow: "hidden" }}>
+        <div style={{ flex: 1, height: 6, backgroundColor: "#e8e4ce", borderRadius: 99, overflow: "hidden" }}>
           <div style={{ width: `${score}%`, height: "100%", backgroundColor: color, borderRadius: 99, transition: "width 0.6s ease" }} />
         </div>
         <span style={{ fontSize: 20, fontWeight: 800, color, minWidth: 40, textAlign: "right" }}>{score}</span>
       </div>
-      <p style={{ fontSize: 12, color: "#888", margin: 0, lineHeight: 1.5 }}>{reason}</p>
+      <p style={{ fontSize: 12, color: "#839958", margin: 0, lineHeight: 1.5 }}>{reason}</p>
     </div>
   );
 }
@@ -150,12 +150,12 @@ function AnalyseTab() {
         onDrop={handleDrop}
         onClick={() => inputRef.current?.click()}
         style={{
-          border: `2px dashed ${dragging ? "#00C9A7" : "#ddd"}`,
+          border: `2px dashed ${dragging ? "#839958" : "#ddd"}`,
           borderRadius: 16,
           padding: "40px 24px",
           textAlign: "center",
           cursor: "pointer",
-          backgroundColor: dragging ? "#00C9A711" : "#fafafa",
+          backgroundColor: dragging ? "#83995811" : "#fafafa",
           transition: "all 0.2s",
         }}
       >
@@ -168,11 +168,11 @@ function AnalyseTab() {
         />
         <div style={{ fontSize: 36, marginBottom: 8 }}>📄</div>
         {fileName ? (
-          <p style={{ fontSize: 14, fontWeight: 700, color: "#00C9A7", margin: 0 }}>✓ {fileName}</p>
+          <p style={{ fontSize: 14, fontWeight: 700, color: "#839958", margin: 0 }}>✓ {fileName}</p>
         ) : (
           <>
             <p style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a", margin: 0 }}>Drop your resume here</p>
-            <p style={{ fontSize: 12, color: "#888", marginTop: 4 }}>PDF or Word — or paste text below</p>
+            <p style={{ fontSize: 12, color: "#839958", marginTop: 4 }}>PDF or Word — or paste text below</p>
           </>
         )}
       </div>
@@ -180,7 +180,7 @@ function AnalyseTab() {
       {/* Paste fallback */}
       {!fileBase64 && (
         <div>
-          <label style={{ fontSize: 12, fontWeight: 600, color: "#888", display: "block", marginBottom: 6 }}>OR PASTE RESUME TEXT</label>
+          <label style={{ fontSize: 12, fontWeight: 600, color: "#839958", display: "block", marginBottom: 6 }}>OR PASTE RESUME TEXT</label>
           <textarea
             className="input"
             rows={6}
@@ -220,11 +220,11 @@ function AnalyseTab() {
         <div style={{ display: "flex", flexDirection: "column", gap: 24, marginTop: 8 }}>
           {/* Guest save prompt */}
           {!session && (
-            <div style={{ backgroundColor: "#fff", border: "1px solid #FDE68A", borderRadius: 12, padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+            <div style={{ backgroundColor: "#fff", border: "1px solid #F7F4D5", borderRadius: 12, padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
               <p style={{ fontSize: 13, color: "#1a1a1a", margin: 0 }}>
                 Sign up to save this analysis and track improvements over time.
               </p>
-              <Link href="/auth/login" style={{ fontSize: 12, fontWeight: 800, backgroundColor: "#1B3A35", color: "#00C9A7", borderRadius: 8, padding: "8px 16px", textDecoration: "none", whiteSpace: "nowrap" }}>
+              <Link href="/auth/login" style={{ fontSize: 12, fontWeight: 800, backgroundColor: "#0A3323", color: "#839958", borderRadius: 8, padding: "8px 16px", textDecoration: "none", whiteSpace: "nowrap" }}>
                 Sign up free →
               </Link>
             </div>
@@ -239,7 +239,7 @@ function AnalyseTab() {
 
           {/* Issues & Wins */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-            <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 16, padding: 20 }}>
+            <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: 20 }}>
               <h3 style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a", margin: "0 0 12px" }}>🚨 Critical Issues</h3>
               <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 8 }}>
                 {(analysis.criticalIssues || []).map((issue, i) => (
@@ -249,12 +249,12 @@ function AnalyseTab() {
                 ))}
               </ul>
             </div>
-            <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 16, padding: 20 }}>
+            <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: 20 }}>
               <h3 style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a", margin: "0 0 12px" }}>⚡ Quick Wins</h3>
               <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 8 }}>
                 {(analysis.quickWins || []).map((win, i) => (
                   <li key={i} style={{ fontSize: 13, color: "#555", display: "flex", gap: 8, alignItems: "flex-start" }}>
-                    <span style={{ color: "#00C9A7", flexShrink: 0 }}>✓</span> {win}
+                    <span style={{ color: "#839958", flexShrink: 0 }}>✓</span> {win}
                   </li>
                 ))}
               </ul>
@@ -262,7 +262,7 @@ function AnalyseTab() {
           </div>
 
           {/* Improvements */}
-          <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 16, padding: 20 }}>
+          <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: 20 }}>
             <h3 style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a", margin: "0 0 12px" }}>💡 Improvements</h3>
             <ol style={{ margin: 0, paddingLeft: 20, display: "flex", flexDirection: "column", gap: 8 }}>
               {(analysis.improvements || []).map((imp, i) => (
@@ -273,14 +273,14 @@ function AnalyseTab() {
 
           {/* Line suggestions */}
           {(analysis.lineSuggestions || []).length > 0 && (
-            <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 16, padding: 20 }}>
+            <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: 20 }}>
               <h3 style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a", margin: "0 0 16px" }}>✏️ Line-by-line Suggestions</h3>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 {analysis.lineSuggestions.map((s, i) => (
                   <div key={i} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <div style={{ fontSize: 12, color: "#888", textDecoration: "line-through", backgroundColor: "#fff5f5", padding: "6px 10px", borderRadius: 8 }}>{s.original}</div>
-                    <div style={{ fontSize: 12, color: "#1a1a1a", backgroundColor: "#f0fdf9", padding: "6px 10px", borderRadius: 8, borderLeft: "3px solid #00C9A7" }}>{s.improved}</div>
-                    <p style={{ fontSize: 11, color: "#888", margin: 0 }}>{s.reason}</p>
+                    <div style={{ fontSize: 12, color: "#839958", textDecoration: "line-through", backgroundColor: "#fff5f5", padding: "6px 10px", borderRadius: 8 }}>{s.original}</div>
+                    <div style={{ fontSize: 12, color: "#1a1a1a", backgroundColor: "#f0fdf9", padding: "6px 10px", borderRadius: 8, borderLeft: "3px solid #839958" }}>{s.improved}</div>
+                    <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>{s.reason}</p>
                   </div>
                 ))}
               </div>
@@ -372,18 +372,18 @@ function BuildTab({ onGenerated }: { onGenerated: (r: GeneratedResume, pi: Perso
               onClick={() => setStep(i)}
               style={{
                 width: 28, height: 28, borderRadius: "50%",
-                backgroundColor: i === step ? "#1B3A35" : i < step ? "#00C9A7" : "#eee",
-                color: i <= step ? "#fff" : "#888",
+                backgroundColor: i === step ? "#0A3323" : i < step ? "#839958" : "#e8e4ce",
+                color: i <= step ? "#fff" : "#839958",
                 fontSize: 11, fontWeight: 800, border: "none", cursor: "pointer", flexShrink: 0,
               }}
             >{i + 1}</button>
             {i < steps.length - 1 && (
-              <div style={{ flex: 1, height: 2, backgroundColor: i < step ? "#00C9A7" : "#eee" }} />
+              <div style={{ flex: 1, height: 2, backgroundColor: i < step ? "#839958" : "#e8e4ce" }} />
             )}
           </div>
         ))}
       </div>
-      <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#888" }}>Step {step + 1} of {steps.length}: {steps[step]}</p>
+      <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#839958" }}>Step {step + 1} of {steps.length}: {steps[step]}</p>
 
       {/* Step 0: Personal Info */}
       {step === 0 && (
@@ -403,11 +403,11 @@ function BuildTab({ onGenerated }: { onGenerated: (r: GeneratedResume, pi: Perso
       {step === 1 && (
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           {experiences.map((exp, idx) => (
-            <div key={exp.id} style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 16, padding: 20, display: "flex", flexDirection: "column", gap: 14 }}>
+            <div key={exp.id} style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: 20, display: "flex", flexDirection: "column", gap: 14 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <h4 style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a", margin: 0 }}>Position {idx + 1}</h4>
                 {experiences.length > 1 && (
-                  <button onClick={() => setExperiences((prev) => prev.filter((e) => e.id !== exp.id))} style={{ background: "none", border: "none", color: "#888", cursor: "pointer", fontSize: 12 }}>Remove</button>
+                  <button onClick={() => setExperiences((prev) => prev.filter((e) => e.id !== exp.id))} style={{ background: "none", border: "none", color: "#839958", cursor: "pointer", fontSize: 12 }}>Remove</button>
                 )}
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -451,11 +451,11 @@ function BuildTab({ onGenerated }: { onGenerated: (r: GeneratedResume, pi: Perso
       {step === 2 && (
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           {education.map((edu, idx) => (
-            <div key={edu.id} style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 16, padding: 20, display: "flex", flexDirection: "column", gap: 14 }}>
+            <div key={edu.id} style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: 20, display: "flex", flexDirection: "column", gap: 14 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <h4 style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a", margin: 0 }}>Education {idx + 1}</h4>
                 {education.length > 1 && (
-                  <button onClick={() => setEducation((prev) => prev.filter((e) => e.id !== edu.id))} style={{ background: "none", border: "none", color: "#888", cursor: "pointer", fontSize: 12 }}>Remove</button>
+                  <button onClick={() => setEducation((prev) => prev.filter((e) => e.id !== edu.id))} style={{ background: "none", border: "none", color: "#839958", cursor: "pointer", fontSize: 12 }}>Remove</button>
                 )}
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -501,7 +501,7 @@ function BuildTab({ onGenerated }: { onGenerated: (r: GeneratedResume, pi: Perso
           {skills.length > 0 && (
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
               {skills.map((s) => (
-                <span key={s} style={{ display: "inline-flex", alignItems: "center", gap: 6, backgroundColor: "#FDE68A", color: "#1a1a1a", fontSize: 11, fontWeight: 600, borderRadius: 99, padding: "4px 10px" }}>
+                <span key={s} style={{ display: "inline-flex", alignItems: "center", gap: 6, backgroundColor: "#F7F4D5", color: "#1a1a1a", fontSize: 11, fontWeight: 600, borderRadius: 99, padding: "4px 10px" }}>
                   {s}
                   <button onClick={() => setSkills((prev) => prev.filter((x) => x !== s))} style={{ background: "none", border: "none", cursor: "pointer", color: "#1a1a1a88", padding: 0, fontSize: 12, lineHeight: 1 }}>✕</button>
                 </span>
@@ -516,7 +516,7 @@ function BuildTab({ onGenerated }: { onGenerated: (r: GeneratedResume, pi: Perso
         <div style={{ textAlign: "center", padding: "40px 0" }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>🤖</div>
           <h3 style={{ fontSize: 18, fontWeight: 800, color: "#1a1a1a", margin: "0 0 8px" }}>Ready to build your resume?</h3>
-          <p style={{ fontSize: 14, color: "#888", marginBottom: 32 }}>Claude will craft a polished, ATS-optimised resume from your details.</p>
+          <p style={{ fontSize: 14, color: "#839958", marginBottom: 32 }}>Claude will craft a polished, ATS-optimised resume from your details.</p>
           <button className="btn-primary" onClick={handleGenerate} disabled={generating} style={{ opacity: generating ? 0.6 : 1 }}>
             {generating ? "Building your resume…" : "✨ Generate Resume"}
           </button>
@@ -538,7 +538,7 @@ function ExportTab({ resume, personalInfo }: { resume: GeneratedResume | null; p
     return (
       <div style={{ textAlign: "center", padding: "80px 0" }}>
         <div style={{ fontSize: 48, marginBottom: 16 }}>📋</div>
-        <p style={{ fontSize: 14, color: "#888" }}>Go to the Build tab and generate your resume first.</p>
+        <p style={{ fontSize: 14, color: "#839958" }}>Go to the Build tab and generate your resume first.</p>
       </div>
     );
   }
@@ -557,10 +557,10 @@ function ExportTab({ resume, personalInfo }: { resume: GeneratedResume | null; p
         }
       `}</style>
 
-      <div id="resume-preview" style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 16, padding: "40px 48px", fontFamily: "Georgia, serif", lineHeight: 1.6 }}>
+      <div id="resume-preview" style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: "40px 48px", fontFamily: "Georgia, serif", lineHeight: 1.6 }}>
         {/* Header */}
-        <div style={{ borderBottom: "2px solid #1B3A35", paddingBottom: 16, marginBottom: 20 }}>
-          <h1 style={{ fontSize: 26, fontWeight: 800, color: "#1B3A35", margin: "0 0 4px" }}>{personalInfo?.name || "Your Name"}</h1>
+        <div style={{ borderBottom: "2px solid #0A3323", paddingBottom: 16, marginBottom: 20 }}>
+          <h1 style={{ fontSize: 26, fontWeight: 800, color: "#0A3323", margin: "0 0 4px" }}>{personalInfo?.name || "Your Name"}</h1>
           <p style={{ fontSize: 13, color: "#555", margin: 0 }}>
             {[personalInfo?.email, personalInfo?.phone, personalInfo?.location, personalInfo?.linkedin].filter(Boolean).join(" · ")}
           </p>
@@ -580,7 +580,7 @@ function ExportTab({ resume, personalInfo }: { resume: GeneratedResume | null; p
               <div key={i} style={{ marginBottom: 16 }}>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                   <strong style={{ fontSize: 14, color: "#1a1a1a" }}>{exp.title}</strong>
-                  <span style={{ fontSize: 12, color: "#888" }}>{exp.duration}</span>
+                  <span style={{ fontSize: 12, color: "#839958" }}>{exp.duration}</span>
                 </div>
                 <p style={{ fontSize: 13, color: "#555", margin: "2px 0 8px", fontStyle: "italic" }}>{exp.company}</p>
                 <ul style={{ margin: 0, paddingLeft: 18 }}>
@@ -600,7 +600,7 @@ function ExportTab({ resume, personalInfo }: { resume: GeneratedResume | null; p
                   <strong style={{ fontSize: 13, color: "#1a1a1a" }}>{edu.degree}</strong>
                   <p style={{ fontSize: 12, color: "#555", margin: 0 }}>{edu.school}{edu.highlights ? ` · ${edu.highlights}` : ""}</p>
                 </div>
-                <span style={{ fontSize: 12, color: "#888" }}>{edu.year}</span>
+                <span style={{ fontSize: 12, color: "#839958" }}>{edu.year}</span>
               </div>
             ))}
           </Section>
@@ -625,7 +625,7 @@ function ExportTab({ resume, personalInfo }: { resume: GeneratedResume | null; p
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 20 }}>
-      <h2 style={{ fontSize: 13, fontWeight: 800, color: "#1B3A35", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 10px", borderBottom: "1px solid #eee", paddingBottom: 4 }}>{title}</h2>
+      <h2 style={{ fontSize: 13, fontWeight: 800, color: "#0A3323", textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 10px", borderBottom: "1px solid #e8e4ce", paddingBottom: 4 }}>{title}</h2>
       {children}
     </div>
   );
@@ -667,7 +667,7 @@ export default function ResumePage() {
       {/* Header */}
       <div style={{ marginBottom: 32 }}>
         <h1 style={{ fontSize: 24, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>AI Resume Builder</h1>
-        <p style={{ fontSize: 14, color: "#888", margin: 0 }}>Analyse, build, and export a standout resume with Claude.</p>
+        <p style={{ fontSize: 14, color: "#839958", margin: 0 }}>Analyse, build, and export a standout resume with Claude.</p>
       </div>
 
       {/* Tabs */}
@@ -678,7 +678,7 @@ export default function ResumePage() {
             onClick={() => setTab(id)}
             style={{
               fontSize: 13, fontWeight: tab === id ? 700 : 500,
-              color: tab === id ? "#1a1a1a" : "#888",
+              color: tab === id ? "#1a1a1a" : "#839958",
               backgroundColor: tab === id ? "#fff" : "transparent",
               border: "none", borderRadius: 10, padding: "8px 20px",
               cursor: "pointer", boxShadow: tab === id ? "0 1px 4px rgba(0,0,0,0.08)" : "none",

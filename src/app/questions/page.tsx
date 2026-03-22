@@ -40,17 +40,17 @@ const TYPES = ["All", "Behavioral", "Technical", "Case Study", "Situational"];
 
 /* ─── Helpers ───────────────────────────────────── */
 const DIFF_COLOR: Record<string, string> = {
-  Easy: "#00C9A7",
-  Medium: "#FDE68A",
-  Hard: "#C4B5FD",
+  Easy: "#839958",
+  Medium: "#F7F4D5",
+  Hard: "#D3968C",
 };
 const DIFF_TEXT: Record<string, string> = {
-  Easy: "#1B3A35",
+  Easy: "#0A3323",
   Medium: "#8a7200",
   Hard: "#5b3fa8",
 };
 
-const COMPANY_COLORS = ["#FDE68A", "#C4B5FD", "#00C9A7", "#FFB5C8", "#B5D5FF", "#FFCBA4", "#B5FFD9", "#FFB5B5", "#D5B5FF", "#B5E5FF", "#FFD9B5"];
+const COMPANY_COLORS = ["#F7F4D5", "#D3968C", "#839958", "#FFB5C8", "#B5D5FF", "#FFCBA4", "#B5FFD9", "#FFB5B5", "#D5B5FF", "#B5E5FF", "#FFD9B5"];
 
 function companyColor(company: string) {
   let hash = 0;
@@ -90,13 +90,13 @@ function AnswerModal({ question, onClose }: { question: Question; onClose: () =>
         boxShadow: "0 -8px 40px rgba(0,0,0,0.15)",
       }}>
         {/* Handle */}
-        <div style={{ width: 40, height: 4, backgroundColor: "#eee", borderRadius: 99, margin: "0 auto 20px" }} />
+        <div style={{ width: 40, height: 4, backgroundColor: "#e8e4ce", borderRadius: 99, margin: "0 auto 20px" }} />
 
         {/* Badges */}
         <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
           <span style={{ fontSize: 11, fontWeight: 700, backgroundColor: DIFF_COLOR[question.difficulty], color: DIFF_TEXT[question.difficulty], borderRadius: 99, padding: "3px 10px" }}>{question.difficulty}</span>
-          <span style={{ fontSize: 11, fontWeight: 600, backgroundColor: "#f0f0f0", color: "#888", borderRadius: 99, padding: "3px 10px" }}>{question.type}</span>
-          <span style={{ fontSize: 11, fontWeight: 600, backgroundColor: "#f0f0f0", color: "#888", borderRadius: 99, padding: "3px 10px" }}>{question.role}</span>
+          <span style={{ fontSize: 11, fontWeight: 600, backgroundColor: "#e8e4ce", color: "#839958", borderRadius: 99, padding: "3px 10px" }}>{question.type}</span>
+          <span style={{ fontSize: 11, fontWeight: 600, backgroundColor: "#e8e4ce", color: "#839958", borderRadius: 99, padding: "3px 10px" }}>{question.role}</span>
         </div>
 
         <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1a1a1a", margin: "0 0 20px", lineHeight: 1.4 }}>{question.question}</h2>
@@ -109,24 +109,24 @@ function AnswerModal({ question, onClose }: { question: Question; onClose: () =>
 
         {answer && (
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            <div style={{ backgroundColor: "#f8fffe", border: "1px solid #00C9A733", borderRadius: 12, padding: 18 }}>
-              <p style={{ fontSize: 12, fontWeight: 700, color: "#00C9A7", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.5px" }}>Expert Answer</p>
+            <div style={{ backgroundColor: "#f8fffe", border: "1px solid #83995833", borderRadius: 12, padding: 18 }}>
+              <p style={{ fontSize: 12, fontWeight: 700, color: "#839958", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.5px" }}>Expert Answer</p>
               <p style={{ fontSize: 14, color: "#1a1a1a", lineHeight: 1.7, margin: 0 }}>{answer.answer}</p>
             </div>
 
             <div>
-              <p style={{ fontSize: 12, fontWeight: 700, color: "#888", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.5px" }}>Key Points to Cover</p>
+              <p style={{ fontSize: 12, fontWeight: 700, color: "#839958", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.5px" }}>Key Points to Cover</p>
               <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 8 }}>
                 {(answer.keyPoints || []).map((pt, i) => (
                   <li key={i} style={{ fontSize: 13, color: "#333", display: "flex", gap: 8, alignItems: "flex-start" }}>
-                    <span style={{ color: "#00C9A7", fontWeight: 700, flexShrink: 0 }}>✓</span> {pt}
+                    <span style={{ color: "#839958", fontWeight: 700, flexShrink: 0 }}>✓</span> {pt}
                   </li>
                 ))}
               </ul>
             </div>
 
             <div>
-              <p style={{ fontSize: 12, fontWeight: 700, color: "#888", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.5px" }}>Common Mistakes to Avoid</p>
+              <p style={{ fontSize: 12, fontWeight: 700, color: "#839958", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.5px" }}>Common Mistakes to Avoid</p>
               <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 8 }}>
                 {(answer.commonMistakes || []).map((m, i) => (
                   <li key={i} style={{ fontSize: 13, color: "#555", display: "flex", gap: 8, alignItems: "flex-start" }}>
@@ -136,12 +136,12 @@ function AnswerModal({ question, onClose }: { question: Question; onClose: () =>
               </ul>
             </div>
 
-            <div style={{ backgroundColor: "#1B3A35", borderRadius: 12, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ backgroundColor: "#0A3323", borderRadius: 12, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <div>
                 <p style={{ fontSize: 13, fontWeight: 700, color: "#fff", margin: 0 }}>Want personalised coaching?</p>
-                <p style={{ fontSize: 12, color: "#00C9A799", margin: 0 }}>Book a mock interview with a {question.role} mentor</p>
+                <p style={{ fontSize: 12, color: "#83995899", margin: 0 }}>Book a mock interview with a {question.role} mentor</p>
               </div>
-              <Link href={`/experts`} style={{ backgroundColor: "#00C9A7", color: "#1B3A35", fontSize: 12, fontWeight: 800, borderRadius: 8, padding: "8px 16px", textDecoration: "none", whiteSpace: "nowrap" }}>
+              <Link href={`/experts`} style={{ backgroundColor: "#839958", color: "#0A3323", fontSize: 12, fontWeight: 800, borderRadius: 8, padding: "8px 16px", textDecoration: "none", whiteSpace: "nowrap" }}>
                 Find mentor →
               </Link>
             </div>
@@ -174,7 +174,7 @@ function PracticeModal({ question, onClose }: { question: Question; onClose: () 
     }
   };
 
-  const scoreColor = (n: number) => n >= 8 ? "#00C9A7" : n >= 6 ? "#FDE68A" : "#ff6b6b";
+  const scoreColor = (n: number) => n >= 8 ? "#839958" : n >= 6 ? "#F7F4D5" : "#ff6b6b";
 
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 100, backgroundColor: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
@@ -184,10 +184,10 @@ function PracticeModal({ question, onClose }: { question: Question; onClose: () 
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
           <div>
-            <p style={{ fontSize: 11, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 4px" }}>Practice Mode</p>
+            <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 4px" }}>Practice Mode</p>
             <h2 style={{ fontSize: 15, fontWeight: 800, color: "#1a1a1a", margin: 0, lineHeight: 1.4, maxWidth: 520 }}>{question.question}</h2>
           </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: "#888", flexShrink: 0, marginLeft: 12 }}>✕</button>
+          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: "#839958", flexShrink: 0, marginLeft: 12 }}>✕</button>
         </div>
 
         {!feedback ? (
@@ -221,14 +221,14 @@ function PracticeModal({ question, onClose }: { question: Question; onClose: () 
                 <p style={{ fontSize: 14, fontWeight: 800, color: "#1a1a1a", margin: "0 0 2px" }}>
                   {feedback.score >= 8 ? "Excellent answer!" : feedback.score >= 6 ? "Good, with room to improve" : "Needs more work"}
                 </p>
-                <p style={{ fontSize: 12, color: "#888", margin: 0 }}>Score: {feedback.score}/10</p>
+                <p style={{ fontSize: 12, color: "#839958", margin: 0 }}>Score: {feedback.score}/10</p>
               </div>
             </div>
 
             <div>
-              <p style={{ fontSize: 12, fontWeight: 700, color: "#00C9A7", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 8px" }}>Strengths</p>
+              <p style={{ fontSize: 12, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 8px" }}>Strengths</p>
               {(feedback.strengths || []).map((s, i) => (
-                <p key={i} style={{ fontSize: 13, color: "#333", display: "flex", gap: 8, margin: "0 0 6px" }}><span style={{ color: "#00C9A7" }}>✓</span> {s}</p>
+                <p key={i} style={{ fontSize: 13, color: "#333", display: "flex", gap: 8, margin: "0 0 6px" }}><span style={{ color: "#839958" }}>✓</span> {s}</p>
               ))}
             </div>
 
@@ -239,8 +239,8 @@ function PracticeModal({ question, onClose }: { question: Question; onClose: () 
               ))}
             </div>
 
-            <div style={{ backgroundColor: "#f8fffe", border: "1px solid #00C9A733", borderRadius: 12, padding: 16 }}>
-              <p style={{ fontSize: 12, fontWeight: 700, color: "#00C9A7", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 8px" }}>Model Answer</p>
+            <div style={{ backgroundColor: "#f8fffe", border: "1px solid #83995833", borderRadius: 12, padding: 16 }}>
+              <p style={{ fontSize: 12, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 8px" }}>Model Answer</p>
               <p style={{ fontSize: 13, color: "#1a1a1a", lineHeight: 1.7, margin: 0 }}>{feedback.modelAnswer}</p>
             </div>
 
@@ -266,11 +266,11 @@ function QuestionCard({
   const initial = q.company[0]?.toUpperCase() ?? "?";
 
   return (
-    <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 14, padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
+    <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
       {/* Top row */}
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <span style={{ fontSize: 11, fontWeight: 700, backgroundColor: DIFF_COLOR[q.difficulty] + "33", color: DIFF_TEXT[q.difficulty], borderRadius: 99, padding: "3px 10px" }}>{q.difficulty}</span>
-        <span style={{ fontSize: 11, fontWeight: 600, backgroundColor: "#f0f0f0", color: "#888", borderRadius: 99, padding: "3px 10px" }}>{q.type}</span>
+        <span style={{ fontSize: 11, fontWeight: 600, backgroundColor: "#e8e4ce", color: "#839958", borderRadius: 99, padding: "3px 10px" }}>{q.type}</span>
         <div style={{ marginLeft: "auto", width: 28, height: 28, borderRadius: 8, backgroundColor: bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, color: "#1a1a1a", flexShrink: 0 }}>
           {initial}
         </div>
@@ -282,7 +282,7 @@ function QuestionCard({
       </p>
 
       {/* Role tag */}
-      <span style={{ fontSize: 11, fontWeight: 600, backgroundColor: "#FAF7F2", color: "#888", borderRadius: 99, padding: "3px 10px", alignSelf: "flex-start" }}>
+      <span style={{ fontSize: 11, fontWeight: 600, backgroundColor: "#F9F7EC", color: "#839958", borderRadius: 99, padding: "3px 10px", alignSelf: "flex-start" }}>
         {q.role === "General" ? "All roles" : q.role}
       </span>
 
@@ -290,13 +290,13 @@ function QuestionCard({
       <div style={{ display: "flex", gap: 8, marginTop: "auto" }}>
         <button
           onClick={onViewAnswer}
-          style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#1B3A35", color: "#00C9A7", border: "none", borderRadius: 8, padding: "7px 14px", cursor: "pointer" }}
+          style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#0A3323", color: "#839958", border: "none", borderRadius: 8, padding: "7px 14px", cursor: "pointer" }}
         >
           View answer →
         </button>
         <button
           onClick={onPractice}
-          style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#FDE68A", color: "#1a1a1a", border: "none", borderRadius: 8, padding: "7px 14px", cursor: "pointer" }}
+          style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#F7F4D5", color: "#1a1a1a", border: "none", borderRadius: 8, padding: "7px 14px", cursor: "pointer" }}
         >
           Practice with AI →
         </button>
@@ -316,8 +316,8 @@ function PillRow({ options, value, onChange }: { options: string[]; value: strin
           style={{
             flexShrink: 0,
             fontSize: 12, fontWeight: value === opt ? 700 : 500,
-            backgroundColor: value === opt ? "#1B3A35" : "#f0f0f0",
-            color: value === opt ? "#00C9A7" : "#555",
+            backgroundColor: value === opt ? "#0A3323" : "#e8e4ce",
+            color: value === opt ? "#839958" : "#555",
             border: "none", borderRadius: 99, padding: "6px 14px", cursor: "pointer",
             transition: "all 0.15s",
           }}
@@ -363,11 +363,11 @@ export default function QuestionsPage() {
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: 24, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>Interview Question Bank</h1>
-        <p style={{ fontSize: 14, color: "#888", margin: 0 }}>Role and company-specific questions, expert-curated. Free to browse.</p>
+        <p style={{ fontSize: 14, color: "#839958", margin: 0 }}>Role and company-specific questions, expert-curated. Free to browse.</p>
       </div>
 
       {/* Filters */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28, backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 16, padding: "18px 20px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28, backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: "18px 20px" }}>
         <input
           className="input"
           value={search}
@@ -376,33 +376,33 @@ export default function QuestionsPage() {
           style={{ width: "100%", boxSizing: "border-box" }}
         />
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>Role</p>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>Role</p>
           <PillRow options={ROLES} value={role} onChange={setRole} />
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>Company</p>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>Company</p>
           <PillRow options={COMPANIES} value={company} onChange={setCompany} />
         </div>
         <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <p style={{ fontSize: 11, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>Difficulty</p>
+            <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>Difficulty</p>
             <PillRow options={DIFFICULTIES} value={difficulty} onChange={setDifficulty} />
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <p style={{ fontSize: 11, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>Type</p>
+            <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>Type</p>
             <PillRow options={TYPES} value={type} onChange={setType} />
           </div>
         </div>
       </div>
 
       {/* Count */}
-      <p style={{ fontSize: 13, color: "#888", margin: "0 0 16px" }}>{filtered.length} question{filtered.length !== 1 ? "s" : ""}</p>
+      <p style={{ fontSize: 13, color: "#839958", margin: "0 0 16px" }}>{filtered.length} question{filtered.length !== 1 ? "s" : ""}</p>
 
       {/* Grid */}
       {filtered.length === 0 ? (
         <div style={{ textAlign: "center", padding: "80px 0" }}>
           <div style={{ fontSize: 48, marginBottom: 12 }}>🔍</div>
-          <p style={{ fontSize: 14, color: "#888" }}>No questions match your filters.</p>
+          <p style={{ fontSize: 14, color: "#839958" }}>No questions match your filters.</p>
         </div>
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
@@ -425,7 +425,7 @@ export default function QuestionsPage() {
                     href="/auth/login"
                     style={{
                       fontSize: 12, fontWeight: 800,
-                      backgroundColor: "#1B3A35", color: "#00C9A7",
+                      backgroundColor: "#0A3323", color: "#839958",
                       borderRadius: 99, padding: "10px 20px",
                       textDecoration: "none", whiteSpace: "nowrap",
                     }}

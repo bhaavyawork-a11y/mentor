@@ -9,7 +9,7 @@ export default function GuestBanner() {
   return (
     <div style={{
       backgroundColor: "#fff",
-      border: "1px solid #FDE68A",
+      border: "1px solid #F7F4D5",
       borderRadius: 12,
       padding: "14px 20px",
       display: "flex",
@@ -24,13 +24,13 @@ export default function GuestBanner() {
       <div style={{ display: "flex", gap: 10, alignItems: "center", flexShrink: 0 }}>
         <Link
           href="/auth/login"
-          style={{ fontSize: 12, fontWeight: 800, backgroundColor: "#1B3A35", color: "#00C9A7", borderRadius: 8, padding: "8px 16px", textDecoration: "none", whiteSpace: "nowrap" }}
+          style={{ fontSize: 12, fontWeight: 800, backgroundColor: "#0A3323", color: "#839958", borderRadius: 8, padding: "8px 16px", textDecoration: "none", whiteSpace: "nowrap" }}
         >
           Sign up free →
         </Link>
         <Link
           href="/auth/login"
-          style={{ fontSize: 12, fontWeight: 600, color: "#888", textDecoration: "none", whiteSpace: "nowrap" }}
+          style={{ fontSize: 12, fontWeight: 600, color: "#839958", textDecoration: "none", whiteSpace: "nowrap" }}
         >
           Sign in
         </Link>

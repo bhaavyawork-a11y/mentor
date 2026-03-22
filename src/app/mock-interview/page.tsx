@@ -33,16 +33,16 @@ type Step = "setup" | "interview" | "results";
 
 /* ─── Helpers ───────────────────────────────────── */
 const LEVEL_STYLE: Record<string, { bg: string; color: string }> = {
-  "Strong candidate":  { bg: "#00C9A7", color: "#1B3A35" },
-  "Good candidate":    { bg: "#FDE68A", color: "#8a7200" },
-  "Needs preparation": { bg: "#C4B5FD", color: "#5b3fa8" },
-  "Not ready yet":     { bg: "#f0f0f0", color: "#888" },
+  "Strong candidate":  { bg: "#839958", color: "#0A3323" },
+  "Good candidate":    { bg: "#F7F4D5", color: "#0A3323" },
+  "Needs preparation": { bg: "#D3968C", color: "#0A3323" },
+  "Not ready yet":     { bg: "#e8e4ce", color: "#839958" },
 };
 
 function scoreColor(n: number) {
-  if (n >= 8) return "#00C9A7";
-  if (n >= 6) return "#FDE68A";
-  return "#ff6b6b";
+  if (n >= 8) return "#839958";
+  if (n >= 6) return "#F7F4D5";
+  return "#D3968C";
 }
 
 function formatTime(secs: number) {
@@ -61,8 +61,8 @@ function PillGroup<T extends string | number>({ options, value, onChange }: { op
           onClick={() => onChange(opt)}
           style={{
             fontSize: 13, fontWeight: value === opt ? 700 : 500,
-            backgroundColor: value === opt ? "#1B3A35" : "#f0f0f0",
-            color: value === opt ? "#00C9A7" : "#555",
+            backgroundColor: value === opt ? "#0A3323" : "#e8e4ce",
+            color: value === opt ? "#839958" : "#555",
             border: "none", borderRadius: 99, padding: "8px 18px",
             cursor: "pointer", transition: "all 0.15s",
           }}
@@ -108,10 +108,10 @@ function SetupScreen({ onStart }: { onStart: (cfg: InterviewConfig) => void }) {
       <div style={{ textAlign: "center", marginBottom: 36 }}>
         <div style={{ fontSize: 52, marginBottom: 12 }}>🎙️</div>
         <h1 style={{ fontSize: 26, fontWeight: 800, color: "#1a1a1a", margin: "0 0 8px" }}>AI Mock Interview</h1>
-        <p style={{ fontSize: 14, color: "#888", margin: 0 }}>Practice with AI. Get scored. Upgrade to a human expert when ready.</p>
+        <p style={{ fontSize: 14, color: "#839958", margin: 0 }}>Practice with AI. Get scored. Upgrade to a human expert when ready.</p>
       </div>
 
-      <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 20, padding: 28, display: "flex", flexDirection: "column", gap: 22 }}>
+      <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 20, padding: 28, display: "flex", flexDirection: "column", gap: 22 }}>
         {/* Interview type */}
         <div>
           <label className="label">Interview type</label>
@@ -132,7 +132,7 @@ function SetupScreen({ onStart }: { onStart: (cfg: InterviewConfig) => void }) {
 
         {/* Company */}
         <div>
-          <label className="label">Target company <span style={{ fontWeight: 400, color: "#aaa" }}>(optional — we'll tailor questions to their style)</span></label>
+          <label className="label">Target company <span style={{ fontWeight: 400, color: "#b0ab8c" }}>(optional — we'll tailor questions to their style)</span></label>
           <input
             className="input"
             value={company}
@@ -225,20 +225,20 @@ function InterviewScreen({ config, onSubmit }: { config: InterviewConfig; onSubm
   if (!q) return null;
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", backgroundColor: "#FAF7F2" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", backgroundColor: "#F9F7EC" }}>
       {/* Top bar */}
-      <div style={{ backgroundColor: "#fff", borderBottom: "1px solid #eee", padding: "12px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{ backgroundColor: "#fff", borderBottom: "1px solid #e8e4ce", padding: "12px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <span style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a" }}>Question {current + 1} of {config.questions.length}</span>
           <div style={{ display: "flex", gap: 4 }}>
             {config.questions.map((_, i) => (
-              <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: i < current ? "#00C9A7" : i === current ? "#1B3A35" : "#eee" }} />
+              <div key={i} style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: i < current ? "#839958" : i === current ? "#0A3323" : "#e8e4ce" }} />
             ))}
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <span style={{ fontSize: 13, color: "#888", fontFamily: "monospace" }}>{formatTime(elapsed)}</span>
-          <button onClick={handleEnd} style={{ fontSize: 12, fontWeight: 600, backgroundColor: "transparent", color: "#888", border: "1px solid #eee", borderRadius: 8, padding: "6px 14px", cursor: "pointer" }}>
+          <span style={{ fontSize: 13, color: "#839958", fontFamily: "monospace" }}>{formatTime(elapsed)}</span>
+          <button onClick={handleEnd} style={{ fontSize: 12, fontWeight: 600, backgroundColor: "transparent", color: "#839958", border: "1px solid #e8e4ce", borderRadius: 8, padding: "6px 14px", cursor: "pointer" }}>
             End interview
           </button>
         </div>
@@ -249,7 +249,7 @@ function InterviewScreen({ config, onSubmit }: { config: InterviewConfig; onSubm
         <div style={{ width: "100%", maxWidth: 680, display: "flex", flexDirection: "column", gap: 28 }}>
           {/* Type badge */}
           <div style={{ textAlign: "center" }}>
-            <span style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#1B3A35", color: "#00C9A7", borderRadius: 99, padding: "4px 14px" }}>
+            <span style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#0A3323", color: "#839958", borderRadius: 99, padding: "4px 14px" }}>
               {q.type}
             </span>
           </div>
@@ -262,7 +262,7 @@ function InterviewScreen({ config, onSubmit }: { config: InterviewConfig; onSubm
           {/* Think time */}
           {thinking && thinkTime > 0 && (
             <div style={{ textAlign: "center" }}>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: 8, backgroundColor: "#FDE68A22", border: "1px solid #FDE68A", borderRadius: 10, padding: "10px 18px" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 8, backgroundColor: "#F7F4D522", border: "1px solid #F7F4D5", borderRadius: 10, padding: "10px 18px" }}>
                 <span style={{ fontSize: 13, color: "#8a7200", fontWeight: 600 }}>💭 Think time: {thinkTime}s</span>
                 <button onClick={() => setThinking(false)} style={{ fontSize: 11, color: "#8a7200", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>skip</button>
               </div>
@@ -271,8 +271,8 @@ function InterviewScreen({ config, onSubmit }: { config: InterviewConfig; onSubm
 
           {/* Tip */}
           {!thinking && (
-            <div style={{ backgroundColor: "#f8fffe", border: "1px solid #00C9A733", borderRadius: 10, padding: "10px 14px", textAlign: "center" }}>
-              <p style={{ fontSize: 12, color: "#00C9A7", margin: 0 }}>💡 {q.tips}</p>
+            <div style={{ backgroundColor: "#f8fffe", border: "1px solid #83995833", borderRadius: 10, padding: "10px 14px", textAlign: "center" }}>
+              <p style={{ fontSize: 12, color: "#839958", margin: 0 }}>💡 {q.tips}</p>
             </div>
           )}
 
@@ -286,17 +286,17 @@ function InterviewScreen({ config, onSubmit }: { config: InterviewConfig; onSubm
               style={{
                 width: "100%", boxSizing: "border-box",
                 minHeight: 220, resize: "vertical",
-                border: `2px solid ${thinking && thinkTime > 0 ? "#eee" : "#1B3A35"}`,
+                border: `2px solid ${thinking && thinkTime > 0 ? "#e8e4ce" : "#0A3323"}`,
                 borderRadius: 14, padding: "16px 18px",
                 fontSize: 15, color: "#1a1a1a", lineHeight: 1.65,
                 backgroundColor: thinking && thinkTime > 0 ? "#f8f8f8" : "#fff",
                 outline: "none", fontFamily: "inherit",
                 transition: "border-color 0.2s",
               }}
-              onFocus={(e) => e.currentTarget.style.borderColor = "#00C9A7"}
-              onBlur={(e) => e.currentTarget.style.borderColor = "#1B3A35"}
+              onFocus={(e) => e.currentTarget.style.borderColor = "#839958"}
+              onBlur={(e) => e.currentTarget.style.borderColor = "#0A3323"}
             />
-            <span style={{ position: "absolute", bottom: 12, right: 14, fontSize: 11, color: "#aaa" }}>
+            <span style={{ position: "absolute", bottom: 12, right: 14, fontSize: 11, color: "#b0ab8c" }}>
               {wordCount} words
             </span>
           </div>
@@ -306,7 +306,7 @@ function InterviewScreen({ config, onSubmit }: { config: InterviewConfig; onSubm
             <button
               onClick={() => setCurrent((c) => Math.max(0, c - 1))}
               disabled={current === 0}
-              style={{ fontSize: 13, fontWeight: 600, backgroundColor: "transparent", color: current === 0 ? "#ccc" : "#888", border: "1px solid #eee", borderRadius: 10, padding: "10px 20px", cursor: current === 0 ? "default" : "pointer" }}
+              style={{ fontSize: 13, fontWeight: 600, backgroundColor: "transparent", color: current === 0 ? "#ccc" : "#839958", border: "1px solid #e8e4ce", borderRadius: 10, padding: "10px 20px", cursor: current === 0 ? "default" : "pointer" }}
             >
               ← Back
             </button>
@@ -368,7 +368,7 @@ function ResultsScreen({ config, answers, onRetry }: {
       <div style={{ maxWidth: 600, margin: "80px auto", textAlign: "center" }}>
         <div style={{ fontSize: 52, marginBottom: 16 }}>⏳</div>
         <h2 style={{ fontSize: 18, fontWeight: 800, color: "#1a1a1a", margin: "0 0 8px" }}>Evaluating your answers…</h2>
-        <p style={{ fontSize: 14, color: "#888" }}>Claude is reviewing each answer. This takes about 15 seconds.</p>
+        <p style={{ fontSize: 14, color: "#839958" }}>Claude is reviewing each answer. This takes about 15 seconds.</p>
       </div>
     );
   }
@@ -387,23 +387,23 @@ function ResultsScreen({ config, answers, onRetry }: {
   return (
     <div style={{ maxWidth: 720, margin: "0 auto", padding: "40px 0" }}>
       {/* Overall score card */}
-      <div style={{ backgroundColor: "#1B3A35", borderRadius: 20, padding: "36px 32px", textAlign: "center", marginBottom: 28 }}>
-        <p style={{ fontSize: 56, fontWeight: 800, color: "#00C9A7", margin: "0 0 8px", lineHeight: 1 }}>
+      <div style={{ backgroundColor: "#0A3323", borderRadius: 20, padding: "36px 32px", textAlign: "center", marginBottom: 28 }}>
+        <p style={{ fontSize: 56, fontWeight: 800, color: "#839958", margin: "0 0 8px", lineHeight: 1 }}>
           {result.overallScore.toFixed(1)}
-          <span style={{ fontSize: 24, color: "#00C9A799" }}> / 10</span>
+          <span style={{ fontSize: 24, color: "#83995899" }}> / 10</span>
         </p>
         <span style={{ fontSize: 14, fontWeight: 700, backgroundColor: lvStyle.bg, color: lvStyle.color, borderRadius: 99, padding: "6px 18px", display: "inline-block", marginBottom: 16 }}>
           {result.level}
         </span>
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, backgroundColor: "#FDE68A22", border: "1px solid #FDE68A44", borderRadius: 10, padding: "8px 18px" }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, backgroundColor: "#F7F4D522", border: "1px solid #F7F4D544", borderRadius: 10, padding: "8px 18px" }}>
           <span style={{ fontSize: 22 }}>⚡</span>
-          <span style={{ fontSize: 14, fontWeight: 800, color: "#FDE68A" }}>+{result.xpEarned} XP earned</span>
+          <span style={{ fontSize: 14, fontWeight: 800, color: "#F7F4D5" }}>+{result.xpEarned} XP earned</span>
         </div>
       </div>
 
       {/* Per-question breakdown */}
-      <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 16, overflow: "hidden", marginBottom: 20 }}>
-        <div style={{ padding: "16px 20px", borderBottom: "1px solid #eee" }}>
+      <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, overflow: "hidden", marginBottom: 20 }}>
+        <div style={{ padding: "16px 20px", borderBottom: "1px solid #e8e4ce" }}>
           <p style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a", margin: 0 }}>Question-by-question breakdown</p>
         </div>
         {(result.questionScores ?? []).map((qs, i) => {
@@ -411,7 +411,7 @@ function ResultsScreen({ config, answers, onRetry }: {
           const isOpen = open === i;
           const color = scoreColor(qs.score);
           return (
-            <div key={i} style={{ borderTop: i === 0 ? "none" : "1px solid #f0f0f0" }}>
+            <div key={i} style={{ borderTop: i === 0 ? "none" : "1px solid #e8e4ce" }}>
               <button
                 onClick={() => setOpen(isOpen ? null : i)}
                 style={{ width: "100%", display: "flex", alignItems: "center", gap: 14, padding: "16px 20px", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
@@ -423,41 +423,41 @@ function ResultsScreen({ config, answers, onRetry }: {
                   <p style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a", margin: "0 0 2px", display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                     Q{i + 1}: {q?.question}
                   </p>
-                  <div style={{ width: "100%", height: 4, backgroundColor: "#eee", borderRadius: 99, overflow: "hidden", marginTop: 4 }}>
+                  <div style={{ width: "100%", height: 4, backgroundColor: "#e8e4ce", borderRadius: 99, overflow: "hidden", marginTop: 4 }}>
                     <div style={{ width: `${qs.score * 10}%`, height: "100%", backgroundColor: color, borderRadius: 99 }} />
                   </div>
                 </div>
-                <span style={{ fontSize: 12, color: "#888", flexShrink: 0 }}>{isOpen ? "▲" : "▼"}</span>
+                <span style={{ fontSize: 12, color: "#839958", flexShrink: 0 }}>{isOpen ? "▲" : "▼"}</span>
               </button>
 
               {isOpen && (
                 <div style={{ padding: "0 20px 20px", display: "flex", flexDirection: "column", gap: 14 }}>
                   {/* Your answer */}
                   <div style={{ backgroundColor: "#fafafa", borderRadius: 10, padding: 14 }}>
-                    <p style={{ fontSize: 11, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 6px" }}>Your answer</p>
-                    <p style={{ fontSize: 13, color: "#555", lineHeight: 1.6, margin: 0 }}>{q?.answer || <em style={{ color: "#aaa" }}>No answer given</em>}</p>
+                    <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 6px" }}>Your answer</p>
+                    <p style={{ fontSize: 13, color: "#555", lineHeight: 1.6, margin: 0 }}>{q?.answer || <em style={{ color: "#b0ab8c" }}>No answer given</em>}</p>
                   </div>
 
                   {/* Strengths */}
                   {qs.strengths?.length > 0 && (
                     <div>
-                      <p style={{ fontSize: 11, fontWeight: 700, color: "#00C9A7", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 8px" }}>Strengths</p>
-                      {qs.strengths.map((s, j) => <p key={j} style={{ fontSize: 13, color: "#333", margin: "0 0 6px", display: "flex", gap: 8 }}><span style={{ color: "#00C9A7" }}>✓</span>{s}</p>)}
+                      <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 8px" }}>Strengths</p>
+                      {qs.strengths.map((s, j) => <p key={j} style={{ fontSize: 13, color: "#333", margin: "0 0 6px", display: "flex", gap: 8 }}><span style={{ color: "#839958" }}>✓</span>{s}</p>)}
                     </div>
                   )}
 
                   {/* Improvements */}
                   {qs.improvements?.length > 0 && (
                     <div>
-                      <p style={{ fontSize: 11, fontWeight: 700, color: "#FDE68A", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 8px" }}>Improvements</p>
-                      {qs.improvements.map((s, j) => <p key={j} style={{ fontSize: 13, color: "#555", margin: "0 0 6px", display: "flex", gap: 8 }}><span style={{ color: "#FDE68A" }}>→</span>{s}</p>)}
+                      <p style={{ fontSize: 11, fontWeight: 700, color: "#F7F4D5", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 8px" }}>Improvements</p>
+                      {qs.improvements.map((s, j) => <p key={j} style={{ fontSize: 13, color: "#555", margin: "0 0 6px", display: "flex", gap: 8 }}><span style={{ color: "#F7F4D5" }}>→</span>{s}</p>)}
                     </div>
                   )}
 
                   {/* Model answer */}
                   {qs.modelAnswer && (
-                    <div style={{ backgroundColor: "#f8fffe", border: "1px solid #00C9A733", borderRadius: 10, padding: 14 }}>
-                      <p style={{ fontSize: 11, fontWeight: 700, color: "#00C9A7", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 6px" }}>Model answer</p>
+                    <div style={{ backgroundColor: "#f8fffe", border: "1px solid #83995833", borderRadius: 10, padding: 14 }}>
+                      <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 6px" }}>Model answer</p>
                       <p style={{ fontSize: 13, color: "#1a1a1a", lineHeight: 1.7, margin: 0 }}>{qs.modelAnswer}</p>
                     </div>
                   )}
@@ -470,24 +470,24 @@ function ResultsScreen({ config, answers, onRetry }: {
 
       {/* Overall feedback */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }}>
-        <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 14, padding: 20 }}>
-          <p style={{ fontSize: 12, fontWeight: 700, color: "#00C9A7", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 12px" }}>Top strengths</p>
+        <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: 20 }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 12px" }}>Top strengths</p>
           {(result.topStrengths ?? []).map((s, i) => (
-            <p key={i} style={{ fontSize: 13, color: "#333", margin: "0 0 8px", display: "flex", gap: 8 }}><span style={{ color: "#00C9A7", flexShrink: 0 }}>✓</span>{s}</p>
+            <p key={i} style={{ fontSize: 13, color: "#333", margin: "0 0 8px", display: "flex", gap: 8 }}><span style={{ color: "#839958", flexShrink: 0 }}>✓</span>{s}</p>
           ))}
         </div>
-        <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 14, padding: 20 }}>
-          <p style={{ fontSize: 12, fontWeight: 700, color: "#FDE68A", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 12px" }}>Areas to improve</p>
+        <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: 20 }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: "#F7F4D5", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 12px" }}>Areas to improve</p>
           {(result.topImprovements ?? []).map((s, i) => (
-            <p key={i} style={{ fontSize: 13, color: "#555", margin: "0 0 8px", display: "flex", gap: 8 }}><span style={{ color: "#FDE68A", flexShrink: 0 }}>→</span>{s}</p>
+            <p key={i} style={{ fontSize: 13, color: "#555", margin: "0 0 8px", display: "flex", gap: 8 }}><span style={{ color: "#F7F4D5", flexShrink: 0 }}>→</span>{s}</p>
           ))}
         </div>
       </div>
 
       {/* Next step */}
       {result.nextStep && (
-        <div style={{ backgroundColor: "#FAF7F2", border: "1px solid #eee", borderRadius: 14, padding: 18, marginBottom: 24 }}>
-          <p style={{ fontSize: 12, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 6px" }}>Recommended next step</p>
+        <div style={{ backgroundColor: "#F9F7EC", border: "1px solid #e8e4ce", borderRadius: 14, padding: 18, marginBottom: 24 }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 6px" }}>Recommended next step</p>
           <p style={{ fontSize: 14, color: "#1a1a1a", lineHeight: 1.6, margin: 0 }}>👉 {result.nextStep}</p>
         </div>
       )}
@@ -503,7 +503,7 @@ function ResultsScreen({ config, answers, onRetry }: {
         </button>
         <Link
           href="/experts"
-          style={{ flex: 1, padding: "14px 0", fontSize: 14, fontWeight: 700, backgroundColor: "#1B3A35", color: "#00C9A7", borderRadius: 10, textDecoration: "none", textAlign: "center", display: "block" }}
+          style={{ flex: 1, padding: "14px 0", fontSize: 14, fontWeight: 700, backgroundColor: "#0A3323", color: "#839958", borderRadius: 10, textDecoration: "none", textAlign: "center", display: "block" }}
         >
           Book a human mock interview →
         </Link>

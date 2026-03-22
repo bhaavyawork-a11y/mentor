@@ -47,7 +47,7 @@ export default function ProfileForm({ profile, userId }: { profile: Profile | nu
     setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2500); router.refresh();
   };
 
-  const card = { backgroundColor: "#ffffff", border: "1px solid #eeeeee", borderRadius: "16px", padding: "24px", marginBottom: "0" };
+  const card = { backgroundColor: "#ffffff", border: "1px solid #e8e4ce", borderRadius: "16px", padding: "24px", marginBottom: "0" };
 
   return (
     <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
@@ -96,7 +96,7 @@ export default function ProfileForm({ profile, userId }: { profile: Profile | nu
             {form.skills.map((skill) => (
               <span key={skill} style={{
                 display: "inline-flex", alignItems: "center", gap: "6px",
-                backgroundColor: "#FDE68A", color: "#1a1a1a",
+                backgroundColor: "#F7F4D5", color: "#1a1a1a",
                 fontSize: "11px", fontWeight: 600,
                 borderRadius: "99px", padding: "4px 10px",
               }}>
@@ -116,7 +116,7 @@ export default function ProfileForm({ profile, userId }: { profile: Profile | nu
           {saving ? <Loader2 style={{ width: "14px", height: "14px" }} /> : <Save style={{ width: "14px", height: "14px" }} />}
           {saving ? "Saving…" : "Save profile"}
         </button>
-        {saved && <span style={{ fontSize: "13px", fontWeight: 600, color: "#00C9A7" }}>✓ Saved!</span>}
+        {saved && <span style={{ fontSize: "13px", fontWeight: 600, color: "#839958" }}>✓ Saved!</span>}
       </div>
     </form>
   );
@@ -125,7 +125,7 @@ export default function ProfileForm({ profile, userId }: { profile: Profile | nu
 function Section({ title, children, style }: { title: string; children: React.ReactNode; style?: React.CSSProperties }) {
   return (
     <div style={{ ...style, display: "flex", flexDirection: "column", gap: "14px" }}>
-      <div style={{ paddingBottom: "10px", borderBottom: "1px solid #eeeeee" }}>
+      <div style={{ paddingBottom: "10px", borderBottom: "1px solid #e8e4ce" }}>
         <h3 style={{ fontSize: "13px", fontWeight: 700, color: "#1a1a1a", margin: 0 }}>{title}</h3>
       </div>
       {children}

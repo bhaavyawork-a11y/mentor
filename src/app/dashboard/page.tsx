@@ -76,12 +76,12 @@ function buildStreakDots(dates: string[]) {
   });
 }
 
-const AVATAR_FILLS = ["#FDE68A", "#C4B5FD", "#00C9A7"];
+const AVATAR_FILLS = ["#F7F4D5", "#D3968C", "#839958"];
 const CAREER_PATHS = [
-  { label: "Product Manager",  bg: "#FDE68A", color: "#1a1a1a" },
-  { label: "Growth",           bg: "#C4B5FD", color: "#1a1a1a" },
-  { label: "Founder's Office", bg: "#00C9A7", color: "#1B3A35" },
-  { label: "Strategy",         bg: "#1B3A35", color: "#00C9A7" },
+  { label: "Product Manager",  bg: "#F7F4D5", color: "#0A3323"  },
+  { label: "Growth",           bg: "#839958", color: "#ffffff"   },
+  { label: "Founder's Office", bg: "#105666", color: "#F7F4D5"  },
+  { label: "Strategy",         bg: "#0A3323", color: "#F7F4D5"  },
 ];
 const DEFAULT_MS = [
   { title: "Resume",    completed: false, isActive: true  },
@@ -162,14 +162,14 @@ export default async function DashboardPage() {
         <h1 style={{ fontSize: "24px", fontWeight: 800, color: "#1a1a1a", margin: 0 }}>
           {getGreeting()}, {displayName} 👋
         </h1>
-        <p style={{ fontSize: "13px", color: "#888888", marginTop: "4px" }}>
+        <p style={{ fontSize: "13px", color: "#839958", marginTop: "4px" }}>
           You&apos;re on a {streak}-day streak. Don&apos;t break it today.
         </p>
       </div>
 
       {/* ── XP Hero card ─────────────────────────────────────────────────── */}
       <div style={{
-        backgroundColor: "#1B3A35",
+        backgroundColor: "#0A3323",
         borderRadius: "16px",
         padding: "24px",
         display: "flex",
@@ -181,7 +181,7 @@ export default async function DashboardPage() {
           {/* Level badge */}
           <span style={{
             display: "inline-flex", alignItems: "center",
-            backgroundColor: "#00C9A7", color: "#1B3A35",
+            backgroundColor: "#839958", color: "#ffffff",
             fontSize: "10px", fontWeight: 800,
             borderRadius: "99px", padding: "3px 10px",
             alignSelf: "flex-start", letterSpacing: "0.5px",
@@ -192,14 +192,14 @@ export default async function DashboardPage() {
             <p style={{ fontSize: "20px", fontWeight: 800, color: "#ffffff", margin: 0 }}>
               {xpToNext > 0 ? `${xpToNext} XP to Level ${level.num + 1}` : "Max level reached!"}
             </p>
-            <p style={{ fontSize: "12px", color: "rgba(0,201,167,0.8)", marginTop: "4px" }}>
+            <p style={{ fontSize: "12px", color: "rgba(131,153,88,0.8)", marginTop: "4px" }}>
               Complete a mock interview to earn +100 XP
             </p>
           </div>
           {/* XP bar */}
           <div>
             <div style={{ height: "8px", borderRadius: "99px", backgroundColor: "rgba(255,255,255,0.15)", overflow: "hidden" }}>
-              <div style={{ height: "100%", width: `${level.progress}%`, backgroundColor: "#00C9A7", borderRadius: "99px", transition: "width 0.7s ease" }} />
+              <div style={{ height: "100%", width: `${level.progress}%`, backgroundColor: "#D3968C", borderRadius: "99px", transition: "width 0.7s ease" }} />
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: "6px" }}>
               <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.5)" }}>{level.xp} / {level.next} XP</span>
@@ -210,13 +210,13 @@ export default async function DashboardPage() {
 
         {/* Centre: big XP number */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minWidth: "100px" }}>
-          <div style={{ fontSize: "40px", fontWeight: 800, color: "#FDE68A", lineHeight: 1 }}>{level.xp}</div>
+          <div style={{ fontSize: "40px", fontWeight: 800, color: "#D3968C", lineHeight: 1 }}>{level.xp}</div>
           <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.5)", marginTop: "4px", textAlign: "center" }}>total XP<br />earned</div>
         </div>
 
         {/* Right: Weekly quest */}
         <div style={{
-          backgroundColor: "#FDE68A",
+          backgroundColor: "#F7F4D5",
           borderRadius: "12px",
           padding: "14px 16px",
           minWidth: "160px",
@@ -230,12 +230,12 @@ export default async function DashboardPage() {
           <p style={{ fontSize: "13px", fontWeight: 700, color: "#1a1a1a", margin: 0 }}>
             {questName.length > 20 ? questName.slice(0, 20) + "…" : questName}
           </p>
-          <p style={{ fontSize: "11px", color: "#888888", margin: 0 }}>
+          <p style={{ fontSize: "11px", color: "#839958", margin: 0 }}>
             {questDone} / {questTotal} tasks done
           </p>
           {/* mini progress */}
           <div style={{ height: "4px", borderRadius: "99px", backgroundColor: "rgba(0,0,0,0.1)", overflow: "hidden", marginTop: "4px" }}>
-            <div style={{ height: "100%", width: `${questTotal > 0 ? Math.round(questDone / questTotal * 100) : 0}%`, backgroundColor: "#1B3A35", borderRadius: "99px" }} />
+            <div style={{ height: "100%", width: `${questTotal > 0 ? Math.round(questDone / questTotal * 100) : 0}%`, backgroundColor: "#0A3323", borderRadius: "99px" }} />
           </div>
         </div>
       </div>
@@ -243,14 +243,14 @@ export default async function DashboardPage() {
       {/* ── Stats row ────────────────────────────────────────────────────── */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
         {[
-          { accent: "#00C9A7", val: activeGoals.length, label: "Active goals",  badge: activeGoals.length > 0 ? "In progress" : "Start one!" },
-          { accent: "#C4B5FD", val: `${streak}🔥`,      label: "Day streak",    badge: streak > 0 ? "Active" : "Begin today" },
-          { accent: "#FDE68A", val: sessionsDone,        label: "Sessions done", badge: "Completed" },
-          { accent: "#1B3A35", val: daysToGoal,          label: "Days to goal",  badge: daysToGoal < 30 ? "This month!" : "On track" },
+          { accent: "#839958", val: activeGoals.length, label: "Active goals",  badge: activeGoals.length > 0 ? "In progress" : "Start one!" },
+          { accent: "#D3968C", val: `${streak}🔥`,      label: "Day streak",    badge: streak > 0 ? "Active" : "Begin today" },
+          { accent: "#F7F4D5", val: sessionsDone,        label: "Sessions done", badge: "Completed" },
+          { accent: "#105666", val: daysToGoal,          label: "Days to goal",  badge: daysToGoal < 30 ? "This month!" : "On track" },
         ].map(({ accent, val, label, badge }) => (
           <div key={label} style={{
             backgroundColor: "#ffffff",
-            border: "1px solid #eeeeee",
+            border: "1px solid #e8e4ce",
             borderRadius: "14px",
             padding: "16px",
             position: "relative",
@@ -262,14 +262,14 @@ export default async function DashboardPage() {
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "10px" }}>
               <span style={{
                 fontSize: "10px", fontWeight: 600,
-                backgroundColor: "#FAF7F2", color: "#888888",
+                backgroundColor: "#F9F7EC", color: "#839958",
                 borderRadius: "99px", padding: "2px 8px",
               }}>
                 {badge}
               </span>
             </div>
             <div style={{ fontSize: "28px", fontWeight: 800, color: "#1a1a1a", lineHeight: 1 }}>{val}</div>
-            <div style={{ fontSize: "11px", color: "#888888", marginTop: "4px" }}>{label}</div>
+            <div style={{ fontSize: "11px", color: "#839958", marginTop: "4px" }}>{label}</div>
           </div>
         ))}
       </div>
@@ -278,12 +278,12 @@ export default async function DashboardPage() {
       <div style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: "16px" }}>
 
         {/* LEFT: Active goal */}
-        <div style={{ backgroundColor: "#ffffff", border: "1px solid #eeeeee", borderRadius: "16px", padding: "22px" }}>
+        <div style={{ backgroundColor: "#ffffff", border: "1px solid #e8e4ce", borderRadius: "16px", padding: "22px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
-            <p style={{ fontSize: "10px", fontWeight: 700, color: "#888888", letterSpacing: "0.5px", textTransform: "uppercase", margin: 0 }}>
+            <p style={{ fontSize: "10px", fontWeight: 700, color: "#839958", letterSpacing: "0.5px", textTransform: "uppercase", margin: 0 }}>
               Active Goal
             </p>
-            <Link href="/goals" style={{ fontSize: "12px", fontWeight: 600, color: "#00C9A7", textDecoration: "none" }}>Edit</Link>
+            <Link href="/goals" style={{ fontSize: "12px", fontWeight: 600, color: "#839958", textDecoration: "none" }}>Edit</Link>
           </div>
 
           {firstGoal ? (
@@ -292,7 +292,7 @@ export default async function DashboardPage() {
                 <p style={{ fontSize: "16px", fontWeight: 800, color: "#1a1a1a", flex: 1, margin: 0 }}>{firstGoal.title}</p>
                 <span style={{
                   fontSize: "11px", fontWeight: 600,
-                  backgroundColor: "#C4B5FD", color: "#1a1a1a",
+                  backgroundColor: "#D3968C", color: "#1a1a1a",
                   borderRadius: "99px", padding: "3px 10px",
                   textTransform: "capitalize", whiteSpace: "nowrap",
                 }}>
@@ -300,10 +300,10 @@ export default async function DashboardPage() {
                 </span>
               </div>
               <div>
-                <div style={{ height: "8px", borderRadius: "99px", backgroundColor: "#f0f0f0", overflow: "hidden" }}>
-                  <div style={{ height: "100%", width: `${goalPct}%`, backgroundColor: "#00C9A7", borderRadius: "99px" }} />
+                <div style={{ height: "8px", borderRadius: "99px", backgroundColor: "#e8e4ce", overflow: "hidden" }}>
+                  <div style={{ height: "100%", width: `${goalPct}%`, backgroundColor: "#839958", borderRadius: "99px" }} />
                 </div>
-                <p style={{ fontSize: "10px", color: "#888888", marginTop: "5px" }}>
+                <p style={{ fontSize: "10px", color: "#839958", marginTop: "5px" }}>
                   {goalPct}%{goalDays !== null ? ` · ${goalDays} days left` : ""}
                 </p>
               </div>
@@ -312,8 +312,8 @@ export default async function DashboardPage() {
                   <span key={c.key} style={{
                     fontSize: "10px", fontWeight: 600,
                     padding: "5px 10px", borderRadius: "8px",
-                    backgroundColor: c.completed ? "#FDE68A" : c.isActive ? "#1B3A35" : "#f0f0f0",
-                    color:           c.completed ? "#1a1a1a"  : c.isActive ? "#00C9A7"  : "#aaaaaa",
+                    backgroundColor: c.completed ? "#F7F4D5" : c.isActive ? "#0A3323" : "#e8e4ce",
+                    color:           c.completed ? "#1a1a1a"  : c.isActive ? "#839958"  : "#b0ab8c",
                   }}>
                     {c.title}
                   </span>
@@ -322,10 +322,10 @@ export default async function DashboardPage() {
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: "12px", paddingTop: "8px" }}>
-              <p style={{ fontSize: "13px", color: "#888888", margin: 0 }}>No active goals. Setting one earns you 50 XP.</p>
+              <p style={{ fontSize: "13px", color: "#839958", margin: 0 }}>No active goals. Setting one earns you 50 XP.</p>
               <Link href="/goals" style={{
                 display: "inline-flex", alignItems: "center",
-                backgroundColor: "#FDE68A", color: "#1a1a1a",
+                backgroundColor: "#F7F4D5", color: "#1a1a1a",
                 fontSize: "13px", fontWeight: 700,
                 borderRadius: "8px", padding: "10px 18px",
                 textDecoration: "none",
@@ -337,14 +337,14 @@ export default async function DashboardPage() {
         </div>
 
         {/* RIGHT: Sessions */}
-        <div style={{ backgroundColor: "#ffffff", border: "1px solid #eeeeee", borderRadius: "16px", padding: "22px", display: "flex", flexDirection: "column" }}>
-          <p style={{ fontSize: "10px", fontWeight: 700, color: "#888888", letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: "14px" }}>
+        <div style={{ backgroundColor: "#ffffff", border: "1px solid #e8e4ce", borderRadius: "16px", padding: "22px", display: "flex", flexDirection: "column" }}>
+          <p style={{ fontSize: "10px", fontWeight: 700, color: "#839958", letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: "14px" }}>
             Sessions
           </p>
 
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "12px" }}>
             {upcomingBooks.length === 0 ? (
-              <p style={{ fontSize: "12px", color: "#888888", margin: 0 }}>No upcoming sessions.</p>
+              <p style={{ fontSize: "12px", color: "#839958", margin: 0 }}>No upcoming sessions.</p>
             ) : (
               upcomingBooks.map((b) => {
                 const expertName   = (b.expert as { full_name: string } | null)?.full_name ?? "Expert";
@@ -354,22 +354,22 @@ export default async function DashboardPage() {
                   <div key={b.id} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                     <div style={{
                       width: "38px", height: "44px", flexShrink: 0,
-                      backgroundColor: "#FDE68A", borderRadius: "8px",
+                      backgroundColor: "#F7F4D5", borderRadius: "8px",
                       display: "flex", flexDirection: "column",
                       alignItems: "center", justifyContent: "center",
                     }}>
-                      <span style={{ fontSize: "16px", fontWeight: 800, color: "#1a1a1a", lineHeight: 1 }}>{dt ? dt.getDate() : "–"}</span>
-                      <span style={{ fontSize: "8px", fontWeight: 700, color: "#1a1a1a99", textTransform: "uppercase" }}>
+                      <span style={{ fontSize: "16px", fontWeight: 800, color: "#0A3323", lineHeight: 1 }}>{dt ? dt.getDate() : "–"}</span>
+                      <span style={{ fontSize: "8px", fontWeight: 700, color: "#0A3323aa", textTransform: "uppercase" }}>
                         {dt ? dt.toLocaleDateString("en-US", { month: "short" }) : ""}
                       </span>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p style={{ fontSize: "12px", fontWeight: 700, color: "#1a1a1a", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{serviceTitle}</p>
-                      <p style={{ fontSize: "11px", color: "#888888", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{expertName}</p>
+                      <p style={{ fontSize: "11px", color: "#839958", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{expertName}</p>
                     </div>
                     <button style={{
                       flexShrink: 0,
-                      backgroundColor: "#1B3A35", color: "#00C9A7",
+                      backgroundColor: "#0A3323", color: "#839958",
                       fontSize: "11px", fontWeight: 700,
                       borderRadius: "8px", padding: "5px 10px",
                       border: "none", cursor: "pointer",
@@ -383,15 +383,15 @@ export default async function DashboardPage() {
           </div>
 
           {/* Streak dots */}
-          <div style={{ marginTop: "16px", paddingTop: "12px", borderTop: "1px solid #eeeeee", display: "flex", gap: "6px", justifyContent: "space-between" }}>
+          <div style={{ marginTop: "16px", paddingTop: "12px", borderTop: "1px solid #e8e4ce", display: "flex", gap: "6px", justifyContent: "space-between" }}>
             {streakDots.map((d, i) => (
               <div key={i} style={{
                 width: "22px", height: "22px",
                 borderRadius: "6px",
-                backgroundColor: d.isDone ? "#1B3A35" : d.isToday ? "#FDE68A" : "#f0f0f0",
+                backgroundColor: d.isDone ? "#0A3323" : d.isToday ? "#D3968C" : "#e8e4ce",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontSize: "9px", fontWeight: 700,
-                color: d.isDone ? "#00C9A7" : "#1a1a1a99",
+                color: d.isDone ? "#F7F4D5" : d.isToday ? "#ffffff" : "#1a1a1a99",
               }}>
                 {d.letter}
               </div>
@@ -402,12 +402,12 @@ export default async function DashboardPage() {
 
       {/* ── Referral banner (only for users with no referrals) ──────────── */}
       {!hasReferrals && (
-        <div style={{ backgroundColor: "#FDE68A", borderRadius: "16px", padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+        <div style={{ backgroundColor: "#F7F4D5", borderRadius: "16px", padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
           <div>
             <p style={{ fontSize: "13px", fontWeight: 800, color: "#1a1a1a", margin: "0 0 2px" }}>Earn ₹200 for every friend you invite</p>
             <p style={{ fontSize: "12px", color: "#8a720099", margin: 0 }}>They get ₹200 off their first session too.</p>
           </div>
-          <Link href="/refer" style={{ fontSize: "12px", fontWeight: 800, backgroundColor: "#1B3A35", color: "#00C9A7", borderRadius: "10px", padding: "8px 18px", textDecoration: "none", whiteSpace: "nowrap" }}>
+          <Link href="/refer" style={{ fontSize: "12px", fontWeight: 800, backgroundColor: "#0A3323", color: "#839958", borderRadius: "10px", padding: "8px 18px", textDecoration: "none", whiteSpace: "nowrap" }}>
             Invite friends →
           </Link>
         </div>
@@ -416,55 +416,55 @@ export default async function DashboardPage() {
       {/* ── Practice interview card ─────────────────────────────────────── */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
         {/* Practice interview */}
-        <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 16, padding: "20px 22px", display: "flex", alignItems: "center", gap: 16 }}>
+        <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: "20px 22px", display: "flex", alignItems: "center", gap: 16 }}>
           <div style={{ fontSize: 32, flexShrink: 0 }}>🎙️</div>
           <div style={{ flex: 1 }}>
             <p style={{ fontSize: "13px", fontWeight: 800, color: "#1a1a1a", margin: "0 0 2px" }}>AI Mock Interview</p>
             {profile?.last_interview_score != null && profile.last_interview_at ? (
-              <p style={{ fontSize: "12px", color: "#888", margin: 0 }}>
+              <p style={{ fontSize: "12px", color: "#839958", margin: 0 }}>
                 Last score: {profile.last_interview_score.toFixed(1)}/10 ·{" "}
                 {Math.ceil((Date.now() - new Date(profile.last_interview_at).getTime()) / 86_400_000)} days ago
               </p>
             ) : (
-              <p style={{ fontSize: "12px", color: "#888", margin: 0 }}>Practice with AI · get scored</p>
+              <p style={{ fontSize: "12px", color: "#839958", margin: 0 }}>Practice with AI · get scored</p>
             )}
           </div>
-          <Link href="/mock-interview" style={{ backgroundColor: "#1B3A35", color: "#00C9A7", fontSize: "12px", fontWeight: 700, borderRadius: 8, padding: "8px 14px", textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0 }}>
+          <Link href="/mock-interview" style={{ backgroundColor: "#0A3323", color: "#839958", fontSize: "12px", fontWeight: 700, borderRadius: 8, padding: "8px 14px", textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0 }}>
             Practice →
           </Link>
         </div>
 
         {/* Interview question bank */}
-        <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 16, padding: "20px 22px", display: "flex", alignItems: "center", gap: 16 }}>
+        <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: "20px 22px", display: "flex", alignItems: "center", gap: 16 }}>
           <div style={{ fontSize: 32, flexShrink: 0 }}>❓</div>
           <div style={{ flex: 1 }}>
             <p style={{ fontSize: "13px", fontWeight: 800, color: "#1a1a1a", margin: "0 0 2px" }}>Question Bank</p>
-            <p style={{ fontSize: "12px", color: "#888", margin: 0 }}>20 curated questions · AI answers</p>
+            <p style={{ fontSize: "12px", color: "#839958", margin: 0 }}>20 curated questions · AI answers</p>
           </div>
-          <Link href="/questions" style={{ backgroundColor: "#FAF7F2", color: "#1a1a1a", fontSize: "12px", fontWeight: 700, borderRadius: 8, padding: "8px 14px", textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0, border: "1px solid #eee" }}>
+          <Link href="/questions" style={{ backgroundColor: "#F9F7EC", color: "#1a1a1a", fontSize: "12px", fontWeight: 700, borderRadius: 8, padding: "8px 14px", textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0, border: "1px solid #e8e4ce" }}>
             Explore →
           </Link>
         </div>
       </div>
 
       {/* ── AI Resume Builder card ──────────────────────────────────────── */}
-      <div style={{ backgroundColor: "#1B3A35", borderRadius: "16px", padding: "22px 24px", display: "flex", alignItems: "center", gap: "20px" }}>
+      <div style={{ backgroundColor: "#0A3323", borderRadius: "16px", padding: "22px 24px", display: "flex", alignItems: "center", gap: "20px" }}>
         <div style={{ fontSize: 36, flexShrink: 0 }}>📝</div>
         <div style={{ flex: 1 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
             <p style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff", margin: 0 }}>AI Resume Builder</p>
-            <span style={{ fontSize: "10px", fontWeight: 700, backgroundColor: "#00C9A7", color: "#1B3A35", borderRadius: 99, padding: "2px 8px" }}>FREE</span>
+            <span style={{ fontSize: "10px", fontWeight: 700, backgroundColor: "#839958", color: "#0A3323", borderRadius: 99, padding: "2px 8px" }}>FREE</span>
           </div>
-          <p style={{ fontSize: "12px", color: "#00C9A799", margin: 0 }}>Analyse your resume, build a new one, and export — powered by Claude.</p>
+          <p style={{ fontSize: "12px", color: "#83995899", margin: 0 }}>Analyse your resume, build a new one, and export — powered by Claude.</p>
         </div>
-        <Link href="/resume" style={{ backgroundColor: "#00C9A7", color: "#1B3A35", fontSize: "12px", fontWeight: 800, borderRadius: "10px", padding: "10px 20px", textDecoration: "none", flexShrink: 0, whiteSpace: "nowrap" }}>
+        <Link href="/resume" style={{ backgroundColor: "#839958", color: "#0A3323", fontSize: "12px", fontWeight: 800, borderRadius: "10px", padding: "10px 20px", textDecoration: "none", flexShrink: 0, whiteSpace: "nowrap" }}>
           Open →
         </Link>
       </div>
 
       {/* ── Career paths ─────────────────────────────────────────────────── */}
-      <div style={{ backgroundColor: "#ffffff", border: "1px solid #eeeeee", borderRadius: "16px", padding: "22px" }}>
-        <p style={{ fontSize: "10px", fontWeight: 700, color: "#888888", letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: "14px" }}>
+      <div style={{ backgroundColor: "#ffffff", border: "1px solid #e8e4ce", borderRadius: "16px", padding: "22px" }}>
+        <p style={{ fontSize: "10px", fontWeight: 700, color: "#839958", letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: "14px" }}>
           Career Paths for You
         </p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
@@ -483,18 +483,18 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Top Experts ──────────────────────────────────────────────────── */}
-      <div style={{ backgroundColor: "#ffffff", border: "1px solid #eeeeee", borderRadius: "16px", padding: "22px" }}>
+      <div style={{ backgroundColor: "#ffffff", border: "1px solid #e8e4ce", borderRadius: "16px", padding: "22px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-          <p style={{ fontSize: "10px", fontWeight: 700, color: "#888888", letterSpacing: "0.5px", textTransform: "uppercase", margin: 0 }}>
+          <p style={{ fontSize: "10px", fontWeight: 700, color: "#839958", letterSpacing: "0.5px", textTransform: "uppercase", margin: 0 }}>
             Top Experts
           </p>
-          <Link href="/experts" style={{ fontSize: "13px", fontWeight: 600, color: "#00C9A7", textDecoration: "none" }}>
+          <Link href="/experts" style={{ fontSize: "13px", fontWeight: 600, color: "#839958", textDecoration: "none" }}>
             Browse all →
           </Link>
         </div>
 
         {experts.length === 0 ? (
-          <p style={{ fontSize: "13px", color: "#888888" }}>No experts yet.</p>
+          <p style={{ fontSize: "13px", color: "#839958" }}>No experts yet.</p>
         ) : (
           <div>
             {experts.map((e, i) => {
@@ -515,12 +515,12 @@ export default async function DashboardPage() {
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p style={{ fontSize: "13px", fontWeight: 700, color: "#1a1a1a", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.full_name}</p>
-                      {tag && <p style={{ fontSize: "11px", color: "#888888", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{tag}</p>}
+                      {tag && <p style={{ fontSize: "11px", color: "#839958", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{tag}</p>}
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
-                      <span style={{ fontSize: "11px", color: "#888888" }}>★ {e.rating.toFixed(1)}</span>
+                      <span style={{ fontSize: "11px", color: "#839958" }}>★ {e.rating.toFixed(1)}</span>
                       <Link href={`/experts/${e.id}`} style={{
-                        backgroundColor: "#1B3A35", color: "#00C9A7",
+                        backgroundColor: "#0A3323", color: "#839958",
                         fontSize: "11px", fontWeight: 700,
                         borderRadius: "8px", padding: "5px 14px",
                         textDecoration: "none",
@@ -529,7 +529,7 @@ export default async function DashboardPage() {
                       </Link>
                     </div>
                   </div>
-                  {i < experts.length - 1 && <div style={{ height: "1px", backgroundColor: "#eeeeee" }} />}
+                  {i < experts.length - 1 && <div style={{ height: "1px", backgroundColor: "#e8e4ce" }} />}
                 </div>
               );
             })}

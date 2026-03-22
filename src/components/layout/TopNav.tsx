@@ -60,7 +60,7 @@ export default function TopNav() {
   return (
     <header style={{
       backgroundColor: "#ffffff",
-      borderBottom: "1px solid #eeeeee",
+      borderBottom: "1px solid #e8e4ce",
       height: "56px",
       display: "flex",
       alignItems: "center",
@@ -71,7 +71,7 @@ export default function TopNav() {
     }}>
       {/* Logo */}
       <Link href="/dashboard" style={{ fontSize: "18px", fontWeight: 800, color: "#1a1a1a", textDecoration: "none", marginRight: "40px", flexShrink: 0 }}>
-        mentor<span style={{ color: "#00C9A7" }}>.</span>
+        mentor<span style={{ color: "#D3968C" }}>.</span>
       </Link>
 
       {/* Nav links */}
@@ -85,12 +85,12 @@ export default function TopNav() {
               style={{
                 fontSize: "13px",
                 fontWeight: active ? 700 : 500,
-                color: active ? "#1a1a1a" : "#888888",
+                color: active ? "#0A3323" : "#839958",
                 textDecoration: "none",
                 padding: "6px 12px",
                 borderRadius: "8px",
                 transition: "color 0.15s, background 0.15s",
-                background: active ? "#FAF7F2" : "transparent",
+                background: active ? "#F9F7EC" : "transparent",
               }}
             >
               {label}
@@ -103,8 +103,8 @@ export default function TopNav() {
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
         {/* Level pill */}
         <div style={{
-          backgroundColor: "#1B3A35",
-          color: "#00C9A7",
+          backgroundColor: "#0A3323",
+          color: "#F7F4D5",
           fontSize: "11px",
           fontWeight: 800,
           borderRadius: "99px",
@@ -121,8 +121,8 @@ export default function TopNav() {
           style={{
             width: "32px", height: "32px",
             borderRadius: "99px",
-            backgroundColor: "#FDE68A",
-            color: "#1a1a1a",
+            backgroundColor: "#F7F4D5",
+            color: "#0A3323",
             fontSize: "11px",
             fontWeight: 800,
             border: "none",

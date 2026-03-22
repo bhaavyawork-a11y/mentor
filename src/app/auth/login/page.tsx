@@ -18,18 +18,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", backgroundColor: "#FAF7F2" }}>
+    <div style={{ minHeight: "100vh", display: "flex", backgroundColor: "#F9F7EC" }}>
       {/* Left panel */}
       <div style={{
         display: "none",
         width: "50%",
-        backgroundColor: "#1B3A35",
+        backgroundColor: "#0A3323",
         flexDirection: "column",
         justifyContent: "space-between",
         padding: "48px",
       }} className="lg:flex">
         <Link href="/" style={{ fontSize: "20px", fontWeight: 800, color: "#ffffff", textDecoration: "none" }}>
-          mentor<span style={{ color: "#00C9A7" }}>.</span>
+          mentor<span style={{ color: "#839958" }}>.</span>
         </Link>
         <div>
           <blockquote style={{ fontSize: "20px", lineHeight: 1.6, fontWeight: 300, color: "rgba(255,255,255,0.75)", marginBottom: "24px", maxWidth: "380px" }}>
@@ -38,7 +38,7 @@ export default function LoginPage() {
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <div style={{
               width: "40px", height: "40px", borderRadius: "99px",
-              backgroundColor: "#FDE68A", color: "#1a1a1a",
+              backgroundColor: "#F7F4D5", color: "#1a1a1a",
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: "13px", fontWeight: 800,
             }}>AK</div>
@@ -63,11 +63,11 @@ export default function LoginPage() {
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "32px" }}>
         <div style={{ width: "100%", maxWidth: "360px" }}>
           <Link href="/" style={{ fontSize: "20px", fontWeight: 800, color: "#1a1a1a", textDecoration: "none", display: "block", marginBottom: "48px" }} className="lg:hidden">
-            mentor<span style={{ color: "#00C9A7" }}>.</span>
+            mentor<span style={{ color: "#839958" }}>.</span>
           </Link>
 
           <h1 style={{ fontSize: "24px", fontWeight: 800, color: "#1a1a1a", marginBottom: "8px" }}>Welcome back</h1>
-          <p style={{ fontSize: "13px", color: "#888888", marginBottom: "28px" }}>Sign in to continue your career journey.</p>
+          <p style={{ fontSize: "13px", color: "#839958", marginBottom: "28px" }}>Sign in to continue your career journey.</p>
 
           <button onClick={handleLinkedInLogin} disabled={loading}
             style={{
@@ -83,18 +83,18 @@ export default function LoginPage() {
           </button>
 
           <div style={{ display: "flex", alignItems: "center", gap: "12px", margin: "20px 0" }}>
-            <div style={{ flex: 1, height: "1px", backgroundColor: "#eeeeee" }} />
-            <span style={{ fontSize: "11px", color: "#aaaaaa" }}>or</span>
-            <div style={{ flex: 1, height: "1px", backgroundColor: "#eeeeee" }} />
+            <div style={{ flex: 1, height: "1px", backgroundColor: "#e8e4ce" }} />
+            <span style={{ fontSize: "11px", color: "#b0ab8c" }}>or</span>
+            <div style={{ flex: 1, height: "1px", backgroundColor: "#e8e4ce" }} />
           </div>
 
           <EmailForm />
 
-          <p style={{ textAlign: "center", fontSize: "11px", color: "#aaaaaa", marginTop: "28px" }}>
+          <p style={{ textAlign: "center", fontSize: "11px", color: "#b0ab8c", marginTop: "28px" }}>
             By continuing, you agree to our{" "}
-            <Link href="/terms" style={{ color: "#888888", textDecoration: "underline" }}>Terms</Link>{" "}
+            <Link href="/terms" style={{ color: "#839958", textDecoration: "underline" }}>Terms</Link>{" "}
             and{" "}
-            <Link href="/privacy" style={{ color: "#888888", textDecoration: "underline" }}>Privacy Policy</Link>.
+            <Link href="/privacy" style={{ color: "#839958", textDecoration: "underline" }}>Privacy Policy</Link>.
           </p>
         </div>
       </div>
@@ -119,7 +119,7 @@ function EmailForm() {
 
   if (sent) return (
     <div style={{ textAlign: "center", padding: "16px 0" }}>
-      <p style={{ fontSize: "13px", color: "#888888" }}>
+      <p style={{ fontSize: "13px", color: "#839958" }}>
         Magic link sent to <strong style={{ color: "#1a1a1a" }}>{email}</strong>. Check your inbox.
       </p>
     </div>

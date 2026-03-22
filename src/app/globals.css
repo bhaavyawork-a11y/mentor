@@ -4,15 +4,16 @@
 
 @layer base {
   :root {
-    --forest:   #1B3A35;
-    --mint:     #00C9A7;
-    --yellow:   #FDE68A;
-    --lavender: #C4B5FD;
+    --forest:   #0A3323;
+    --mint:     #839958;
+    --sage:     #839958;
+    --yellow:   #F7F4D5;
+    --lavender: #D3968C;
     --dark:     #1a1a1a;
-    --muted:    #888888;
-    --page:     #FAF7F2;
+    --muted:    #839958;
+    --page:     #F9F7EC;
     --surface:  #ffffff;
-    --line:     #eeeeee;
+    --line:     #e8e4ce;
   }
 
   html { scroll-behavior: smooth; }
@@ -30,14 +31,14 @@
   h2 { font-size: 18px; font-weight: 800; color: var(--dark); line-height: 1.3; }
   h3 { font-size: 15px; font-weight: 700; color: var(--dark); }
 
-  ::selection { background: #00C9A733; color: var(--dark); }
+  ::selection { background: #83995833; color: var(--dark); }
 }
 
 @layer components {
   /* Card */
   .card {
     background: #ffffff;
-    border: 1px solid #eeeeee;
+    border: 1px solid #e8e4ce;
     border-radius: 16px;
     padding: 20px;
   }
@@ -45,8 +46,8 @@
   /* Buttons */
   .btn-primary {
     @apply inline-flex items-center gap-2 px-5 py-2.5 font-semibold text-[13px] transition-all duration-200 active:scale-[0.98];
-    background: var(--forest);
-    color: var(--mint);
+    background-color: #0A3323;
+    color: #F7F4D5;
     border-radius: 8px;
     border: none;
   }
@@ -64,9 +65,9 @@
   .btn-outline {
     @apply inline-flex items-center gap-2 px-5 py-2.5 font-semibold text-[13px] transition-all duration-200 active:scale-[0.98];
     background: transparent;
-    color: var(--dark);
+    color: #0A3323;
     border-radius: 8px;
-    border: 1px solid var(--line);
+    border: 1px solid #0A3323;
   }
   .btn-outline:hover { background: var(--page); }
 
@@ -80,7 +81,7 @@
     outline: none;
   }
   .input::placeholder { color: var(--muted); }
-  .input:focus { border-color: var(--mint); box-shadow: 0 0 0 3px rgba(0,201,167,0.12); }
+  .input:focus { border-color: #839958; box-shadow: 0 0 0 3px rgba(131,153,88,0.12); }
 
   /* Label */
   .label {

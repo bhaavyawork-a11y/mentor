@@ -81,9 +81,9 @@ function ContributeModal({ onClose, onSaved }: { onClose: () => void; onSaved: (
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
             <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1a1a1a", margin: "0 0 4px" }}>Share your comp to unlock</h2>
-            <p style={{ fontSize: 12, color: "#888", margin: 0 }}>Anonymous. Helps the community.</p>
+            <p style={{ fontSize: 12, color: "#839958", margin: 0 }}>Anonymous. Helps the community.</p>
           </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: "#888" }}>✕</button>
+          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: "#839958" }}>✕</button>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
           <div style={{ gridColumn: "1/-1" }}><label className="label">Role *</label><input className="input" value={form.role} onChange={(e) => f("role", e.target.value)} style={{ width: "100%", boxSizing: "border-box" }} placeholder="Product Manager" /></div>
@@ -129,9 +129,9 @@ function ContributeModal({ onClose, onSaved }: { onClose: () => void; onSaved: (
 function RangeBar({ p25, median, p75, max }: { p25: number; median: number; p75: number; max: number }) {
   const pct = (v: number) => Math.round((v / max) * 100);
   return (
-    <div style={{ position: "relative", height: 8, backgroundColor: "#eee", borderRadius: 99, margin: "12px 0" }}>
-      <div style={{ position: "absolute", left: `${pct(p25)}%`, right: `${100 - pct(p75)}%`, height: "100%", backgroundColor: "#00C9A7", borderRadius: 99 }} />
-      <div style={{ position: "absolute", left: `${pct(median)}%`, transform: "translateX(-50%)", width: 12, height: 12, borderRadius: "50%", backgroundColor: "#1B3A35", border: "2px solid #fff", top: -2 }} />
+    <div style={{ position: "relative", height: 8, backgroundColor: "#e8e4ce", borderRadius: 99, margin: "12px 0" }}>
+      <div style={{ position: "absolute", left: `${pct(p25)}%`, right: `${100 - pct(p75)}%`, height: "100%", backgroundColor: "#839958", borderRadius: 99 }} />
+      <div style={{ position: "absolute", left: `${pct(median)}%`, transform: "translateX(-50%)", width: 12, height: 12, borderRadius: "50%", backgroundColor: "#0A3323", border: "2px solid #fff", top: -2 }} />
     </div>
   );
 }
@@ -180,30 +180,30 @@ export default function SalariesPage() {
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: 24, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>What should you be earning?</h1>
-        <p style={{ fontSize: 14, color: "#888", margin: 0 }}>Real comp data from Indian professionals. Contribute to unlock full access.</p>
+        <p style={{ fontSize: 14, color: "#839958", margin: 0 }}>Real comp data from Indian professionals. Contribute to unlock full access.</p>
       </div>
 
       {/* Filters */}
-      <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 16, padding: "18px 20px", marginBottom: 28, display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: "18px 20px", marginBottom: 28, display: "flex", flexDirection: "column", gap: 14 }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
           <input className="input" value={roleSearch} onChange={(e) => setRoleSearch(e.target.value)} placeholder="Search by role…" style={{ boxSizing: "border-box" }} />
           <input className="input" value={companySearch} onChange={(e) => setCompanySearch(e.target.value)} placeholder="Filter by company…" style={{ boxSizing: "border-box" }} />
         </div>
         {/* City pills */}
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-          {CITIES.map((c) => <button key={c} onClick={() => setCity(c)} style={{ fontSize: 12, fontWeight: city === c ? 700 : 500, backgroundColor: city === c ? "#1B3A35" : "#f0f0f0", color: city === c ? "#00C9A7" : "#555", border: "none", borderRadius: 99, padding: "6px 14px", cursor: "pointer" }}>{c}</button>)}
+          {CITIES.map((c) => <button key={c} onClick={() => setCity(c)} style={{ fontSize: 12, fontWeight: city === c ? 700 : 500, backgroundColor: city === c ? "#0A3323" : "#e8e4ce", color: city === c ? "#839958" : "#555", border: "none", borderRadius: 99, padding: "6px 14px", cursor: "pointer" }}>{c}</button>)}
         </div>
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <p style={{ fontSize: 11, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>Experience</p>
+            <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>Experience</p>
             <div style={{ display: "flex", gap: 6 }}>
-              {EXPERIENCES.map((e) => <button key={e} onClick={() => setExp(e)} style={{ fontSize: 12, fontWeight: exp === e ? 700 : 500, backgroundColor: exp === e ? "#1B3A35" : "#f0f0f0", color: exp === e ? "#00C9A7" : "#555", border: "none", borderRadius: 99, padding: "6px 14px", cursor: "pointer" }}>{e} yrs</button>)}
+              {EXPERIENCES.map((e) => <button key={e} onClick={() => setExp(e)} style={{ fontSize: 12, fontWeight: exp === e ? 700 : 500, backgroundColor: exp === e ? "#0A3323" : "#e8e4ce", color: exp === e ? "#839958" : "#555", border: "none", borderRadius: 99, padding: "6px 14px", cursor: "pointer" }}>{e} yrs</button>)}
             </div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <p style={{ fontSize: 11, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>Stage</p>
+            <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>Stage</p>
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-              {STAGES.map((s) => <button key={s} onClick={() => setStage(s)} style={{ fontSize: 12, fontWeight: stage === s ? 700 : 500, backgroundColor: stage === s ? "#1B3A35" : "#f0f0f0", color: stage === s ? "#00C9A7" : "#555", border: "none", borderRadius: 99, padding: "6px 14px", cursor: "pointer" }}>{s}</button>)}
+              {STAGES.map((s) => <button key={s} onClick={() => setStage(s)} style={{ fontSize: 12, fontWeight: stage === s ? 700 : 500, backgroundColor: stage === s ? "#0A3323" : "#e8e4ce", color: stage === s ? "#839958" : "#555", border: "none", borderRadius: 99, padding: "6px 14px", cursor: "pointer" }}>{s}</button>)}
             </div>
           </div>
         </div>
@@ -212,26 +212,26 @@ export default function SalariesPage() {
       {filtered.length === 0 ? (
         <div style={{ textAlign: "center", padding: "80px 0" }}>
           <div style={{ fontSize: 48, marginBottom: 12 }}>📊</div>
-          <p style={{ fontSize: 14, color: "#888" }}>No data matches these filters yet.</p>
+          <p style={{ fontSize: 14, color: "#839958" }}>No data matches these filters yet.</p>
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           {/* Main range card */}
-          <div style={{ backgroundColor: "#1B3A35", borderRadius: 16, padding: "28px 28px 24px" }}>
-            <p style={{ fontSize: 12, color: "#00C9A799", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 6px" }}>Total CTC</p>
+          <div style={{ backgroundColor: "#0A3323", borderRadius: 16, padding: "28px 28px 24px" }}>
+            <p style={{ fontSize: 12, color: "#83995899", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 6px" }}>Total CTC</p>
             <p style={{ fontSize: 15, fontWeight: 700, color: "#fff", margin: "0 0 16px" }}>{labelFor}</p>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-              <span style={{ fontSize: 12, color: "#00C9A799" }}>P25</span>
-              <span style={{ fontSize: 12, color: "#00C9A799" }}>Median</span>
-              <span style={{ fontSize: 12, color: "#00C9A799" }}>P75</span>
+              <span style={{ fontSize: 12, color: "#83995899" }}>P25</span>
+              <span style={{ fontSize: 12, color: "#83995899" }}>Median</span>
+              <span style={{ fontSize: 12, color: "#83995899" }}>P75</span>
             </div>
             <RangeBar p25={p25c} median={medC} p75={p75c} max={maxCTC} />
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ fontSize: 18, fontWeight: 800, color: "#00C9A7" }}>{formatINR(p25c)}</span>
+              <span style={{ fontSize: 18, fontWeight: 800, color: "#839958" }}>{formatINR(p25c)}</span>
               <span style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>{formatINR(medC)}</span>
-              <span style={{ fontSize: 18, fontWeight: 800, color: "#00C9A7" }}>{formatINR(p75c)}</span>
+              <span style={{ fontSize: 18, fontWeight: 800, color: "#839958" }}>{formatINR(p75c)}</span>
             </div>
-            <p style={{ fontSize: 11, color: "#00C9A755", margin: "12px 0 0" }}>Based on {filtered.length} data point{filtered.length !== 1 ? "s" : ""}</p>
+            <p style={{ fontSize: 11, color: "#83995855", margin: "12px 0 0" }}>Based on {filtered.length} data point{filtered.length !== 1 ? "s" : ""}</p>
           </div>
 
           {/* Breakdown cards — blurred for guests */}
@@ -244,37 +244,37 @@ export default function SalariesPage() {
               display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14,
             }}>
               <p style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a", margin: 0 }}>🔒 Sign up to unlock full breakdown</p>
-              <p style={{ fontSize: 12, color: "#888", margin: 0 }}>Contribute your salary data to unlock stage breakdown, base pay, and more.</p>
-              <Link href="/auth/login" style={{ fontSize: 13, fontWeight: 800, backgroundColor: "#1B3A35", color: "#00C9A7", borderRadius: 10, padding: "10px 24px", textDecoration: "none" }}>
+              <p style={{ fontSize: 12, color: "#839958", margin: 0 }}>Contribute your salary data to unlock stage breakdown, base pay, and more.</p>
+              <Link href="/auth/login" style={{ fontSize: 13, fontWeight: 800, backgroundColor: "#0A3323", color: "#839958", borderRadius: 10, padding: "10px 24px", textDecoration: "none" }}>
                 Sign up + contribute your salary to unlock →
               </Link>
             </div>
           )}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
             {/* Base salary */}
-            <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 14, padding: 20 }}>
-              <p style={{ fontSize: 12, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 12px" }}>Base salary</p>
+            <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: 20 }}>
+              <p style={{ fontSize: 12, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 12px" }}>Base salary</p>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 {[["P25", p25b], ["Median", medB], ["P75", p75b]].map(([label, val]) => (
                   <div key={label as string} style={{ textAlign: "center" }}>
                     <p style={{ fontSize: 16, fontWeight: 800, color: "#1a1a1a", margin: "0 0 4px" }}>{formatINR(val as number)}</p>
-                    <p style={{ fontSize: 11, color: "#888", margin: 0 }}>{label}</p>
+                    <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>{label}</p>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Variable/ESOP */}
-            <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 14, padding: 20 }}>
-              <p style={{ fontSize: 12, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 12px" }}>Variable / ESOP</p>
+            <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: 20 }}>
+              <p style={{ fontSize: 12, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 12px" }}>Variable / ESOP</p>
               <p style={{ fontSize: 28, fontWeight: 800, color: "#1a1a1a", margin: "0 0 4px" }}>{esopPct}%</p>
-              <p style={{ fontSize: 12, color: "#888", margin: 0 }}>include variable / ESOP component</p>
+              <p style={{ fontSize: 12, color: "#839958", margin: 0 }}>include variable / ESOP component</p>
             </div>
 
             {/* Stage breakdown */}
             {unlocked ? (
-              <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 14, padding: 20, gridColumn: "1/-1" }}>
-                <p style={{ fontSize: 12, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 12px" }}>By company stage</p>
+              <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: 20, gridColumn: "1/-1" }}>
+                <p style={{ fontSize: 12, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 12px" }}>By company stage</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {["Series A","Series B","Series C","Growth","Listed"].map((s) => {
                     const pts = filtered.filter((d) => d.stage === s);
@@ -283,20 +283,20 @@ export default function SalariesPage() {
                     return (
                       <div key={s} style={{ display: "flex", alignItems: "center", gap: 12 }}>
                         <span style={{ fontSize: 12, color: "#555", minWidth: 90 }}>{s}</span>
-                        <div style={{ flex: 1, height: 6, backgroundColor: "#eee", borderRadius: 99, overflow: "hidden" }}>
-                          <div style={{ width: `${Math.round((med / maxCTC) * 100)}%`, height: "100%", backgroundColor: "#00C9A7", borderRadius: 99 }} />
+                        <div style={{ flex: 1, height: 6, backgroundColor: "#e8e4ce", borderRadius: 99, overflow: "hidden" }}>
+                          <div style={{ width: `${Math.round((med / maxCTC) * 100)}%`, height: "100%", backgroundColor: "#839958", borderRadius: 99 }} />
                         </div>
                         <span style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a", minWidth: 50, textAlign: "right" }}>{formatINR(med)}</span>
-                        <span style={{ fontSize: 11, color: "#888", minWidth: 60 }}>{pts.length} resp.</span>
+                        <span style={{ fontSize: 11, color: "#839958", minWidth: 60 }}>{pts.length} resp.</span>
                       </div>
                     );
                   })}
                 </div>
               </div>
             ) : (
-              <div style={{ backgroundColor: "#FAF7F2", border: "1px dashed #ddd", borderRadius: 14, padding: 20, gridColumn: "1/-1", textAlign: "center" }}>
+              <div style={{ backgroundColor: "#F9F7EC", border: "1px dashed #ddd", borderRadius: 14, padding: 20, gridColumn: "1/-1", textAlign: "center" }}>
                 <p style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a", margin: "0 0 8px" }}>🔒 Full breakdown locked</p>
-                <p style={{ fontSize: 12, color: "#888", margin: "0 0 16px" }}>Share your comp data to unlock stage breakdown, YoY trends, and more.</p>
+                <p style={{ fontSize: 12, color: "#839958", margin: "0 0 16px" }}>Share your comp data to unlock stage breakdown, YoY trends, and more.</p>
                 <button className="btn-primary" onClick={() => setShowContribute(true)}>Share your comp to unlock</button>
               </div>
             )}

@@ -18,10 +18,10 @@ interface OfferResult {
 
 /* ─── Helpers ───────────────────────────────────── */
 const VERDICT_STYLE: Record<string, { bg: string; color: string }> = {
-  "Fair":           { bg: "#FDE68A",  color: "#8a7200" },
-  "Below market":   { bg: "#C4B5FD",  color: "#5b3fa8" },
-  "Above market":   { bg: "#00C9A7",  color: "#1B3A35" },
-  "Strong offer":   { bg: "#1B3A35",  color: "#00C9A7" },
+  "Fair":           { bg: "#F7F4D5",  color: "#8a7200" },
+  "Below market":   { bg: "#D3968C",  color: "#5b3fa8" },
+  "Above market":   { bg: "#839958",  color: "#0A3323" },
+  "Strong offer":   { bg: "#0A3323",  color: "#839958" },
 };
 
 function formatINR(n: number) {
@@ -36,10 +36,10 @@ const STAGES = ["Seed", "Series A", "Series B", "Series C", "Late stage / Pre-IP
 /* ─── Metric Card ───────────────────────────────── */
 function MetricCard({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
-    <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 14, padding: "16px 18px" }}>
-      <p style={{ fontSize: 11, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 6px" }}>{label}</p>
+    <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: "16px 18px" }}>
+      <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 6px" }}>{label}</p>
       <p style={{ fontSize: 20, fontWeight: 800, color: "#1a1a1a", margin: "0 0 4px" }}>{value}</p>
-      <p style={{ fontSize: 12, color: "#888", margin: 0 }}>{sub}</p>
+      <p style={{ fontSize: 12, color: "#839958", margin: 0 }}>{sub}</p>
     </div>
   );
 }
@@ -48,12 +48,12 @@ function MetricCard({ label, value, sub }: { label: string; value: string; sub: 
 function Collapsible({ title, children }: { title: string; children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
   return (
-    <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 14, overflow: "hidden" }}>
+    <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, overflow: "hidden" }}>
       <button onClick={() => setOpen((o) => !o)} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 18px", background: "none", border: "none", cursor: "pointer" }}>
         <span style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a" }}>{title}</span>
-        <span style={{ fontSize: 12, color: "#888" }}>{open ? "▲" : "▼"}</span>
+        <span style={{ fontSize: 12, color: "#839958" }}>{open ? "▲" : "▼"}</span>
       </button>
-      {open && <div style={{ padding: "0 18px 16px", borderTop: "1px solid #f0f0f0" }}>{children}</div>}
+      {open && <div style={{ padding: "0 18px 16px", borderTop: "1px solid #e8e4ce" }}>{children}</div>}
     </div>
   );
 }
@@ -108,11 +108,11 @@ export default function OfferPage() {
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: 24, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>Is this offer good?</h1>
-        <p style={{ fontSize: 14, color: "#888", margin: 0 }}>Paste your offer details. We&apos;ll tell you exactly where you stand.</p>
+        <p style={{ fontSize: 14, color: "#839958", margin: 0 }}>Paste your offer details. We&apos;ll tell you exactly where you stand.</p>
       </div>
 
       {/* Form */}
-      <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", gap: 16, marginBottom: 24 }}>
+      <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", gap: 16, marginBottom: 24 }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
           <div><label className="label">Company</label><input className="input" value={form.company} onChange={(e) => f("company", e.target.value)} placeholder="Razorpay" style={{ width: "100%", boxSizing: "border-box" }} /></div>
           <div><label className="label">Role</label><input className="input" value={form.role} onChange={(e) => f("role", e.target.value)} placeholder="Senior Product Manager" style={{ width: "100%", boxSizing: "border-box" }} /></div>
@@ -190,7 +190,7 @@ export default function OfferPage() {
           <Collapsible title="✓ What's good about this offer">
             <ul style={{ margin: "12px 0 0", padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 8 }}>
               {result.whatIsGood.map((g, i) => (
-                <li key={i} style={{ fontSize: 13, color: "#333", display: "flex", gap: 8 }}><span style={{ color: "#00C9A7", flexShrink: 0 }}>✓</span>{g}</li>
+                <li key={i} style={{ fontSize: 13, color: "#333", display: "flex", gap: 8 }}><span style={{ color: "#839958", flexShrink: 0 }}>✓</span>{g}</li>
               ))}
             </ul>
           </Collapsible>
@@ -199,20 +199,20 @@ export default function OfferPage() {
           <Collapsible title="→ What to negotiate">
             <ul style={{ margin: "12px 0 0", padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 8 }}>
               {result.whatToNegotiate.map((n, i) => (
-                <li key={i} style={{ fontSize: 13, color: "#333", display: "flex", gap: 8 }}><span style={{ color: "#FDE68A", flexShrink: 0 }}>→</span>{n}</li>
+                <li key={i} style={{ fontSize: 13, color: "#333", display: "flex", gap: 8 }}><span style={{ color: "#F7F4D5", flexShrink: 0 }}>→</span>{n}</li>
               ))}
             </ul>
           </Collapsible>
 
           {/* Negotiation script */}
-          <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 14 }}>
+          <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14 }}>
             <button onClick={() => setScriptOpen((o) => !o)} style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 18px", background: "none", border: "none", cursor: "pointer" }}>
               <span style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a" }}>✉ Here&apos;s how to ask for more →</span>
-              <span style={{ fontSize: 12, color: "#888" }}>{scriptOpen ? "▲" : "▼"}</span>
+              <span style={{ fontSize: 12, color: "#839958" }}>{scriptOpen ? "▲" : "▼"}</span>
             </button>
             {scriptOpen && (
-              <div style={{ padding: "0 18px 18px", borderTop: "1px solid #f0f0f0" }}>
-                <div style={{ backgroundColor: "#f8fffe", border: "1px solid #00C9A733", borderRadius: 10, padding: 16, marginTop: 12 }}>
+              <div style={{ padding: "0 18px 18px", borderTop: "1px solid #e8e4ce" }}>
+                <div style={{ backgroundColor: "#f8fffe", border: "1px solid #83995833", borderRadius: 10, padding: 16, marginTop: 12 }}>
                   <p style={{ fontSize: 13, color: "#1a1a1a", lineHeight: 1.8, margin: 0, fontStyle: "italic" }}>{result.negotiationScript}</p>
                 </div>
               </div>
@@ -220,12 +220,12 @@ export default function OfferPage() {
           </div>
 
           {/* CTA */}
-          <div style={{ backgroundColor: "#1B3A35", borderRadius: 16, padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20 }}>
+          <div style={{ backgroundColor: "#0A3323", borderRadius: 16, padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20 }}>
             <div>
               <p style={{ fontSize: 14, fontWeight: 700, color: "#fff", margin: 0 }}>Want help negotiating?</p>
-              <p style={{ fontSize: 12, color: "#00C9A799", margin: 0 }}>Talk to a negotiation expert who&apos;s done it at your target company</p>
+              <p style={{ fontSize: 12, color: "#83995899", margin: 0 }}>Talk to a negotiation expert who&apos;s done it at your target company</p>
             </div>
-            <Link href="/experts" style={{ backgroundColor: "#00C9A7", color: "#1B3A35", fontSize: 12, fontWeight: 800, borderRadius: 8, padding: "10px 18px", textDecoration: "none", whiteSpace: "nowrap" }}>
+            <Link href="/experts" style={{ backgroundColor: "#839958", color: "#0A3323", fontSize: 12, fontWeight: 800, borderRadius: 8, padding: "10px 18px", textDecoration: "none", whiteSpace: "nowrap" }}>
               Find expert →
             </Link>
           </div>

@@ -18,7 +18,7 @@ interface Community {
 }
 
 /* ─── Helpers ───────────────────────────────────── */
-const PALETTE = ["#FDE68A", "#C4B5FD", "#00C9A7", "#FFB5C8", "#B5D5FF", "#FFCBA4", "#B5FFD9", "#FFD9B5"];
+const PALETTE = ["#F7F4D5", "#D3968C", "#839958", "#FFB5C8", "#B5D5FF", "#FFCBA4", "#B5FFD9", "#FFD9B5"];
 
 function iconColor(c: Community, i: number) {
   return c.icon_color ?? PALETTE[i % PALETTE.length];
@@ -35,7 +35,7 @@ function CommunityCard({ community, index, isMember, onJoin }: {
   const initial = community.name[0]?.toUpperCase() ?? "?";
 
   return (
-    <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 16, padding: 20, display: "flex", flexDirection: "column", gap: 14 }}>
+    <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: 20, display: "flex", flexDirection: "column", gap: 14 }}>
       <div style={{ width: 60, height: 60, borderRadius: 14, backgroundColor: bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, fontWeight: 800, color: "#1a1a1a" }}>
         {initial}
       </div>
@@ -43,13 +43,13 @@ function CommunityCard({ community, index, isMember, onJoin }: {
       <div>
         <h3 style={{ fontSize: 16, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>{community.name}</h3>
         {community.role_type && (
-          <span style={{ fontSize: 11, fontWeight: 600, backgroundColor: "#f0f0f0", color: "#888", borderRadius: 99, padding: "3px 10px" }}>{community.role_type}</span>
+          <span style={{ fontSize: 11, fontWeight: 600, backgroundColor: "#e8e4ce", color: "#839958", borderRadius: 99, padding: "3px 10px" }}>{community.role_type}</span>
         )}
       </div>
 
       <div style={{ display: "flex", gap: 16 }}>
-        <span style={{ fontSize: 12, color: "#888" }}>{community.member_count.toLocaleString()} members</span>
-        <span style={{ fontSize: 11, color: "#aaa" }}>{community.posts_this_week} posts this week</span>
+        <span style={{ fontSize: 12, color: "#839958" }}>{community.member_count.toLocaleString()} members</span>
+        <span style={{ fontSize: 11, color: "#b0ab8c" }}>{community.posts_this_week} posts this week</span>
       </div>
 
       {community.description && (
@@ -60,19 +60,19 @@ function CommunityCard({ community, index, isMember, onJoin }: {
 
       <div style={{ display: "flex", gap: 8, marginTop: "auto" }}>
         {isMember ? (
-          <Link href={`/communities/${community.slug}`} style={{ fontSize: 12, fontWeight: 700, backgroundColor: "transparent", color: "#1B3A35", border: "1px solid #1B3A35", borderRadius: 8, padding: "8px 16px", textDecoration: "none" }}>
+          <Link href={`/communities/${community.slug}`} style={{ fontSize: 12, fontWeight: 700, backgroundColor: "transparent", color: "#0A3323", border: "1px solid #0A3323", borderRadius: 8, padding: "8px 16px", textDecoration: "none" }}>
             View →
           </Link>
         ) : (
           <button
             onClick={() => onJoin(community.id)}
-            style={{ fontSize: 12, fontWeight: 700, backgroundColor: "#1B3A35", color: "#00C9A7", border: "none", borderRadius: 8, padding: "8px 16px", cursor: "pointer" }}
+            style={{ fontSize: 12, fontWeight: 700, backgroundColor: "#0A3323", color: "#839958", border: "none", borderRadius: 8, padding: "8px 16px", cursor: "pointer" }}
           >
             Join
           </button>
         )}
         {isMember && (
-          <span style={{ fontSize: 11, fontWeight: 600, backgroundColor: "#00C9A722", color: "#1B3A35", borderRadius: 99, padding: "4px 10px", alignSelf: "center" }}>Member ✓</span>
+          <span style={{ fontSize: 11, fontWeight: 600, backgroundColor: "#83995822", color: "#0A3323", borderRadius: 99, padding: "4px 10px", alignSelf: "center" }}>Member ✓</span>
         )}
       </div>
     </div>
@@ -114,17 +114,17 @@ export default function CommunitiesPage() {
       {/* Header */}
       <div style={{ marginBottom: 32 }}>
         <h1 style={{ fontSize: 24, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>Your circles</h1>
-        <p style={{ fontSize: 14, color: "#888", margin: 0 }}>Connect with people at the same stage, in the same role.</p>
+        <p style={{ fontSize: 14, color: "#839958", margin: 0 }}>Connect with people at the same stage, in the same role.</p>
       </div>
 
       {loading ? (
-        <p style={{ fontSize: 14, color: "#888" }}>Loading…</p>
+        <p style={{ fontSize: 14, color: "#839958" }}>Loading…</p>
       ) : (
         <>
           {/* My communities */}
           {myComms.length > 0 && (
             <div style={{ marginBottom: 40 }}>
-              <p style={{ fontSize: 11, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 16px" }}>My communities</p>
+              <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 16px" }}>My communities</p>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
                 {myComms.map((c, i) => (
                   <CommunityCard key={c.id} community={c} index={i} isMember={true} onJoin={handleJoin} />
@@ -134,14 +134,14 @@ export default function CommunitiesPage() {
           )}
 
           {myComms.length === 0 && (
-            <div style={{ backgroundColor: "#fff", border: "1px dashed #eee", borderRadius: 16, padding: "32px 24px", textAlign: "center", marginBottom: 32 }}>
-              <p style={{ fontSize: 14, color: "#888", margin: 0 }}>You haven&apos;t joined any communities yet. Join one below.</p>
+            <div style={{ backgroundColor: "#fff", border: "1px dashed #e8e4ce", borderRadius: 16, padding: "32px 24px", textAlign: "center", marginBottom: 32 }}>
+              <p style={{ fontSize: 14, color: "#839958", margin: 0 }}>You haven&apos;t joined any communities yet. Join one below.</p>
             </div>
           )}
 
           {/* Browse */}
           <div>
-            <p style={{ fontSize: 11, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 16px" }}>Browse communities</p>
+            <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 16px" }}>Browse communities</p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
               {browseComms.map((c, i) => (
                 <CommunityCard key={c.id} community={c} index={i + myComms.length} isMember={false} onJoin={handleJoin} />

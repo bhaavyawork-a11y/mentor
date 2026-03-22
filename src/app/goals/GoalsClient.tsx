@@ -10,11 +10,11 @@ const CATEGORIES = ["role","skill","salary","network","education","other"] as co
 const PRIORITIES  = ["high","medium","low"] as const;
 
 const CAT_BG: Record<string, string> = {
-  role: "#C4B5FD", skill: "#00C9A7", salary: "#FDE68A",
-  network: "#C4B5FD", education: "#FDE68A", other: "#eeeeee",
+  role: "#D3968C", skill: "#839958", salary: "#F7F4D5",
+  network: "#D3968C", education: "#F7F4D5", other: "#e8e4ce",
 };
 const PRI_COLOR: Record<string, string> = {
-  high: "#ef4444", medium: "#FDE68A", low: "#00C9A7",
+  high: "#ef4444", medium: "#F7F4D5", low: "#839958",
 };
 
 const BLANK = {
@@ -66,14 +66,14 @@ export default function GoalsClient({ goals: initial, userId }: { goals: Goal[];
     <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
       {/* Filter + new button */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
-        <div style={{ display: "flex", gap: "6px", backgroundColor: "#ffffff", border: "1px solid #eeeeee", borderRadius: "10px", padding: "4px" }}>
+        <div style={{ display: "flex", gap: "6px", backgroundColor: "#ffffff", border: "1px solid #e8e4ce", borderRadius: "10px", padding: "4px" }}>
           {(["all","active","completed","paused"] as const).map((s) => (
             <button key={s} onClick={() => setFilter(s)}
               style={{
                 padding: "6px 12px", borderRadius: "8px", border: "none", cursor: "pointer",
                 fontSize: "12px", fontWeight: 600, textTransform: "capitalize",
-                backgroundColor: filter === s ? "#1B3A35" : "transparent",
-                color: filter === s ? "#00C9A7" : "#888888",
+                backgroundColor: filter === s ? "#0A3323" : "transparent",
+                color: filter === s ? "#839958" : "#839958",
                 transition: "all 0.15s",
               }}>
               {s} ({counts[s as keyof typeof counts] ?? 0})
@@ -87,7 +87,7 @@ export default function GoalsClient({ goals: initial, userId }: { goals: Goal[];
 
       {/* Form */}
       {showForm && (
-        <div style={{ backgroundColor: "#ffffff", border: "1px solid #eeeeee", borderRadius: "16px", padding: "24px", animation: "fadeUp 0.3s ease forwards" }}>
+        <div style={{ backgroundColor: "#ffffff", border: "1px solid #e8e4ce", borderRadius: "16px", padding: "24px", animation: "fadeUp 0.3s ease forwards" }}>
           <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#1a1a1a", marginBottom: "18px" }}>New Quest</h3>
           <form onSubmit={handleCreate} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             <div>
@@ -132,11 +132,11 @@ export default function GoalsClient({ goals: initial, userId }: { goals: Goal[];
 
       {/* Empty state */}
       {filtered.length === 0 ? (
-        <div style={{ backgroundColor: "#ffffff", border: "1px solid #eeeeee", borderRadius: "16px", padding: "48px 24px", textAlign: "center" }}>
-          <p style={{ fontSize: "13px", fontWeight: 600, color: "#888888", marginBottom: "4px" }}>
+        <div style={{ backgroundColor: "#ffffff", border: "1px solid #e8e4ce", borderRadius: "16px", padding: "48px 24px", textAlign: "center" }}>
+          <p style={{ fontSize: "13px", fontWeight: 600, color: "#839958", marginBottom: "4px" }}>
             {filter === "all" ? "No quests yet" : `No ${filter} quests`}
           </p>
-          {filter === "all" && <p style={{ fontSize: "12px", color: "#aaaaaa" }}>Create your first quest to start earning XP.</p>}
+          {filter === "all" && <p style={{ fontSize: "12px", color: "#b0ab8c" }}>Create your first quest to start earning XP.</p>}
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -156,19 +156,19 @@ function GoalRow({ goal, index, onStatusChange, onDelete, deleting }: {
   onDelete: (id: string) => void; deleting: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const catBg = CAT_BG[goal.category] ?? "#eeeeee";
-  const priColor = PRI_COLOR[goal.priority] ?? "#888888";
+  const catBg = CAT_BG[goal.category] ?? "#e8e4ce";
+  const priColor = PRI_COLOR[goal.priority] ?? "#839958";
 
   const statusIcon = {
-    active:    <Clock style={{ width: "14px", height: "14px", color: "#888888" }} />,
-    completed: <CheckCircle2 style={{ width: "14px", height: "14px", color: "#00C9A7" }} />,
-    paused:    <Pause style={{ width: "14px", height: "14px", color: "#FDE68A" }} />,
+    active:    <Clock style={{ width: "14px", height: "14px", color: "#839958" }} />,
+    completed: <CheckCircle2 style={{ width: "14px", height: "14px", color: "#839958" }} />,
+    paused:    <Pause style={{ width: "14px", height: "14px", color: "#F7F4D5" }} />,
     cancelled: <XCircle style={{ width: "14px", height: "14px", color: "#ef4444" }} />,
   }[goal.status];
 
   return (
     <div style={{
-      backgroundColor: "#ffffff", border: "1px solid #eeeeee", borderRadius: "14px",
+      backgroundColor: "#ffffff", border: "1px solid #e8e4ce", borderRadius: "14px",
       padding: "14px 18px", opacity: goal.status === "completed" ? 0.65 : 1,
       animation: `fadeUp 0.3s ease ${index * 40}ms both`,
     }}>
@@ -187,12 +187,12 @@ function GoalRow({ goal, index, onStatusChange, onDelete, deleting }: {
             <span style={{ fontSize: "10px", color: priColor, fontWeight: 700 }}>● {goal.priority}</span>
           </div>
           {goal.description && (
-            <p style={{ fontSize: "11px", color: "#888888", marginTop: "3px" }}>{goal.description}</p>
+            <p style={{ fontSize: "11px", color: "#839958", marginTop: "3px" }}>{goal.description}</p>
           )}
           {goal.target_date && (
             <div style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "6px" }}>
-              <Calendar style={{ width: "10px", height: "10px", color: "#aaaaaa" }} />
-              <span style={{ fontSize: "11px", color: "#aaaaaa" }}>
+              <Calendar style={{ width: "10px", height: "10px", color: "#b0ab8c" }} />
+              <span style={{ fontSize: "11px", color: "#b0ab8c" }}>
                 {new Date(goal.target_date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
               </span>
             </div>
@@ -203,7 +203,7 @@ function GoalRow({ goal, index, onStatusChange, onDelete, deleting }: {
             <button onClick={() => setOpen(!open)}
               style={{
                 display: "inline-flex", alignItems: "center", gap: "4px",
-                backgroundColor: "#FAF7F2", border: "1px solid #eeeeee",
+                backgroundColor: "#F9F7EC", border: "1px solid #e8e4ce",
                 fontSize: "11px", fontWeight: 600, borderRadius: "8px",
                 padding: "5px 10px", cursor: "pointer", color: "#1a1a1a",
                 textTransform: "capitalize",
@@ -213,7 +213,7 @@ function GoalRow({ goal, index, onStatusChange, onDelete, deleting }: {
             {open && (
               <div style={{
                 position: "absolute", right: 0, top: "calc(100% + 4px)",
-                backgroundColor: "#ffffff", border: "1px solid #eeeeee",
+                backgroundColor: "#ffffff", border: "1px solid #e8e4ce",
                 borderRadius: "12px", boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
                 overflow: "hidden", minWidth: "130px", zIndex: 10,
               }}>
@@ -223,7 +223,7 @@ function GoalRow({ goal, index, onStatusChange, onDelete, deleting }: {
                       display: "block", width: "100%", textAlign: "left",
                       padding: "8px 12px", border: "none", background: "none",
                       fontSize: "12px", cursor: "pointer", textTransform: "capitalize",
-                      color: goal.status === s ? "#00C9A7" : "#1a1a1a",
+                      color: goal.status === s ? "#839958" : "#1a1a1a",
                       fontWeight: goal.status === s ? 700 : 400,
                     }}>
                     {s}
@@ -235,11 +235,11 @@ function GoalRow({ goal, index, onStatusChange, onDelete, deleting }: {
           <button onClick={() => onDelete(goal.id)} disabled={deleting}
             style={{
               padding: "6px", borderRadius: "8px", border: "none", background: "none",
-              cursor: "pointer", color: "#aaaaaa", display: "flex", alignItems: "center",
+              cursor: "pointer", color: "#b0ab8c", display: "flex", alignItems: "center",
               transition: "color 0.15s",
             }}
             onMouseEnter={(e) => (e.currentTarget.style.color = "#ef4444")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#aaaaaa")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#b0ab8c")}
           >
             {deleting ? <Loader2 style={{ width: "13px", height: "13px" }} /> : <Trash2 style={{ width: "13px", height: "13px" }} />}
           </button>

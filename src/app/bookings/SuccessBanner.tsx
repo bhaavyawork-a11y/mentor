@@ -21,20 +21,20 @@ export default function BookingSuccessBanner() {
   return (
     <div style={{
       display: "flex", alignItems: "flex-start", gap: "12px",
-      backgroundColor: "#ffffff", border: "1px solid #eeeeee",
-      borderLeft: "3px solid #00C9A7",
+      backgroundColor: "#ffffff", border: "1px solid #e8e4ce",
+      borderLeft: "3px solid #839958",
       borderRadius: "12px", padding: "14px 16px",
       animation: "fadeUp 0.3s ease forwards",
     }}>
-      <CheckCircle2 style={{ width: "18px", height: "18px", color: "#00C9A7", flexShrink: 0, marginTop: "1px" }} />
+      <CheckCircle2 style={{ width: "18px", height: "18px", color: "#839958", flexShrink: 0, marginTop: "1px" }} />
       <div style={{ flex: 1 }}>
         <p style={{ fontSize: "13px", fontWeight: 600, color: "#1a1a1a", margin: 0 }}>Booking confirmed!</p>
-        <p style={{ fontSize: "11px", color: "#888888", marginTop: "2px" }}>
+        <p style={{ fontSize: "11px", color: "#839958", marginTop: "2px" }}>
           Your session has been booked and payment processed. Check your email for details.
         </p>
       </div>
       <button onClick={() => setVisible(false)}
-        style={{ background: "none", border: "none", cursor: "pointer", color: "#aaaaaa", fontSize: "18px", lineHeight: 1, flexShrink: 0 }}>
+        style={{ background: "none", border: "none", cursor: "pointer", color: "#b0ab8c", fontSize: "18px", lineHeight: 1, flexShrink: 0 }}>
         ×
       </button>
     </div>

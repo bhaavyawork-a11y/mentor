@@ -45,7 +45,7 @@ function timeAgo(iso: string) {
   return `${Math.floor(h / 24)}d ago`;
 }
 
-const PALETTE = ["#FDE68A", "#C4B5FD", "#00C9A7", "#FFB5C8", "#B5D5FF"];
+const PALETTE = ["#F7F4D5", "#D3968C", "#839958", "#FFB5C8", "#B5D5FF"];
 function avatarBg(userId: string) {
   let h = 0;
   for (const c of userId) h = (h * 31 + c.charCodeAt(0)) & 0xfffff;
@@ -63,7 +63,7 @@ function PostCard({ post }: { post: Post }) {
   const displayContent = !expanded && long ? post.content.slice(0, 220) + "…" : post.content;
 
   return (
-    <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 14, padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
+    <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
       {/* Author row */}
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <div style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "#1a1a1a", flexShrink: 0 }}>
@@ -71,19 +71,19 @@ function PostCard({ post }: { post: Post }) {
         </div>
         <div style={{ flex: 1 }}>
           <p style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a", margin: 0 }}>{name}</p>
-          {role && <p style={{ fontSize: 11, color: "#888", margin: 0 }}>{role}</p>}
+          {role && <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>{role}</p>}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontSize: 10, fontWeight: 700, backgroundColor: "#f0f0f0", color: "#888", borderRadius: 99, padding: "2px 8px" }}>{post.type}</span>
-          <span style={{ fontSize: 11, color: "#aaa" }}>{timeAgo(post.created_at)}</span>
+          <span style={{ fontSize: 10, fontWeight: 700, backgroundColor: "#e8e4ce", color: "#839958", borderRadius: 99, padding: "2px 8px" }}>{post.type}</span>
+          <span style={{ fontSize: 11, color: "#b0ab8c" }}>{timeAgo(post.created_at)}</span>
         </div>
       </div>
 
       {/* Referral badge */}
       {post.type === "Job referral" && post.referral_company && (
-        <div style={{ backgroundColor: "#FDE68A22", border: "1px solid #FDE68A", borderRadius: 8, padding: "8px 12px", display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ backgroundColor: "#F7F4D522", border: "1px solid #F7F4D5", borderRadius: 8, padding: "8px 12px", display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ fontSize: 12, fontWeight: 700, color: "#8a7200" }}>🤝 Can refer at {post.referral_company}</span>
-          {post.referral_role && <span style={{ fontSize: 11, color: "#888" }}>· {post.referral_role}</span>}
+          {post.referral_role && <span style={{ fontSize: 11, color: "#839958" }}>· {post.referral_role}</span>}
         </div>
       )}
 
@@ -91,20 +91,20 @@ function PostCard({ post }: { post: Post }) {
       <p style={{ fontSize: 14, color: "#333", margin: 0, lineHeight: 1.6 }}>
         {displayContent}
         {long && (
-          <button onClick={() => setExpanded((o) => !o)} style={{ background: "none", border: "none", cursor: "pointer", color: "#00C9A7", fontSize: 13, fontWeight: 600, padding: 0, marginLeft: 4 }}>
+          <button onClick={() => setExpanded((o) => !o)} style={{ background: "none", border: "none", cursor: "pointer", color: "#839958", fontSize: 13, fontWeight: 600, padding: 0, marginLeft: 4 }}>
             {expanded ? "Show less" : "Read more"}
           </button>
         )}
       </p>
 
       {post.link_url && (
-        <a href={post.link_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#00C9A7", textDecoration: "none" }}>🔗 {post.link_url}</a>
+        <a href={post.link_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "#839958", textDecoration: "none" }}>🔗 {post.link_url}</a>
       )}
 
       {/* Reactions */}
       <div style={{ display: "flex", gap: 16, borderTop: "1px solid #f5f5f5", paddingTop: 10 }}>
-        <span style={{ fontSize: 12, color: "#888" }}>👍 {post.helpful_count} Helpful</span>
-        <span style={{ fontSize: 12, color: "#888" }}>💬 {post.reply_count} replies</span>
+        <span style={{ fontSize: 12, color: "#839958" }}>👍 {post.helpful_count} Helpful</span>
+        <span style={{ fontSize: 12, color: "#839958" }}>💬 {post.reply_count} replies</span>
       </div>
     </div>
   );
@@ -145,14 +145,14 @@ function PostComposer({ communityId, userId, onPosted }: { communityId: string; 
   };
 
   return (
-    <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 14, padding: 18, display: "flex", gap: 12 }}>
+    <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: 18, display: "flex", gap: 12 }}>
       <div style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "#1a1a1a", flexShrink: 0 }}>
         {initials}
       </div>
       <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
           {(["Discussion", "Resource", "Job referral"] as const).map((t) => (
-            <button key={t} onClick={() => setType(t)} style={{ fontSize: 11, fontWeight: type === t ? 700 : 500, backgroundColor: type === t ? "#1B3A35" : "#f0f0f0", color: type === t ? "#00C9A7" : "#888", border: "none", borderRadius: 99, padding: "4px 12px", cursor: "pointer" }}>{t}</button>
+            <button key={t} onClick={() => setType(t)} style={{ fontSize: 11, fontWeight: type === t ? 700 : 500, backgroundColor: type === t ? "#0A3323" : "#e8e4ce", color: type === t ? "#839958" : "#839958", border: "none", borderRadius: 99, padding: "4px 12px", cursor: "pointer" }}>{t}</button>
           ))}
         </div>
         <textarea
@@ -216,8 +216,8 @@ export default function CommunityDetailPage() {
     setIsMember(true);
   };
 
-  if (loading) return <div style={{ padding: 32 }}><p style={{ color: "#888" }}>Loading…</p></div>;
-  if (!community) return <div style={{ padding: 32 }}><p style={{ color: "#888" }}>Community not found.</p></div>;
+  if (loading) return <div style={{ padding: 32 }}><p style={{ color: "#839958" }}>Loading…</p></div>;
+  if (!community) return <div style={{ padding: 32 }}><p style={{ color: "#839958" }}>Community not found.</p></div>;
 
   const referralPosts = posts.filter((p) => p.type === "Job referral");
   const feedPosts = tab === "referrals" ? referralPosts : posts;
@@ -226,28 +226,28 @@ export default function CommunityDetailPage() {
     <div style={{ maxWidth: 1000, margin: "0 auto", padding: "32px 0", display: "grid", gridTemplateColumns: "240px 1fr", gap: 28, alignItems: "start" }}>
       {/* Sidebar */}
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 16, padding: 20, display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: 20, display: "flex", flexDirection: "column", gap: 14 }}>
           <div>
             <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1a1a1a", margin: "0 0 4px" }}>{community.name}</h2>
-            <p style={{ fontSize: 12, color: "#888", margin: 0 }}>{community.member_count.toLocaleString()} members</p>
+            <p style={{ fontSize: 12, color: "#839958", margin: 0 }}>{community.member_count.toLocaleString()} members</p>
           </div>
 
           {isMember ? (
-            <span style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#00C9A722", color: "#1B3A35", borderRadius: 99, padding: "4px 12px", alignSelf: "flex-start" }}>You&apos;re a member ✓</span>
+            <span style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#83995822", color: "#0A3323", borderRadius: 99, padding: "4px 12px", alignSelf: "flex-start" }}>You&apos;re a member ✓</span>
           ) : (
             <button className="btn-primary" onClick={handleJoin}>Join community</button>
           )}
 
           {community.description && (
             <div>
-              <p style={{ fontSize: 11, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 6px" }}>About</p>
+              <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 6px" }}>About</p>
               <p style={{ fontSize: 12, color: "#555", lineHeight: 1.6, margin: 0 }}>{community.description}</p>
             </div>
           )}
 
           {community.rules?.length > 0 && (
             <div>
-              <p style={{ fontSize: 11, fontWeight: 700, color: "#888", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 8px" }}>Rules</p>
+              <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 8px" }}>Rules</p>
               <ol style={{ margin: 0, paddingLeft: 16, display: "flex", flexDirection: "column", gap: 6 }}>
                 {community.rules.map((r: string, i: number) => (
                   <li key={i} style={{ fontSize: 12, color: "#555" }}>{r}</li>
@@ -258,7 +258,7 @@ export default function CommunityDetailPage() {
         </div>
 
         {isMember && (
-          <Link href="/experts" style={{ display: "block", backgroundColor: "#FDE68A", color: "#1a1a1a", fontSize: 12, fontWeight: 800, borderRadius: 12, padding: "12px 16px", textDecoration: "none", textAlign: "center" }}>
+          <Link href="/experts" style={{ display: "block", backgroundColor: "#F7F4D5", color: "#1a1a1a", fontSize: 12, fontWeight: 800, borderRadius: 12, padding: "12px 16px", textDecoration: "none", textAlign: "center" }}>
             🤝 Post a job referral
           </Link>
         )}
@@ -269,7 +269,7 @@ export default function CommunityDetailPage() {
         {/* Tabs */}
         <div style={{ display: "flex", gap: 4, backgroundColor: "#f5f5f5", padding: 4, borderRadius: 12, width: "fit-content" }}>
           {(["feed", "referrals"] as const).map((t) => (
-            <button key={t} onClick={() => setTab(t)} style={{ fontSize: 13, fontWeight: tab === t ? 700 : 500, color: tab === t ? "#1a1a1a" : "#888", backgroundColor: tab === t ? "#fff" : "transparent", border: "none", borderRadius: 10, padding: "8px 20px", cursor: "pointer", boxShadow: tab === t ? "0 1px 4px rgba(0,0,0,0.08)" : "none", textTransform: "capitalize" }}>
+            <button key={t} onClick={() => setTab(t)} style={{ fontSize: 13, fontWeight: tab === t ? 700 : 500, color: tab === t ? "#1a1a1a" : "#839958", backgroundColor: tab === t ? "#fff" : "transparent", border: "none", borderRadius: 10, padding: "8px 20px", cursor: "pointer", boxShadow: tab === t ? "0 1px 4px rgba(0,0,0,0.08)" : "none", textTransform: "capitalize" }}>
               {t === "feed" ? "Feed" : `Referrals (${referralPosts.length})`}
             </button>
           ))}
@@ -284,7 +284,7 @@ export default function CommunityDetailPage() {
         {feedPosts.length === 0 ? (
           <div style={{ textAlign: "center", padding: "60px 0" }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>💬</div>
-            <p style={{ fontSize: 14, color: "#888" }}>{isMember ? "Be the first to post!" : "Join to see posts and participate."}</p>
+            <p style={{ fontSize: 14, color: "#839958" }}>{isMember ? "Be the first to post!" : "Join to see posts and participate."}</p>
           </div>
         ) : (
           feedPosts.map((post) => <PostCard key={post.id} post={post} />)

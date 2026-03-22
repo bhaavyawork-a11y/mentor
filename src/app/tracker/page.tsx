@@ -7,10 +7,10 @@ import type { Application } from "@/types";
 
 /* ─── Constants ─────────────────────────────────── */
 const COLUMNS: { status: Application["status"]; label: string; headerBg: string; headerColor: string }[] = [
-  { status: "Applied",      label: "Applied",      headerBg: "#FAF7F2", headerColor: "#888" },
-  { status: "Interviewing", label: "Interviewing", headerBg: "#FDE68A", headerColor: "#1a1a1a" },
-  { status: "Offer",        label: "Offer",        headerBg: "#00C9A7", headerColor: "#1B3A35" },
-  { status: "Rejected",     label: "Rejected",     headerBg: "#f5f5f5", headerColor: "#aaa" },
+  { status: "Applied",      label: "Applied",      headerBg: "#F9F7EC", headerColor: "#839958" },
+  { status: "Interviewing", label: "Interviewing", headerBg: "#F7F4D5", headerColor: "#1a1a1a" },
+  { status: "Offer",        label: "Offer",        headerBg: "#839958", headerColor: "#0A3323" },
+  { status: "Rejected",     label: "Rejected",     headerBg: "#e8e4ce", headerColor: "#b0ab8c" },
 ];
 
 const STATUS_ORDER: Application["status"][] = ["Applied", "Interviewing", "Offer", "Rejected"];
@@ -50,7 +50,7 @@ function AddModal({ onClose, onSaved }: { onClose: () => void; onSaved: () => vo
       <div style={{ backgroundColor: "#fff", borderRadius: 20, padding: 28, width: "100%", maxWidth: 480, display: "flex", flexDirection: "column", gap: 16 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1a1a1a", margin: 0 }}>Add application</h2>
-          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: "#888" }}>✕</button>
+          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: "#839958" }}>✕</button>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
           <div style={{ gridColumn: "1 / -1" }}><label className="label">Company *</label><input className="input" value={form.company} onChange={(e) => setForm((f) => ({ ...f, company: e.target.value }))} style={{ width: "100%", boxSizing: "border-box" }} placeholder="Razorpay" /></div>
@@ -79,19 +79,19 @@ function AppCard({ app, onMove, onDelete }: { app: Application; onMove: (id: str
   const nextStatus = STATUS_ORDER[currentIdx + 1] as Application["status"] | undefined;
 
   return (
-    <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 12, padding: 14, display: "flex", flexDirection: "column", gap: 10 }}>
+    <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 12, padding: 14, display: "flex", flexDirection: "column", gap: 10 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <div>
           <p style={{ fontSize: 14, fontWeight: 800, color: "#1a1a1a", margin: 0 }}>{app.company}</p>
-          <p style={{ fontSize: 12, color: "#888", margin: "2px 0 0" }}>{app.role}</p>
+          <p style={{ fontSize: 12, color: "#839958", margin: "2px 0 0" }}>{app.role}</p>
         </div>
         <button onClick={() => onDelete(app.id)} style={{ background: "none", border: "none", cursor: "pointer", color: "#ccc", fontSize: 12, padding: 0 }}>✕</button>
       </div>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <span style={{ fontSize: 11, color: "#aaa" }}>{new Date(app.applied_date).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span>
+        <span style={{ fontSize: 11, color: "#b0ab8c" }}>{new Date(app.applied_date).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</span>
         {needsFollowUp && (
-          <span title="It's been 7+ days. A follow-up email increases response rate by 3x." style={{ fontSize: 10, fontWeight: 700, backgroundColor: "#FDE68A", color: "#8a7200", borderRadius: 99, padding: "2px 8px", cursor: "help" }}>
+          <span title="It's been 7+ days. A follow-up email increases response rate by 3x." style={{ fontSize: 10, fontWeight: 700, backgroundColor: "#F7F4D5", color: "#8a7200", borderRadius: 99, padding: "2px 8px", cursor: "help" }}>
             Follow up?
           </span>
         )}
@@ -99,7 +99,7 @@ function AppCard({ app, onMove, onDelete }: { app: Application; onMove: (id: str
 
       {app.notes && (
         <div>
-          <button onClick={() => setNotesOpen((o) => !o)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#888", padding: 0, textAlign: "left" }}>
+          <button onClick={() => setNotesOpen((o) => !o)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#839958", padding: 0, textAlign: "left" }}>
             {notesOpen ? "▲ Hide notes" : "▼ Notes"}
           </button>
           {notesOpen && <p style={{ fontSize: 12, color: "#555", margin: "6px 0 0", lineHeight: 1.5 }}>{app.notes}</p>}
@@ -109,7 +109,7 @@ function AppCard({ app, onMove, onDelete }: { app: Application; onMove: (id: str
       {nextStatus && (
         <button
           onClick={() => onMove(app.id, nextStatus)}
-          style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#f5f5f5", color: "#555", border: "none", borderRadius: 8, padding: "6px 12px", cursor: "pointer", alignSelf: "flex-start" }}
+          style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#e8e4ce", color: "#555", border: "none", borderRadius: 8, padding: "6px 12px", cursor: "pointer", alignSelf: "flex-start" }}
         >
           Move to {nextStatus} →
         </button>
@@ -151,13 +151,13 @@ export default function TrackerPage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 32 }}>
         <div>
           <h1 style={{ fontSize: 24, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>My applications</h1>
-          <p style={{ fontSize: 14, color: "#888", margin: 0 }}>{apps.length} application{apps.length !== 1 ? "s" : ""} tracked</p>
+          <p style={{ fontSize: 14, color: "#839958", margin: 0 }}>{apps.length} application{apps.length !== 1 ? "s" : ""} tracked</p>
         </div>
         <button className="btn-primary" onClick={() => setShowAdd(true)}>+ Add application</button>
       </div>
 
       {loading ? (
-        <p style={{ fontSize: 14, color: "#888" }}>Loading…</p>
+        <p style={{ fontSize: 14, color: "#839958" }}>Loading…</p>
       ) : (
         /* Kanban */
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, overflowX: "auto" }}>
@@ -172,7 +172,7 @@ export default function TrackerPage() {
                 </div>
                 {/* Cards */}
                 {col.length === 0 ? (
-                  <div style={{ border: "1px dashed #eee", borderRadius: 12, padding: "24px 14px", textAlign: "center" }}>
+                  <div style={{ border: "1px dashed #e8e4ce", borderRadius: 12, padding: "24px 14px", textAlign: "center" }}>
                     <p style={{ fontSize: 12, color: "#ccc", margin: 0 }}>Empty</p>
                   </div>
                 ) : (
