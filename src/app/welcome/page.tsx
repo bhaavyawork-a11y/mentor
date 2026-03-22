@@ -7,8 +7,8 @@ export default async function WelcomePage() {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) redirect("/auth/login");
 
-  const { data: profile } = await supabase.from("profiles").select("current_role").eq("id", session.user.id).single();
-  if (profile?.current_role) redirect("/dashboard");
+  const { data: profile } = await supabase.from("profiles").select("current_job_role").eq("id", session.user.id).single();
+  if (profile?.current_job_role) redirect("/dashboard");
 
   const FEATURES = [
     { bg: "#FDE68A", icon: "🎯", title: "Set your quest",    body: "Tell us where you want to go. We track your progress and keep you accountable." },

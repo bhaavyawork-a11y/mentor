@@ -12,7 +12,7 @@ export interface Profile {
   full_name: string | null;
   avatar_url: string | null;
   linkedin_url: string | null;
-  current_role: string | null;
+  current_job_role: string | null;
   target_role: string | null;
   current_salary: number | null;
   target_salary: number | null;

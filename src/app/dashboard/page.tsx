@@ -15,7 +15,7 @@ const LEVELS = [
 function calcXP(profile: Profile | null, goals: Goal[], bookings: { status: string }[]) {
   let xp = 0;
   if (profile) {
-    const fields = [profile.full_name, profile.bio, profile.location, profile.current_role, profile.target_role, profile.industry, profile.linkedin_url];
+    const fields = [profile.full_name, profile.bio, profile.location, profile.current_job_role, profile.target_role, profile.industry, profile.linkedin_url];
     xp += fields.filter(Boolean).length * 15;
     xp += Math.min((profile.skills ?? []).length * 5, 50);
   }
@@ -118,7 +118,7 @@ export default async function DashboardPage() {
   const experts       = (expertsRes.data ?? []) as Expert[];
   const recentDates   = (activityRes.data ?? []).map((r: { created_at: string }) => r.created_at);
 
-  if (!profile?.current_role) redirect("/welcome");
+  if (!profile?.current_job_role) redirect("/welcome");
 
   const activeGoals = allGoals.filter((g) => g.status === "active");
   const xp          = calcXP(profile, allGoals, upcomingBooks);

@@ -18,7 +18,7 @@ function navLevel(profile: Profile | null) {
   if (!profile) return 1;
   const fields = [
     profile.full_name, profile.bio, profile.location,
-    profile.current_role, profile.target_role, profile.industry, profile.linkedin_url,
+    profile.current_job_role, profile.target_role, profile.industry, profile.linkedin_url,
   ];
   const xp = fields.filter(Boolean).length * 15
            + Math.min((profile.skills ?? []).length * 5, 50);

@@ -20,7 +20,7 @@ export default function ProfileForm({ profile, userId }: { profile: Profile | nu
     bio:              profile?.bio ?? "",
     location:         profile?.location ?? "",
     linkedin_url:     profile?.linkedin_url ?? "",
-    current_role:     profile?.current_role ?? "",
+    current_job_role:     profile?.current_job_role ?? "",
     target_role:      profile?.target_role ?? "",
     industry:         profile?.industry ?? "",
     years_experience: profile?.years_experience ?? 0,
@@ -63,7 +63,7 @@ export default function ProfileForm({ profile, userId }: { profile: Profile | nu
 
       <Section title="Career" style={card}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
-          <Field label="Current role"><input className="input" value={form.current_role} placeholder="Senior Engineer" onChange={(e) => setForm((f) => ({ ...f, current_role: e.target.value }))} /></Field>
+          <Field label="Current role"><input className="input" value={form.current_job_role} placeholder="Senior Engineer" onChange={(e) => setForm((f) => ({ ...f, current_job_role: e.target.value }))} /></Field>
           <Field label="Target role"><input className="input" value={form.target_role} placeholder="Engineering Manager" onChange={(e) => setForm((f) => ({ ...f, target_role: e.target.value }))} /></Field>
           <Field label="Industry">
             <select className="input" value={form.industry} onChange={(e) => setForm((f) => ({ ...f, industry: e.target.value }))}>
