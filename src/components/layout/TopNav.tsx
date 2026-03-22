@@ -16,6 +16,8 @@ const NAV_LINKS = [
   { href: "/resume",      label: "Resume"    },
   { href: "/questions",   label: "Questions" },
   { href: "/offer",       label: "Offer"     },
+  { href: "/salaries",    label: "Salaries"  },
+  { href: "/companies",   label: "Companies" },
   { href: "/communities", label: "Community" },
   { href: "/refer",       label: "Refer"     },
   { href: "/bookings",    label: "Library"   },
