@@ -18,6 +18,7 @@ function calcXP(profile: Profile | null, goals: Goal[], bookings: { status: stri
     const fields = [profile.full_name, profile.bio, profile.location, profile.current_job_role, profile.target_role, profile.industry, profile.linkedin_url];
     xp += fields.filter(Boolean).length * 15;
     xp += Math.min((profile.skills ?? []).length * 5, 50);
+    xp += profile.interview_xp ?? 0;
   }
   for (const g of goals) {
     if (g.status === "active")    xp += 50;
@@ -411,6 +412,40 @@ export default async function DashboardPage() {
           </Link>
         </div>
       )}
+
+      {/* ── Practice interview card ─────────────────────────────────────── */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        {/* Practice interview */}
+        <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 16, padding: "20px 22px", display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ fontSize: 32, flexShrink: 0 }}>🎙️</div>
+          <div style={{ flex: 1 }}>
+            <p style={{ fontSize: "13px", fontWeight: 800, color: "#1a1a1a", margin: "0 0 2px" }}>AI Mock Interview</p>
+            {profile?.last_interview_score != null && profile.last_interview_at ? (
+              <p style={{ fontSize: "12px", color: "#888", margin: 0 }}>
+                Last score: {profile.last_interview_score.toFixed(1)}/10 ·{" "}
+                {Math.ceil((Date.now() - new Date(profile.last_interview_at).getTime()) / 86_400_000)} days ago
+              </p>
+            ) : (
+              <p style={{ fontSize: "12px", color: "#888", margin: 0 }}>Practice with AI · get scored</p>
+            )}
+          </div>
+          <Link href="/mock-interview" style={{ backgroundColor: "#1B3A35", color: "#00C9A7", fontSize: "12px", fontWeight: 700, borderRadius: 8, padding: "8px 14px", textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0 }}>
+            Practice →
+          </Link>
+        </div>
+
+        {/* Interview question bank */}
+        <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 16, padding: "20px 22px", display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ fontSize: 32, flexShrink: 0 }}>❓</div>
+          <div style={{ flex: 1 }}>
+            <p style={{ fontSize: "13px", fontWeight: 800, color: "#1a1a1a", margin: "0 0 2px" }}>Question Bank</p>
+            <p style={{ fontSize: "12px", color: "#888", margin: 0 }}>20 curated questions · AI answers</p>
+          </div>
+          <Link href="/questions" style={{ backgroundColor: "#FAF7F2", color: "#1a1a1a", fontSize: "12px", fontWeight: 700, borderRadius: 8, padding: "8px 14px", textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0, border: "1px solid #eee" }}>
+            Explore →
+          </Link>
+        </div>
+      </div>
 
       {/* ── AI Resume Builder card ──────────────────────────────────────── */}
       <div style={{ backgroundColor: "#1B3A35", borderRadius: "16px", padding: "22px 24px", display: "flex", alignItems: "center", gap: "20px" }}>

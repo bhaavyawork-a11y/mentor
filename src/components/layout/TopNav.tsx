@@ -20,7 +20,8 @@ const NAV_LINKS = [
   { href: "/companies",   label: "Companies" },
   { href: "/communities", label: "Community" },
   { href: "/refer",       label: "Refer"     },
-  { href: "/bookings",    label: "Library"   },
+  { href: "/mock-interview", label: "Practice"  },
+  { href: "/bookings",       label: "Library"   },
 ];
 
 function navLevel(profile: Profile | null) {

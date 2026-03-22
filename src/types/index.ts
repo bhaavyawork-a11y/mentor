@@ -21,6 +21,9 @@ export interface Profile {
   location: string | null;
   bio: string | null;
   skills: string[];
+  last_interview_score: number | null;
+  last_interview_at: string | null;
+  interview_xp: number;
   created_at: string;
   updated_at: string;
 }
