@@ -397,6 +397,21 @@ export default async function DashboardPage() {
         </div>
       </div>
 
+      {/* ── AI Resume Builder card ──────────────────────────────────────── */}
+      <div style={{ backgroundColor: "#1B3A35", borderRadius: "16px", padding: "22px 24px", display: "flex", alignItems: "center", gap: "20px" }}>
+        <div style={{ fontSize: 36, flexShrink: 0 }}>📝</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+            <p style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff", margin: 0 }}>AI Resume Builder</p>
+            <span style={{ fontSize: "10px", fontWeight: 700, backgroundColor: "#00C9A7", color: "#1B3A35", borderRadius: 99, padding: "2px 8px" }}>FREE</span>
+          </div>
+          <p style={{ fontSize: "12px", color: "#00C9A799", margin: 0 }}>Analyse your resume, build a new one, and export — powered by Claude.</p>
+        </div>
+        <Link href="/resume" style={{ backgroundColor: "#00C9A7", color: "#1B3A35", fontSize: "12px", fontWeight: 800, borderRadius: "10px", padding: "10px 20px", textDecoration: "none", flexShrink: 0, whiteSpace: "nowrap" }}>
+          Open →
+        </Link>
+      </div>
+
       {/* ── Career paths ─────────────────────────────────────────────────── */}
       <div style={{ backgroundColor: "#ffffff", border: "1px solid #eeeeee", borderRadius: "16px", padding: "22px" }}>
         <p style={{ fontSize: "10px", fontWeight: 700, color: "#888888", letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: "14px" }}>

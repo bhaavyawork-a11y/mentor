@@ -1,0 +1,162 @@
+[
+  {
+    "id": "q1",
+    "question": "How would you prioritise features for Swiggy's restaurant discovery experience when you have 10 requests from 5 different stakeholders?",
+    "role": "Product Manager",
+    "company": "Swiggy",
+    "difficulty": "Hard",
+    "type": "Case Study"
+  },
+  {
+    "id": "q2",
+    "question": "Swiggy wants to expand into grocery delivery. Design the product strategy and key metrics you would track in the first 90 days.",
+    "role": "Product Manager",
+    "company": "Swiggy",
+    "difficulty": "Hard",
+    "type": "Case Study"
+  },
+  {
+    "id": "q3",
+    "question": "Razorpay's checkout conversion drops by 15% on mobile. Walk me through how you would investigate and fix this.",
+    "role": "Product Manager",
+    "company": "Razorpay",
+    "difficulty": "Medium",
+    "type": "Case Study"
+  },
+  {
+    "id": "q4",
+    "question": "How would you design a new feature to help Razorpay merchants reduce payment failures? What data would you need?",
+    "role": "Product Manager",
+    "company": "Razorpay",
+    "difficulty": "Medium",
+    "type": "Case Study"
+  },
+  {
+    "id": "q5",
+    "question": "You are a PM at a fast-growing startup. Your top engineer just resigned. How do you handle this and ensure the roadmap stays on track?",
+    "role": "Product Manager",
+    "company": "General",
+    "difficulty": "Medium",
+    "type": "Behavioral"
+  },
+  {
+    "id": "q6",
+    "question": "Design a distributed rate-limiter that can handle 1 million requests per second with sub-10ms latency. Walk through your architecture.",
+    "role": "Software Engineer",
+    "company": "Google",
+    "difficulty": "Hard",
+    "type": "Technical"
+  },
+  {
+    "id": "q7",
+    "question": "Implement a function to find the longest substring without repeating characters. Optimise for time and space complexity.",
+    "role": "Software Engineer",
+    "company": "Google",
+    "difficulty": "Medium",
+    "type": "Technical"
+  },
+  {
+    "id": "q8",
+    "question": "How would you design the backend for Microsoft Teams' real-time messaging system? Consider scale, reliability, and latency requirements.",
+    "role": "Software Engineer",
+    "company": "Microsoft",
+    "difficulty": "Hard",
+    "type": "Technical"
+  },
+  {
+    "id": "q9",
+    "question": "Explain the difference between SQL and NoSQL databases. When would you choose one over the other at scale?",
+    "role": "Software Engineer",
+    "company": "Microsoft",
+    "difficulty": "Easy",
+    "type": "Technical"
+  },
+  {
+    "id": "q10",
+    "question": "You pushed a bug to production that impacted 10,000 users. Walk me through exactly what you did in the next 2 hours.",
+    "role": "Software Engineer",
+    "company": "General",
+    "difficulty": "Medium",
+    "type": "Behavioral"
+  },
+  {
+    "id": "q11",
+    "question": "Tell me about a time you had to influence without authority to get a cross-functional project delivered.",
+    "role": "General",
+    "company": "General",
+    "difficulty": "Medium",
+    "type": "Behavioral"
+  },
+  {
+    "id": "q12",
+    "question": "Describe a situation where you had to make a critical decision with incomplete information. What was your process?",
+    "role": "General",
+    "company": "General",
+    "difficulty": "Medium",
+    "type": "Behavioral"
+  },
+  {
+    "id": "q13",
+    "question": "Tell me about a time you failed. What did you learn and how did you apply that lesson?",
+    "role": "General",
+    "company": "General",
+    "difficulty": "Easy",
+    "type": "Behavioral"
+  },
+  {
+    "id": "q14",
+    "question": "How do you handle disagreement with your manager on a strategic direction? Give a specific example.",
+    "role": "General",
+    "company": "General",
+    "difficulty": "Medium",
+    "type": "Behavioral"
+  },
+  {
+    "id": "q15",
+    "question": "Estimate the market size for food delivery in India. Walk me through your assumptions and calculations.",
+    "role": "Founder's Office",
+    "company": "General",
+    "difficulty": "Medium",
+    "type": "Case Study"
+  },
+  {
+    "id": "q16",
+    "question": "PhonePe wants to grow its insurance product from 2% to 10% penetration in 12 months. Design the growth strategy.",
+    "role": "Growth",
+    "company": "PhonePe",
+    "difficulty": "Hard",
+    "type": "Case Study"
+  },
+  {
+    "id": "q17",
+    "question": "CRED's referral programme isn't converting. You have a ₹5 Cr budget and 3 months. What would you do?",
+    "role": "Growth",
+    "company": "CRED",
+    "difficulty": "Hard",
+    "type": "Case Study"
+  },
+  {
+    "id": "q18",
+    "question": "Groww wants to improve D7 retention for new users who made their first investment. What experiments would you run?",
+    "role": "Growth",
+    "company": "Groww",
+    "difficulty": "Medium",
+    "type": "Case Study"
+  },
+  {
+    "id": "q19",
+    "question": "You are the founding analyst at a B2B SaaS startup. The CEO asks you to build the company's first financial model. Where do you start?",
+    "role": "Finance",
+    "company": "General",
+    "difficulty": "Medium",
+    "type": "Case Study"
+  },
+  {
+    "id": "q20",
+    "question": "Zepto's CAC has doubled in the last quarter. What analysis would you do to identify the root cause and recommend solutions?",
+    "role": "Data Analyst",
+    "company": "Zepto",
+    "difficulty": "Hard",
+    "type": "Case Study"
+  }
+]
