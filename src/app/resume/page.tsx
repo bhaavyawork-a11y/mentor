@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
+import Link from "next/link";
 import { useProfile } from "@/hooks/useProfile";
+import { useSession } from "@/hooks/useSession";
+import GuestBanner from "@/components/GuestBanner";
 
 /* ─── Types ─────────────────────────────────────── */
 interface Analysis {
@@ -84,6 +87,7 @@ function ScoreCard({ label, score, reason }: { label: string; score: number; rea
 
 /* ─── Tab: Analyse ──────────────────────────────── */
 function AnalyseTab() {
+  const { session } = useSession();
   const [dragging, setDragging] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const [fileBase64, setFileBase64] = useState<string | null>(null);
@@ -214,6 +218,18 @@ function AnalyseTab() {
       {/* Results */}
       {analysis && (
         <div style={{ display: "flex", flexDirection: "column", gap: 24, marginTop: 8 }}>
+          {/* Guest save prompt */}
+          {!session && (
+            <div style={{ backgroundColor: "#fff", border: "1px solid #FDE68A", borderRadius: 12, padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+              <p style={{ fontSize: 13, color: "#1a1a1a", margin: 0 }}>
+                Sign up to save this analysis and track improvements over time.
+              </p>
+              <Link href="/auth/login" style={{ fontSize: 12, fontWeight: 800, backgroundColor: "#1B3A35", color: "#00C9A7", borderRadius: 8, padding: "8px 16px", textDecoration: "none", whiteSpace: "nowrap" }}>
+                Sign up free →
+              </Link>
+            </div>
+          )}
+
           {/* Score cards */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
             <ScoreCard label="ATS Score" score={analysis.atsScore} reason={analysis.atsReason} />
@@ -646,6 +662,8 @@ export default function ResumePage() {
 
   return (
     <div style={{ maxWidth: 860, margin: "0 auto", padding: "32px 0" }}>
+      <GuestBanner />
+
       {/* Header */}
       <div style={{ marginBottom: 32 }}>
         <h1 style={{ fontSize: 24, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>AI Resume Builder</h1>

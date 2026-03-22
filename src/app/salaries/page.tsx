@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import { useSession } from "@/hooks/useSession";
 import salariesData from "@/data/salaries.json";
+import GuestBanner from "@/components/GuestBanner";
 
 /* ─── Types ─────────────────────────────────────── */
 interface SalaryPoint {
@@ -136,6 +138,9 @@ function RangeBar({ p25, median, p75, max }: { p25: number; median: number; p75:
 
 /* ─── Page ──────────────────────────────────────── */
 export default function SalariesPage() {
+  const { session, loading: sessionLoading } = useSession();
+  const isGuest = !sessionLoading && !session;
+
   const [roleSearch, setRoleSearch] = useState("");
   const [companySearch, setCompanySearch] = useState("");
   const [city, setCity] = useState("All");
@@ -170,6 +175,8 @@ export default function SalariesPage() {
 
   return (
     <div style={{ maxWidth: 860, margin: "0 auto", padding: "32px 0" }}>
+      <GuestBanner />
+
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: 24, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>What should you be earning?</h1>
@@ -227,7 +234,22 @@ export default function SalariesPage() {
             <p style={{ fontSize: 11, color: "#00C9A755", margin: "12px 0 0" }}>Based on {filtered.length} data point{filtered.length !== 1 ? "s" : ""}</p>
           </div>
 
-          {/* Breakdown cards */}
+          {/* Breakdown cards — blurred for guests */}
+          <div style={{ position: "relative" }}>
+          {isGuest && (
+            <div style={{
+              position: "absolute", inset: 0, zIndex: 10, borderRadius: 14,
+              backdropFilter: "blur(8px)",
+              backgroundColor: "rgba(250,247,242,0.8)",
+              display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14,
+            }}>
+              <p style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a", margin: 0 }}>🔒 Sign up to unlock full breakdown</p>
+              <p style={{ fontSize: 12, color: "#888", margin: 0 }}>Contribute your salary data to unlock stage breakdown, base pay, and more.</p>
+              <Link href="/auth/login" style={{ fontSize: 13, fontWeight: 800, backgroundColor: "#1B3A35", color: "#00C9A7", borderRadius: 10, padding: "10px 24px", textDecoration: "none" }}>
+                Sign up + contribute your salary to unlock →
+              </Link>
+            </div>
+          )}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
             {/* Base salary */}
             <div style={{ backgroundColor: "#fff", border: "1px solid #eee", borderRadius: 14, padding: 20 }}>
@@ -279,6 +301,7 @@ export default function SalariesPage() {
               </div>
             )}
           </div>
+          </div>{/* end position:relative blur wrapper */}
         </div>
       )}
 

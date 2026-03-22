@@ -3,6 +3,8 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import questionsData from "@/data/questions.json";
+import GuestBanner from "@/components/GuestBanner";
+import { useSession } from "@/hooks/useSession";
 
 /* ─── Types ─────────────────────────────────────── */
 interface Question {
@@ -329,6 +331,9 @@ function PillRow({ options, value, onChange }: { options: string[]; value: strin
 
 /* ─── Page ──────────────────────────────────────── */
 export default function QuestionsPage() {
+  const { session, loading: sessionLoading } = useSession();
+  const isGuest = !sessionLoading && !session;
+
   const [search, setSearch] = useState("");
   const [role, setRole] = useState("All");
   const [company, setCompany] = useState("All");
@@ -353,6 +358,8 @@ export default function QuestionsPage() {
 
   return (
     <div style={{ maxWidth: 1000, margin: "0 auto", padding: "32px 0" }}>
+      <GuestBanner />
+
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: 24, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>Interview Question Bank</h1>
@@ -399,13 +406,35 @@ export default function QuestionsPage() {
         </div>
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-          {filtered.map((q) => (
-            <QuestionCard
-              key={q.id}
-              q={q}
-              onViewAnswer={() => setAnswerQ(q)}
-              onPractice={() => setPracticeQ(q)}
-            />
+          {filtered.map((q, idx) => (
+            <div key={q.id} style={{ position: "relative" }}>
+              <QuestionCard
+                q={q}
+                onViewAnswer={() => setAnswerQ(q)}
+                onPractice={() => setPracticeQ(q)}
+              />
+              {/* Blur gate for guests on cards 4+ */}
+              {isGuest && idx >= 3 && (
+                <div style={{
+                  position: "absolute", inset: 0, borderRadius: 14,
+                  backdropFilter: "blur(6px)",
+                  backgroundColor: "rgba(255,255,255,0.75)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <Link
+                    href="/auth/login"
+                    style={{
+                      fontSize: 12, fontWeight: 800,
+                      backgroundColor: "#1B3A35", color: "#00C9A7",
+                      borderRadius: 99, padding: "10px 20px",
+                      textDecoration: "none", whiteSpace: "nowrap",
+                    }}
+                  >
+                    Sign up free to unlock all answers →
+                  </Link>
+                </div>
+              )}
+            </div>
           ))}
         </div>
       )}
