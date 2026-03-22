@@ -1,26 +1,22 @@
 import { cn } from "@/lib/utils";
 
-type BadgeVariant = "default" | "raspberry" | "lemon" | "lilac" | "blueberry" | "red";
+type BadgeVariant = "default" | "mint" | "yellow" | "lavender" | "forest" | "red";
 
 const variantStyles: Record<BadgeVariant, React.CSSProperties> = {
-  default:    { background: "#f0f0f0",  color: "#0f0f0f99" },
-  raspberry:  { background: "#F2619C",  color: "#ffffff"   },
-  lemon:      { background: "#EDE986",  color: "#0f0f0f"   },
-  lilac:      { background: "#E7BEF8",  color: "#0f0f0f"   },
-  blueberry:  { background: "#93ABD9",  color: "#0f0f0f"   },
-  red:        { background: "#fee2e2",  color: "#dc2626"   },
+  default:  { backgroundColor: "#FAF7F2", color: "#888888" },
+  mint:     { backgroundColor: "#00C9A7", color: "#1B3A35" },
+  yellow:   { backgroundColor: "#FDE68A", color: "#1a1a1a" },
+  lavender: { backgroundColor: "#C4B5FD", color: "#1a1a1a" },
+  forest:   { backgroundColor: "#1B3A35", color: "#00C9A7" },
+  red:      { backgroundColor: "#fee2e2", color: "#dc2626" },
 };
 
-interface BadgeProps {
-  children: React.ReactNode;
-  variant?: BadgeVariant;
-  className?: string;
-}
-
-export function Badge({ children, variant = "default", className }: BadgeProps) {
+export function Badge({ children, variant = "default", className }: {
+  children: React.ReactNode; variant?: BadgeVariant; className?: string;
+}) {
   return (
     <span
-      className={cn("inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-medium", className)}
+      className={cn("inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold", className)}
       style={variantStyles[variant]}
     >
       {children}

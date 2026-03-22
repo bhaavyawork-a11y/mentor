@@ -3,20 +3,18 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
-import { Plus, Target, CheckCircle2, Clock, Pause, XCircle, ChevronDown, Trash2, Loader2, Calendar, Flag } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Plus, CheckCircle2, Clock, Pause, XCircle, ChevronDown, Trash2, Loader2, Calendar } from "lucide-react";
 import type { Goal } from "@/types";
 
 const CATEGORIES = ["role","skill","salary","network","education","other"] as const;
-const PRIORITIES = ["high","medium","low"] as const;
+const PRIORITIES  = ["high","medium","low"] as const;
 
-const CATEGORY_BG: Record<string, string> = {
-  role: "#E7BEF8", skill: "#93ABD9", salary: "#EDE986",
-  network: "#F2619C22", education: "#E7BEF822", other: "#f0f0f0",
+const CAT_BG: Record<string, string> = {
+  role: "#C4B5FD", skill: "#00C9A7", salary: "#FDE68A",
+  network: "#C4B5FD", education: "#FDE68A", other: "#eeeeee",
 };
-
-const PRIORITY_COLOR: Record<string, string> = {
-  high: "#F2619C", medium: "#EDE986", low: "#93ABD9",
+const PRI_COLOR: Record<string, string> = {
+  high: "#ef4444", medium: "#FDE68A", low: "#00C9A7",
 };
 
 const BLANK = {
@@ -25,17 +23,17 @@ const BLANK = {
 };
 
 export default function GoalsClient({ goals: initial, userId }: { goals: Goal[]; userId: string }) {
-  const router = useRouter();
+  const router   = useRouter();
   const supabase = createClient();
-  const [goals, setGoals] = useState<Goal[]>(initial);
+  const [goals, setGoals]     = useState<Goal[]>(initial);
   const [showForm, setShowForm] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving]   = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
-  const [form, setForm] = useState(BLANK);
-  const [filter, setFilter] = useState<"all" | Goal["status"]>("all");
+  const [form, setForm]       = useState(BLANK);
+  const [filter, setFilter]   = useState<"all" | Goal["status"]>("all");
 
   const filtered = filter === "all" ? goals : goals.filter((g) => g.status === filter);
-  const counts = {
+  const counts   = {
     all: goals.length,
     active: goals.filter((g) => g.status === "active").length,
     completed: goals.filter((g) => g.status === "completed").length,
@@ -43,55 +41,55 @@ export default function GoalsClient({ goals: initial, userId }: { goals: Goal[];
   };
 
   const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
+    e.preventDefault(); setSaving(true);
     const { data, error } = await supabase
       .from("goals")
       .insert({ user_id: userId, ...form, target_date: form.target_date || null, milestones: [] })
       .select().single();
-    if (!error && data) { setGoals((prev) => [data as Goal, ...prev]); setForm(BLANK); setShowForm(false); router.refresh(); }
+    if (!error && data) { setGoals((p) => [data as Goal, ...p]); setForm(BLANK); setShowForm(false); router.refresh(); }
     setSaving(false);
   };
 
   const handleStatusChange = async (id: string, status: Goal["status"]) => {
     await supabase.from("goals").update({ status }).eq("id", id);
-    setGoals((prev) => prev.map((g) => (g.id === id ? { ...g, status } : g)));
+    setGoals((p) => p.map((g) => g.id === id ? { ...g, status } : g));
   };
 
   const handleDelete = async (id: string) => {
     setDeleting(id);
     await supabase.from("goals").delete().eq("id", id);
-    setGoals((prev) => prev.filter((g) => g.id !== id));
+    setGoals((p) => p.filter((g) => g.id !== id));
     setDeleting(null);
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="flex gap-1.5 p-1 rounded-xl" style={{ background: "#ffffff", border: "1.5px solid #f0f0f0" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      {/* Filter + new button */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
+        <div style={{ display: "flex", gap: "6px", backgroundColor: "#ffffff", border: "1px solid #eeeeee", borderRadius: "10px", padding: "4px" }}>
           {(["all","active","completed","paused"] as const).map((s) => (
-            <button
-              key={s} onClick={() => setFilter(s)}
-              className="px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all capitalize"
-              style={
-                filter === s
-                  ? { background: "#F2619C", color: "#ffffff" }
-                  : { color: "#0f0f0f66" }
-              }
-            >
+            <button key={s} onClick={() => setFilter(s)}
+              style={{
+                padding: "6px 12px", borderRadius: "8px", border: "none", cursor: "pointer",
+                fontSize: "12px", fontWeight: 600, textTransform: "capitalize",
+                backgroundColor: filter === s ? "#1B3A35" : "transparent",
+                color: filter === s ? "#00C9A7" : "#888888",
+                transition: "all 0.15s",
+              }}>
               {s} ({counts[s as keyof typeof counts] ?? 0})
             </button>
           ))}
         </div>
-        <button onClick={() => setShowForm(true)} className="btn-primary text-[13px]">
-          <Plus className="w-4 h-4" /> New goal
+        <button onClick={() => setShowForm(true)} className="btn-primary" style={{ gap: "6px" }}>
+          <Plus style={{ width: "14px", height: "14px" }} /> New quest
         </button>
       </div>
 
+      {/* Form */}
       {showForm && (
-        <div className="card opacity-0 animate-fade-up" style={{ animationFillMode: "forwards", borderColor: "#F2619C44", padding: "24px" }}>
-          <h3 style={{ fontSize: "15px", fontWeight: 800, color: "#0f0f0f", marginBottom: "20px" }}>New goal</h3>
-          <form onSubmit={handleCreate} className="space-y-4">
+        <div style={{ backgroundColor: "#ffffff", border: "1px solid #eeeeee", borderRadius: "16px", padding: "24px", animation: "fadeUp 0.3s ease forwards" }}>
+          <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#1a1a1a", marginBottom: "18px" }}>New Quest</h3>
+          <form onSubmit={handleCreate} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             <div>
               <label className="label">Goal title</label>
               <input required className="input" placeholder="e.g. Land an engineering manager role"
@@ -99,10 +97,10 @@ export default function GoalsClient({ goals: initial, userId }: { goals: Goal[];
             </div>
             <div>
               <label className="label">Description</label>
-              <textarea className="input resize-none" rows={2} placeholder="What does success look like?"
+              <textarea className="input" style={{ resize: "none" }} rows={2} placeholder="What does success look like?"
                 value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
               <div>
                 <label className="label">Category</label>
                 <select className="input" value={form.category} onChange={(e) => setForm((f) => ({ ...f, category: e.target.value as Goal["category"] }))}>
@@ -121,38 +119,30 @@ export default function GoalsClient({ goals: initial, userId }: { goals: Goal[];
                   onChange={(e) => setForm((f) => ({ ...f, target_date: e.target.value }))} />
               </div>
             </div>
-            <div className="flex gap-3 pt-1">
-              <button type="submit" disabled={saving} className="btn-primary disabled:opacity-60">
-                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                Create goal
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button type="submit" disabled={saving} className="btn-primary" style={{ opacity: saving ? 0.6 : 1 }}>
+                {saving ? <Loader2 style={{ width: "14px", height: "14px", animation: "spin 1s linear infinite" }} /> : <Plus style={{ width: "14px", height: "14px" }} />}
+                Create quest
               </button>
-              <button type="button" onClick={() => setShowForm(false)} className="btn-secondary">Cancel</button>
+              <button type="button" onClick={() => setShowForm(false)} className="btn-outline">Cancel</button>
             </div>
           </form>
         </div>
       )}
 
+      {/* Empty state */}
       {filtered.length === 0 ? (
-        <div className="card text-center" style={{ padding: "64px 24px" }}>
-          <Target className="w-10 h-10 mx-auto mb-4" style={{ color: "#0f0f0f22" }} />
-          <p className="font-medium text-[13px] mb-1" style={{ color: "#0f0f0f66" }}>
-            {filter === "all" ? "No goals yet" : `No ${filter} goals`}
+        <div style={{ backgroundColor: "#ffffff", border: "1px solid #eeeeee", borderRadius: "16px", padding: "48px 24px", textAlign: "center" }}>
+          <p style={{ fontSize: "13px", fontWeight: 600, color: "#888888", marginBottom: "4px" }}>
+            {filter === "all" ? "No quests yet" : `No ${filter} quests`}
           </p>
-          {filter === "all" && (
-            <p className="text-[11px]" style={{ color: "#0f0f0f44" }}>
-              Create your first goal to start earning XP.
-            </p>
-          )}
+          {filter === "all" && <p style={{ fontSize: "12px", color: "#aaaaaa" }}>Create your first quest to start earning XP.</p>}
         </div>
       ) : (
-        <div className="space-y-3">
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           {filtered.map((goal, i) => (
-            <GoalRow
-              key={goal.id} goal={goal} index={i}
-              onStatusChange={handleStatusChange}
-              onDelete={handleDelete}
-              deleting={deleting === goal.id}
-            />
+            <GoalRow key={goal.id} goal={goal} index={i}
+              onStatusChange={handleStatusChange} onDelete={handleDelete} deleting={deleting === goal.id} />
           ))}
         </div>
       )}
@@ -160,95 +150,98 @@ export default function GoalsClient({ goals: initial, userId }: { goals: Goal[];
   );
 }
 
-function GoalRow({
-  goal, index, onStatusChange, onDelete, deleting,
-}: {
+function GoalRow({ goal, index, onStatusChange, onDelete, deleting }: {
   goal: Goal; index: number;
-  onStatusChange: (id: string, status: Goal["status"]) => void;
-  onDelete: (id: string) => void;
-  deleting: boolean;
+  onStatusChange: (id: string, s: Goal["status"]) => void;
+  onDelete: (id: string) => void; deleting: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const catBg = CATEGORY_BG[goal.category] ?? "#f0f0f0";
-  const priColor = PRIORITY_COLOR[goal.priority] ?? "#0f0f0f66";
+  const catBg = CAT_BG[goal.category] ?? "#eeeeee";
+  const priColor = PRI_COLOR[goal.priority] ?? "#888888";
 
   const statusIcon = {
-    active: <Clock className="w-4 h-4" style={{ color: "#0f0f0f44" }} />,
-    completed: <CheckCircle2 className="w-4 h-4" style={{ color: "#F2619C" }} />,
-    paused: <Pause className="w-4 h-4" style={{ color: "#EDE986" }} />,
-    cancelled: <XCircle className="w-4 h-4" style={{ color: "#dc2626" }} />,
+    active:    <Clock style={{ width: "14px", height: "14px", color: "#888888" }} />,
+    completed: <CheckCircle2 style={{ width: "14px", height: "14px", color: "#00C9A7" }} />,
+    paused:    <Pause style={{ width: "14px", height: "14px", color: "#FDE68A" }} />,
+    cancelled: <XCircle style={{ width: "14px", height: "14px", color: "#ef4444" }} />,
   }[goal.status];
 
   return (
-    <div
-      className={cn("card opacity-0 animate-fade-up transition-all", goal.status === "completed" && "opacity-60")}
-      style={{ animationDelay: `${index * 50}ms`, animationFillMode: "forwards", padding: "16px 18px" }}
-    >
-      <div className="flex items-start gap-4">
-        <div className="mt-0.5">{statusIcon}</div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <p
-              className={cn("font-medium text-[13px]", goal.status === "completed" && "line-through")}
-              style={{ color: "#0f0f0f" }}
-            >
-              {goal.title}
-            </p>
-            <span
-              className="text-[11px] font-medium px-2.5 py-1 rounded-lg capitalize"
-              style={{ background: catBg, color: "#0f0f0f" }}
-            >
-              {goal.category}
-            </span>
-            <Flag className="w-3 h-3" style={{ color: priColor }} />
+    <div style={{
+      backgroundColor: "#ffffff", border: "1px solid #eeeeee", borderRadius: "14px",
+      padding: "14px 18px", opacity: goal.status === "completed" ? 0.65 : 1,
+      animation: `fadeUp 0.3s ease ${index * 40}ms both`,
+    }}>
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "12px" }}>
+        <div style={{ marginTop: "2px" }}>{statusIcon}</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+            <p style={{
+              fontSize: "13px", fontWeight: 600, color: "#1a1a1a", margin: 0,
+              textDecoration: goal.status === "completed" ? "line-through" : "none",
+            }}>{goal.title}</p>
+            <span style={{
+              fontSize: "10px", fontWeight: 600, borderRadius: "99px", padding: "2px 8px",
+              backgroundColor: catBg, color: "#1a1a1a", textTransform: "capitalize",
+            }}>{goal.category}</span>
+            <span style={{ fontSize: "10px", color: priColor, fontWeight: 700 }}>● {goal.priority}</span>
           </div>
           {goal.description && (
-            <p className="text-[11px] mt-1 leading-relaxed" style={{ color: "#0f0f0f66" }}>
-              {goal.description}
-            </p>
+            <p style={{ fontSize: "11px", color: "#888888", marginTop: "3px" }}>{goal.description}</p>
           )}
           {goal.target_date && (
-            <div className="flex items-center gap-1 mt-2">
-              <Calendar className="w-3 h-3" style={{ color: "#0f0f0f44" }} />
-              <span className="text-[11px]" style={{ color: "#0f0f0f66" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "6px" }}>
+              <Calendar style={{ width: "10px", height: "10px", color: "#aaaaaa" }} />
+              <span style={{ fontSize: "11px", color: "#aaaaaa" }}>
                 {new Date(goal.target_date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
               </span>
             </div>
           )}
         </div>
-        <div className="flex items-center gap-1 shrink-0">
-          <div className="relative">
-            <button
-              onClick={() => setOpen(!open)}
-              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium capitalize transition-all"
-              style={{ background: "#f0f0f0", color: "#0f0f0f" }}
-            >
-              {goal.status} <ChevronDown className="w-3 h-3" />
+        <div style={{ display: "flex", alignItems: "center", gap: "6px", flexShrink: 0 }}>
+          <div style={{ position: "relative" }}>
+            <button onClick={() => setOpen(!open)}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: "4px",
+                backgroundColor: "#FAF7F2", border: "1px solid #eeeeee",
+                fontSize: "11px", fontWeight: 600, borderRadius: "8px",
+                padding: "5px 10px", cursor: "pointer", color: "#1a1a1a",
+                textTransform: "capitalize",
+              }}>
+              {goal.status} <ChevronDown style={{ width: "10px", height: "10px" }} />
             </button>
             {open && (
-              <div
-                className="absolute right-0 top-full mt-1 rounded-xl shadow-float z-10 overflow-hidden min-w-32"
-                style={{ background: "#ffffff", border: "1.5px solid #f0f0f0" }}
-              >
+              <div style={{
+                position: "absolute", right: 0, top: "calc(100% + 4px)",
+                backgroundColor: "#ffffff", border: "1px solid #eeeeee",
+                borderRadius: "12px", boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+                overflow: "hidden", minWidth: "130px", zIndex: 10,
+              }}>
                 {(["active","completed","paused","cancelled"] as Goal["status"][]).map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => { onStatusChange(goal.id, s); setOpen(false); }}
-                    className="w-full text-left px-3 py-2 text-[11px] capitalize transition-colors hover:bg-[#fdf9f7]"
-                    style={{ color: goal.status === s ? "#F2619C" : "#0f0f0f", fontWeight: goal.status === s ? 600 : 400 }}
-                  >
+                  <button key={s} onClick={() => { onStatusChange(goal.id, s); setOpen(false); }}
+                    style={{
+                      display: "block", width: "100%", textAlign: "left",
+                      padding: "8px 12px", border: "none", background: "none",
+                      fontSize: "12px", cursor: "pointer", textTransform: "capitalize",
+                      color: goal.status === s ? "#00C9A7" : "#1a1a1a",
+                      fontWeight: goal.status === s ? 700 : 400,
+                    }}>
                     {s}
                   </button>
                 ))}
               </div>
             )}
           </div>
-          <button
-            onClick={() => onDelete(goal.id)} disabled={deleting}
-            className="p-2 rounded-lg transition-all hover:bg-red-50"
-            style={{ color: "#0f0f0f33" }}
+          <button onClick={() => onDelete(goal.id)} disabled={deleting}
+            style={{
+              padding: "6px", borderRadius: "8px", border: "none", background: "none",
+              cursor: "pointer", color: "#aaaaaa", display: "flex", alignItems: "center",
+              transition: "color 0.15s",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#ef4444")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#aaaaaa")}
           >
-            {deleting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+            {deleting ? <Loader2 style={{ width: "13px", height: "13px" }} /> : <Trash2 style={{ width: "13px", height: "13px" }} />}
           </button>
         </div>
       </div>

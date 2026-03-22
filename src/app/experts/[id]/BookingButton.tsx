@@ -4,29 +4,18 @@ import { useState } from "react";
 import { Loader2, ExternalLink } from "lucide-react";
 
 export default function BookingButton({
-  expertId,
-  serviceId,
-  label = "Book now",
-  size = "default",
+  expertId, serviceId, label = "Book now", size = "default",
 }: {
-  expertId: string;
-  serviceId: string;
-  userId?: string;
-  label?: string;
-  size?: "default" | "small";
+  expertId: string; serviceId: string; userId?: string;
+  label?: string; size?: "default" | "small";
 }) {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error,   setError]   = useState<string | null>(null);
 
   const handleCheckout = async () => {
-    setLoading(true);
-    setError(null);
+    setLoading(true); setError(null);
     try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ serviceId, expertId }),
-      });
+      const res  = await fetch("/api/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ serviceId, expertId }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Checkout failed");
       if (data.url) window.location.href = data.url;
@@ -36,28 +25,24 @@ export default function BookingButton({
     }
   };
 
-  const sizeStyle = size === "small"
-    ? { fontSize: "11px", padding: "6px 12px" }
-    : { fontSize: "13px", padding: "8px 16px" };
+  const pad = size === "small" ? "5px 12px" : "8px 16px";
+  const fz  = size === "small" ? "11px" : "13px";
 
   return (
     <div>
-      <button
-        onClick={handleCheckout}
-        disabled={loading}
-        className="inline-flex items-center gap-1.5 rounded-xl font-medium transition-all duration-200 active:scale-[0.98] disabled:opacity-60"
-        style={{ ...sizeStyle, background: "#F2619C", color: "#ffffff" }}
-      >
-        {loading ? (
-          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-        ) : (
-          <ExternalLink className="w-3.5 h-3.5" />
-        )}
+      <button onClick={handleCheckout} disabled={loading}
+        style={{
+          display: "inline-flex", alignItems: "center", gap: "6px",
+          backgroundColor: "#1B3A35", color: "#00C9A7",
+          fontSize: fz, fontWeight: 700,
+          borderRadius: "8px", padding: pad,
+          border: "none", cursor: "pointer", opacity: loading ? 0.7 : 1,
+          transition: "opacity 0.15s",
+        }}>
+        {loading ? <Loader2 style={{ width: "13px", height: "13px" }} /> : <ExternalLink style={{ width: "13px", height: "13px" }} />}
         {loading ? "Redirecting…" : label}
       </button>
-      {error && (
-        <p className="text-[11px] text-red-500 mt-1">{error}</p>
-      )}
+      {error && <p style={{ fontSize: "11px", color: "#ef4444", marginTop: "4px" }}>{error}</p>}
     </div>
   );
 }

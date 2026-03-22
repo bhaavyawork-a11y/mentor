@@ -6,17 +6,12 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, subtitle, action }: PageHeaderProps) {
   return (
-    <div
-      className="flex items-start justify-between gap-4 opacity-0 animate-fade-up"
-      style={{ animationFillMode: "forwards" }}
-    >
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "16px", marginBottom: "24px" }}>
       <div>
-        <h1 style={{ fontSize: "26px", fontWeight: 800, color: "#0f0f0f" }}>{title}</h1>
-        {subtitle && (
-          <p className="mt-1 text-[13px]" style={{ color: "#0f0f0f66" }}>{subtitle}</p>
-        )}
+        <h1 style={{ fontSize: "24px", fontWeight: 800, color: "#1a1a1a", margin: 0 }}>{title}</h1>
+        {subtitle && <p style={{ fontSize: "13px", color: "#888888", marginTop: "4px" }}>{subtitle}</p>}
       </div>
-      {action && <div className="shrink-0">{action}</div>}
+      {action && <div style={{ flexShrink: 0 }}>{action}</div>}
     </div>
   );
 }

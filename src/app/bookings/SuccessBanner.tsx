@@ -19,26 +19,22 @@ export default function BookingSuccessBanner() {
   if (!visible) return null;
 
   return (
-    <div
-      className="card flex items-start gap-3 animate-fade-up"
-      style={{
-        animationFillMode: "forwards",
-        borderLeft: "4px solid #F2619C",
-        background: "#F2619C0d",
-      }}
-    >
-      <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "#F2619C" }} />
-      <div>
-        <p className="font-medium text-[13px]" style={{ color: "#0f0f0f" }}>Booking confirmed!</p>
-        <p className="text-[11px] mt-0.5" style={{ color: "#0f0f0f66" }}>
+    <div style={{
+      display: "flex", alignItems: "flex-start", gap: "12px",
+      backgroundColor: "#ffffff", border: "1px solid #eeeeee",
+      borderLeft: "3px solid #00C9A7",
+      borderRadius: "12px", padding: "14px 16px",
+      animation: "fadeUp 0.3s ease forwards",
+    }}>
+      <CheckCircle2 style={{ width: "18px", height: "18px", color: "#00C9A7", flexShrink: 0, marginTop: "1px" }} />
+      <div style={{ flex: 1 }}>
+        <p style={{ fontSize: "13px", fontWeight: 600, color: "#1a1a1a", margin: 0 }}>Booking confirmed!</p>
+        <p style={{ fontSize: "11px", color: "#888888", marginTop: "2px" }}>
           Your session has been booked and payment processed. Check your email for details.
         </p>
       </div>
-      <button
-        onClick={() => setVisible(false)}
-        className="ml-auto text-lg leading-none shrink-0 transition-opacity hover:opacity-60"
-        style={{ color: "#0f0f0f66" }}
-      >
+      <button onClick={() => setVisible(false)}
+        style={{ background: "none", border: "none", cursor: "pointer", color: "#aaaaaa", fontSize: "18px", lineHeight: 1, flexShrink: 0 }}>
         ×
       </button>
     </div>
