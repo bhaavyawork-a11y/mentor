@@ -83,6 +83,18 @@ export interface Service {
   updated_at: string;
 }
 
+export interface Application {
+  id: string;
+  user_id: string;
+  company: string;
+  role: string;
+  url: string | null;
+  status: "Applied" | "Interviewing" | "Offer" | "Rejected";
+  applied_date: string;
+  notes: string | null;
+  updated_at: string;
+}
+
 export interface Booking {
   id: string;
   user_id: string;

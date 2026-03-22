@@ -8,12 +8,17 @@ import { useProfile } from "@/hooks/useProfile";
 import type { Profile } from "@/types";
 
 const NAV_LINKS = [
-  { href: "/dashboard", label: "Home"      },
-  { href: "/goals",     label: "Quests"    },
-  { href: "/experts",   label: "Mentors"   },
-  { href: "/resume",    label: "Resume"    },
-  { href: "/questions", label: "Questions" },
-  { href: "/bookings",  label: "Library"   },
+  { href: "/dashboard",   label: "Home"      },
+  { href: "/goals",       label: "Quests"    },
+  { href: "/experts",     label: "Mentors"   },
+  { href: "/jobs",        label: "Jobs"      },
+  { href: "/tracker",     label: "Tracker"   },
+  { href: "/resume",      label: "Resume"    },
+  { href: "/questions",   label: "Questions" },
+  { href: "/offer",       label: "Offer"     },
+  { href: "/communities", label: "Community" },
+  { href: "/refer",       label: "Refer"     },
+  { href: "/bookings",    label: "Library"   },
 ];
 
 function navLevel(profile: Profile | null) {

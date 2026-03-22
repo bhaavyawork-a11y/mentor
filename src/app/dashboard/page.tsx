@@ -96,7 +96,7 @@ export default async function DashboardPage() {
 
   const userId = session.user.id;
 
-  const [profileRes, goalsRes, upcomingRes, doneCountRes, expertsRes, activityRes] = await Promise.all([
+  const [profileRes, goalsRes, upcomingRes, doneCountRes, expertsRes, activityRes, referralCountRes] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", userId).single(),
     supabase.from("goals").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
     supabase
@@ -109,6 +109,7 @@ export default async function DashboardPage() {
     supabase.from("bookings").select("id", { count: "exact" }).eq("user_id", userId).eq("status", "completed"),
     supabase.from("experts").select("id,full_name,headline,rating,review_count,expertise_areas").eq("is_active", true).order("rating", { ascending: false }).limit(3),
     supabase.from("bookings").select("created_at").eq("user_id", userId).gte("created_at", new Date(Date.now() - 7 * 86_400_000).toISOString()),
+    supabase.from("referrals").select("id", { count: "exact" }).eq("referrer_id", userId),
   ]);
 
   const profile       = profileRes.data as Profile | null;
@@ -117,6 +118,7 @@ export default async function DashboardPage() {
   const sessionsDone  = doneCountRes.count ?? 0;
   const experts       = (expertsRes.data ?? []) as Expert[];
   const recentDates   = (activityRes.data ?? []).map((r: { created_at: string }) => r.created_at);
+  const hasReferrals  = (referralCountRes.count ?? 0) > 0;
 
   if (!profile?.current_job_role) redirect("/welcome");
 
@@ -396,6 +398,19 @@ export default async function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* ── Referral banner (only for users with no referrals) ──────────── */}
+      {!hasReferrals && (
+        <div style={{ backgroundColor: "#FDE68A", borderRadius: "16px", padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+          <div>
+            <p style={{ fontSize: "13px", fontWeight: 800, color: "#1a1a1a", margin: "0 0 2px" }}>Earn ₹200 for every friend you invite</p>
+            <p style={{ fontSize: "12px", color: "#8a720099", margin: 0 }}>They get ₹200 off their first session too.</p>
+          </div>
+          <Link href="/refer" style={{ fontSize: "12px", fontWeight: 800, backgroundColor: "#1B3A35", color: "#00C9A7", borderRadius: "10px", padding: "8px 18px", textDecoration: "none", whiteSpace: "nowrap" }}>
+            Invite friends →
+          </Link>
+        </div>
+      )}
 
       {/* ── AI Resume Builder card ──────────────────────────────────────── */}
       <div style={{ backgroundColor: "#1B3A35", borderRadius: "16px", padding: "22px 24px", display: "flex", alignItems: "center", gap: "20px" }}>
