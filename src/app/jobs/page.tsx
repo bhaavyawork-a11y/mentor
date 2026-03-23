@@ -17,7 +17,7 @@ export default async function JobsPage() {
   // Active job listings, newest first
   const { data: jobs } = await supabase
     .from("job_listings")
-    .select("id, external_id, source, title, company_name, company_slug, location, department, job_type, apply_url, description_snippet, posted_at")
+    .select("id, external_id, source, title, company_name, company_slug, company_domain, location, department, job_type, apply_url, description_snippet, posted_at")
     .eq("is_active", true)
     .order("posted_at", { ascending: false })
     .limit(200);

@@ -1,43 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-// ─── Company name maps ────────────────────────────────────────────────────────
+// ─── Company maps (name + domain) ────────────────────────────────────────────
 
-const LEVER_COMPANIES: Record<string, string> = {
-  cred:         "CRED",
-  meesho:       "Meesho",
-  zepto:        "Zepto",
-  swiggy:       "Swiggy",
-  zomato:       "Zomato",
-  dream11:      "Dream11",
-  growwapp:     "Groww",
-  phonepe:      "PhonePe",
-  browserstack: "BrowserStack",
-  freshworks:   "Freshworks",
-  chargebee:    "Chargebee",
-  delhivery:    "Delhivery",
-  sharechat:    "ShareChat",
-  unacademy:    "Unacademy",
-  practo:       "Practo",
-  nykaa:        "Nykaa",
-  zerodha:      "Zerodha",
-  upstox:       "Upstox",
-  bharatpe:     "BharatPe",
-  jupitermoney: "Jupiter",
-  sliceit:      "slice",
-  ultrahuman:   "Ultrahuman",
+const LEVER_COMPANIES: Record<string, { name: string; domain: string }> = {
+  cred:         { name: "CRED",         domain: "cred.club"          },
+  meesho:       { name: "Meesho",       domain: "meesho.com"         },
+  zepto:        { name: "Zepto",        domain: "zepto.team"         },
+  swiggy:       { name: "Swiggy",       domain: "swiggy.com"         },
+  zomato:       { name: "Zomato",       domain: "zomato.com"         },
+  dream11:      { name: "Dream11",      domain: "dream11.com"        },
+  growwapp:     { name: "Groww",        domain: "groww.in"           },
+  phonepe:      { name: "PhonePe",      domain: "phonepe.com"        },
+  browserstack: { name: "BrowserStack", domain: "browserstack.com"   },
+  freshworks:   { name: "Freshworks",   domain: "freshworks.com"     },
+  chargebee:    { name: "Chargebee",    domain: "chargebee.com"      },
+  delhivery:    { name: "Delhivery",    domain: "delhivery.com"      },
+  sharechat:    { name: "ShareChat",    domain: "sharechat.com"      },
+  unacademy:    { name: "Unacademy",    domain: "unacademy.com"      },
+  practo:       { name: "Practo",       domain: "practo.com"         },
+  nykaa:        { name: "Nykaa",        domain: "nykaa.com"          },
+  zerodha:      { name: "Zerodha",      domain: "zerodha.com"        },
+  upstox:       { name: "Upstox",       domain: "upstox.com"         },
+  bharatpe:     { name: "BharatPe",     domain: "bharatpe.com"       },
+  jupitermoney: { name: "Jupiter",      domain: "jupiter.money"      },
+  sliceit:      { name: "slice",        domain: "sliceit.com"        },
+  ultrahuman:   { name: "Ultrahuman",   domain: "ultrahuman.com"     },
 };
 
-const GREENHOUSE_COMPANIES: Record<string, string> = {
-  razorpaysoftwareprivatelimited: "Razorpay",
-  google:     "Google",
-  microsoft:  "Microsoft",
-  adobe:      "Adobe",
-  salesforce: "Salesforce",
-  flipkart:   "Flipkart",
-  amazon:     "Amazon",
-  canva:      "Canva",
-  nvidia:     "NVIDIA",
+const GREENHOUSE_COMPANIES: Record<string, { name: string; domain: string }> = {
+  razorpaysoftwareprivatelimited: { name: "Razorpay",   domain: "razorpay.com"   },
+  google:     { name: "Google",     domain: "google.com"     },
+  microsoft:  { name: "Microsoft",  domain: "microsoft.com"  },
+  adobe:      { name: "Adobe",      domain: "adobe.com"      },
+  salesforce: { name: "Salesforce", domain: "salesforce.com" },
+  flipkart:   { name: "Flipkart",   domain: "flipkart.com"   },
+  amazon:     { name: "Amazon",     domain: "amazon.in"      },
+  canva:      { name: "Canva",      domain: "canva.com"      },
+  nvidia:     { name: "NVIDIA",     domain: "nvidia.com"     },
 };
 
 // ─── API types ────────────────────────────────────────────────────────────────
@@ -52,7 +52,7 @@ interface LeverPosting {
   };
   hostedUrl: string;
   descriptionPlain?: string;
-  createdAt: number; // Unix ms
+  createdAt: number;
 }
 
 interface GreenhouseJob {
@@ -100,12 +100,14 @@ async function fetchGreenhouse(slug: string): Promise<GreenhouseJob[]> {
 // ─── Row builders ─────────────────────────────────────────────────────────────
 
 function leverRow(slug: string, p: LeverPosting) {
+  const co = LEVER_COMPANIES[slug];
   return {
     external_id:         `lever-${p.id}`,
     source:              "lever" as const,
     title:               p.text,
-    company_name:        LEVER_COMPANIES[slug] ?? slug,
+    company_name:        co?.name ?? slug,
     company_slug:        slug,
+    company_domain:      co?.domain ?? null,
     location:            p.categories?.location ?? null,
     department:          p.categories?.department ?? null,
     job_type:            p.categories?.commitment ?? null,
@@ -117,12 +119,14 @@ function leverRow(slug: string, p: LeverPosting) {
 }
 
 function greenhouseRow(slug: string, j: GreenhouseJob) {
+  const co = GREENHOUSE_COMPANIES[slug];
   return {
     external_id:         `greenhouse-${j.id}`,
     source:              "greenhouse" as const,
     title:               j.title,
-    company_name:        GREENHOUSE_COMPANIES[slug] ?? slug,
+    company_name:        co?.name ?? slug,
     company_slug:        slug,
+    company_domain:      co?.domain ?? null,
     location:            j.location?.name ?? null,
     department:          j.departments?.[0]?.name ?? null,
     job_type:            null,
@@ -152,7 +156,6 @@ export async function GET(req: NextRequest) {
   const errors: string[] = [];
   const companySummary: Record<string, number> = {};
 
-  // ── Lever ────────────────────────────────────────────────
   for (const slug of Object.keys(LEVER_COMPANIES)) {
     const postings = await fetchLever(slug);
     if (postings.length === 0) {
@@ -163,7 +166,6 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // ── Greenhouse ───────────────────────────────────────────
   for (const slug of Object.keys(GREENHOUSE_COMPANIES)) {
     const jobs = await fetchGreenhouse(slug);
     if (jobs.length === 0) {
@@ -175,10 +177,9 @@ export async function GET(req: NextRequest) {
   }
 
   if (rows.length === 0) {
-    return NextResponse.json({ success: false, errors, summary: { total: 0, new: 0, updated: 0, companies: companySummary } });
+    return NextResponse.json({ success: false, errors, summary: { total: 0, companies: companySummary } });
   }
 
-  // Upsert all fetched rows
   const { error: upsertError } = await supabase
     .from("job_listings")
     .upsert(rows, { onConflict: "external_id" });
@@ -187,7 +188,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ success: false, error: upsertError.message }, { status: 500 });
   }
 
-  // Mark jobs NOT in the current feed as inactive (Lever + Greenhouse only)
   const fetchedExternalIds = rows.map((r) => r.external_id);
   await supabase
     .from("job_listings")
@@ -195,12 +195,5 @@ export async function GET(req: NextRequest) {
     .in("source", ["lever", "greenhouse"])
     .not("external_id", "in", `(${fetchedExternalIds.map((id) => `"${id}"`).join(",")})`);
 
-  return NextResponse.json({
-    success: true,
-    summary: {
-      total:     rows.length,
-      companies: companySummary,
-      errors,
-    },
-  });
+  return NextResponse.json({ success: true, summary: { total: rows.length, companies: companySummary, errors } });
 }
