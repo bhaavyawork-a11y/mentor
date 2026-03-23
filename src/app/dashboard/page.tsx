@@ -1,44 +1,10 @@
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import type { Profile, Goal, Booking, Expert, Milestone } from "@/types";
+import type { Profile, Goal, Milestone } from "@/types";
 
-// ─── XP & levels ─────────────────────────────────────────────────────────────
-const LEVELS = [
-  { min: 0,    max: 199,     label: "Beginner", next: 200  },
-  { min: 200,  max: 499,     label: "Explorer", next: 500  },
-  { min: 500,  max: 999,     label: "Achiever", next: 1000 },
-  { min: 1000, max: 1999,    label: "Pro",      next: 2000 },
-  { min: 2000, max: Infinity, label: "Expert",  next: 2000 },
-];
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function calcXP(profile: Profile | null, goals: Goal[], bookings: { status: string }[]) {
-  let xp = 0;
-  if (profile) {
-    const fields = [profile.full_name, profile.bio, profile.location, profile.current_job_role, profile.target_role, profile.industry, profile.linkedin_url];
-    xp += fields.filter(Boolean).length * 15;
-    xp += Math.min((profile.skills ?? []).length * 5, 50);
-    xp += profile.interview_xp ?? 0;
-  }
-  for (const g of goals) {
-    if (g.status === "active")    xp += 50;
-    if (g.status === "completed") xp += 200;
-  }
-  for (const b of bookings) {
-    if (b.status === "confirmed" || b.status === "completed") xp += 100;
-  }
-  return xp;
-}
-
-function getLevel(xp: number) {
-  let idx = LEVELS.findIndex((l) => xp >= l.min && xp <= l.max);
-  if (idx === -1) idx = LEVELS.length - 1;
-  const l = LEVELS[idx];
-  const progress = idx === LEVELS.length - 1 ? 100 : Math.round(((xp - l.min) / (l.next - l.min)) * 100);
-  return { num: idx + 1, label: l.label, xp, next: l.next, progress, nextLabel: LEVELS[idx + 1]?.label ?? "Expert" };
-}
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
 function getGreeting() {
   const h = new Date().getHours();
   if (h < 12) return "Good morning";
@@ -70,26 +36,37 @@ function buildStreakDots(dates: string[]) {
   const active = new Set(dates.map((d) => { const dt = new Date(d); dt.setHours(0,0,0,0); return dt.getTime(); }));
   return Array.from({ length: 7 }, (_, i) => {
     const dt = new Date(today); dt.setDate(today.getDate() - (6 - i));
-    const isToday  = dt.getTime() === today.getTime();
-    const isDone   = !isToday && active.has(dt.getTime());
+    const isToday = dt.getTime() === today.getTime();
+    const isDone  = !isToday && active.has(dt.getTime());
     return { letter: LTRS[dt.getDay()], isToday, isDone };
   });
 }
 
-const AVATAR_FILLS = ["#F7F4D5", "#D3968C", "#839958"];
-const CAREER_PATHS = [
-  { label: "Product Manager",  bg: "#F7F4D5", color: "#0A3323"  },
-  { label: "Growth",           bg: "#839958", color: "#ffffff"   },
-  { label: "Founder's Office", bg: "#105666", color: "#F7F4D5"  },
-  { label: "Strategy",         bg: "#0A3323", color: "#F7F4D5"  },
-];
-const DEFAULT_MS = [
+// ─── Static data ──────────────────────────────────────────────────────────────
+
+const DEFAULT_CHIPS = [
   { title: "Resume",    completed: false, isActive: true  },
+  { title: "Referral",  completed: false, isActive: false },
   { title: "Interview", completed: false, isActive: false },
   { title: "Offer",     completed: false, isActive: false },
 ];
 
+const SEED_CONNECTIONS = [
+  { name: "Arjun Kapoor", role: "Chief of Staff", company: "Zepto"    },
+  { name: "Priya Singh",  role: "PM",             company: "Razorpay" },
+];
+
+const CONNECTION_AVATAR_COLORS = ["#D3968C", "#839958"];
+
+const PREP_TOOLS = [
+  { icon: "📝", label: "Resume builder",  href: "/resume"         },
+  { icon: "🎙️", label: "Mock interview",   href: "/mock-interview" },
+  { icon: "❓", label: "Question bank",    href: "/questions"      },
+  { icon: "💰", label: "Salary checker",   href: "/salaries"       },
+];
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default async function DashboardPage() {
   const supabase = await createServerSupabaseClient();
   const { data: { session } } = await supabase.auth.getSession();
@@ -97,44 +74,30 @@ export default async function DashboardPage() {
 
   const userId = session.user.id;
 
-  const [profileRes, goalsRes, upcomingRes, doneCountRes, expertsRes, activityRes, referralCountRes] = await Promise.all([
+  const [profileRes, goalsRes, expertsRes, activityRes, referralRes] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", userId).single(),
     supabase.from("goals").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
-    supabase
-      .from("bookings")
-      .select("*, expert:experts(full_name), service:services(title)")
-      .eq("user_id", userId)
-      .in("status", ["confirmed", "pending"])
-      .order("scheduled_at", { ascending: true })
-      .limit(3),
-    supabase.from("bookings").select("id", { count: "exact" }).eq("user_id", userId).eq("status", "completed"),
-    supabase.from("experts").select("id,full_name,headline,rating,review_count,expertise_areas").eq("is_active", true).order("rating", { ascending: false }).limit(3),
+    supabase.from("experts").select("id,full_name,headline,expertise_areas").eq("is_active", true).order("rating", { ascending: false }).limit(2),
     supabase.from("bookings").select("created_at").eq("user_id", userId).gte("created_at", new Date(Date.now() - 7 * 86_400_000).toISOString()),
     supabase.from("referrals").select("id", { count: "exact" }).eq("referrer_id", userId),
   ]);
 
-  const profile       = profileRes.data as Profile | null;
-  const allGoals      = (goalsRes.data ?? []) as Goal[];
-  const upcomingBooks = (upcomingRes.data ?? []) as Booking[];
-  const sessionsDone  = doneCountRes.count ?? 0;
-  const experts       = (expertsRes.data ?? []) as Expert[];
-  const recentDates   = (activityRes.data ?? []).map((r: { created_at: string }) => r.created_at);
-  const hasReferrals  = (referralCountRes.count ?? 0) > 0;
+  const profile        = profileRes.data as Profile | null;
+  const allGoals       = (goalsRes.data ?? []) as Goal[];
+  const recentDates    = (activityRes.data ?? []).map((r: { created_at: string }) => r.created_at);
+  const referralCount  = referralRes.count ?? 0;
 
   if (!profile?.current_job_role) redirect("/welcome");
 
-  const activeGoals = allGoals.filter((g) => g.status === "active");
-  const xp          = calcXP(profile, allGoals, upcomingBooks);
-  const level       = getLevel(xp);
-  const streakDots  = buildStreakDots(recentDates);
-  const streak      = streakDots.filter((d) => d.isDone || d.isToday).length;
+  const activeGoals  = allGoals.filter((g) => g.status === "active");
+  const streakDots   = buildStreakDots(recentDates);
+  const streak       = streakDots.filter((d) => d.isDone || d.isToday).length;
+  const rawName      = profile?.full_name ?? (session.user.email ?? "there").split("@")[0];
+  const displayName  = firstName(rawName);
 
-  const rawName     = profile?.full_name ?? (session.user.email ?? "there").split("@")[0];
-  const displayName = firstName(rawName);
-
-  const firstGoal = activeGoals[0] ?? null;
-  const goalPct   = firstGoal ? goalProgress(firstGoal) : 0;
-  const goalDays  = firstGoal ? daysLeft(firstGoal.target_date) : null;
+  const firstGoal  = activeGoals[0] ?? null;
+  const goalPct    = firstGoal ? goalProgress(firstGoal) : 0;
+  const goalDays   = firstGoal ? daysLeft(firstGoal.target_date) : null;
   const daysToGoal = goalDays ?? 0;
 
   const storedMs = (firstGoal?.milestones ?? []) as Milestone[];
@@ -145,120 +108,111 @@ export default async function DashboardPage() {
         completed: m.completed,
         isActive: !m.completed && storedMs.findIndex((x: Milestone) => !x.completed) === i,
       }))
-    : DEFAULT_MS.map((m, i) => ({ key: i, ...m }));
+    : DEFAULT_CHIPS.map((m, i) => ({ key: i, ...m }));
 
-  // Weekly quest mock from active goal or generic
-  const questName  = firstGoal?.title ?? "Profile Audit";
-  const questDone  = chips.filter((c) => c.completed).length;
-  const questTotal = chips.length;
-
-  const xpToNext = level.next - level.xp;
+  // Referral connection rows — use real experts if available, else seed
+  const experts = expertsRes.data ?? [];
+  const connections = experts.length >= 2
+    ? experts.slice(0, 2).map((e: { full_name: string; expertise_areas?: string[]; headline?: string | null }) => ({
+        name:    e.full_name,
+        role:    e.expertise_areas?.[0] ?? "Expert",
+        company: (e.headline ?? "").split("·").slice(-1)[0]?.trim() || "Top Company",
+      }))
+    : SEED_CONNECTIONS;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px", opacity: 0, animation: "fadeUp 0.4s ease forwards" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
 
-      {/* ── Greeting ─────────────────────────────────────────────────────── */}
+      {/* ── Greeting ── */}
       <div>
-        <h1 style={{ fontSize: "24px", fontWeight: 800, color: "#1a1a1a", margin: 0 }}>
+        <h1 style={{ fontSize: "24px", fontWeight: 800, color: "#0A3323", margin: 0 }}>
           {getGreeting()}, {displayName} 👋
         </h1>
         <p style={{ fontSize: "13px", color: "#839958", marginTop: "4px" }}>
-          You&apos;re on a {streak}-day streak. Don&apos;t break it today.
+          {profile?.target_role
+            ? `Join a circle to find referral connections at ${profile.target_role} companies.`
+            : "Join a circle to find referral connections at your target companies."}
         </p>
       </div>
 
-      {/* ── XP Hero card ─────────────────────────────────────────────────── */}
+      {/* ── Referral hero card ── */}
       <div style={{
-        backgroundColor: "#0A3323",
-        borderRadius: "16px",
-        padding: "24px",
-        display: "flex",
-        gap: "24px",
-        alignItems: "stretch",
+        backgroundColor: "#0A3323", borderRadius: "16px", padding: "20px 24px",
+        display: "flex", gap: "24px", alignItems: "center",
       }}>
-        {/* Left: progress */}
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "12px" }}>
-          {/* Level badge */}
+        {/* Left */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "10px" }}>
           <span style={{
             display: "inline-flex", alignItems: "center",
-            backgroundColor: "#839958", color: "#ffffff",
-            fontSize: "10px", fontWeight: 800,
-            borderRadius: "99px", padding: "3px 10px",
-            alignSelf: "flex-start", letterSpacing: "0.5px",
+            backgroundColor: "#D3968C", color: "#ffffff",
+            fontSize: "9px", fontWeight: 800, textTransform: "uppercase",
+            borderRadius: "99px", padding: "3px 10px", letterSpacing: "0.5px",
+            alignSelf: "flex-start",
           }}>
-            LEVEL {level.num} · {level.label.toUpperCase()}
+            NEW REFERRAL OPPORTUNITIES
           </span>
-          <div>
-            <p style={{ fontSize: "20px", fontWeight: 800, color: "#ffffff", margin: 0 }}>
-              {xpToNext > 0 ? `${xpToNext} XP to Level ${level.num + 1}` : "Max level reached!"}
-            </p>
-            <p style={{ fontSize: "12px", color: "rgba(131,153,88,0.8)", marginTop: "4px" }}>
-              Complete a mock interview to earn +100 XP
-            </p>
-          </div>
-          {/* XP bar */}
-          <div>
-            <div style={{ height: "8px", borderRadius: "99px", backgroundColor: "rgba(255,255,255,0.15)", overflow: "hidden" }}>
-              <div style={{ height: "100%", width: `${level.progress}%`, backgroundColor: "#D3968C", borderRadius: "99px", transition: "width 0.7s ease" }} />
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "6px" }}>
-              <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.5)" }}>{level.xp} / {level.next} XP</span>
-              <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.5)" }}>Level {level.num + 1}: {level.nextLabel}</span>
-            </div>
-          </div>
+          <p style={{ fontSize: "18px", fontWeight: 800, color: "#F7F4D5", margin: 0, lineHeight: 1.3 }}>
+            {profile?.target_role
+              ? `Find referral connections for ${profile.target_role} roles`
+              : "Find referral connections in your circles"}
+          </p>
+          <p style={{ fontSize: "12px", color: "rgba(247,244,213,0.5)", margin: 0 }}>
+            Active in your circles this week
+          </p>
         </div>
 
-        {/* Centre: big XP number */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minWidth: "100px" }}>
-          <div style={{ fontSize: "40px", fontWeight: 800, color: "#D3968C", lineHeight: 1 }}>{level.xp}</div>
-          <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.5)", marginTop: "4px", textAlign: "center" }}>total XP<br />earned</div>
-        </div>
-
-        {/* Right: Weekly quest */}
-        <div style={{
-          backgroundColor: "#F7F4D5",
-          borderRadius: "12px",
-          padding: "14px 16px",
-          minWidth: "160px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "6px",
-        }}>
-          <p style={{ fontSize: "10px", fontWeight: 800, color: "#1a1a1a", letterSpacing: "0.5px", margin: 0, textTransform: "uppercase" }}>
-            Weekly Quest
-          </p>
-          <p style={{ fontSize: "13px", fontWeight: 700, color: "#1a1a1a", margin: 0 }}>
-            {questName.length > 20 ? questName.slice(0, 20) + "…" : questName}
-          </p>
-          <p style={{ fontSize: "11px", color: "#839958", margin: 0 }}>
-            {questDone} / {questTotal} tasks done
-          </p>
-          {/* mini progress */}
-          <div style={{ height: "4px", borderRadius: "99px", backgroundColor: "rgba(0,0,0,0.1)", overflow: "hidden", marginTop: "4px" }}>
-            <div style={{ height: "100%", width: `${questTotal > 0 ? Math.round(questDone / questTotal * 100) : 0}%`, backgroundColor: "#0A3323", borderRadius: "99px" }} />
-          </div>
+        {/* Right: mini connection rows */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px", minWidth: "260px" }}>
+          {connections.map((c, i) => {
+            const inits = c.name.split(" ").map((n: string) => n[0]).slice(0, 2).join("").toUpperCase();
+            return (
+              <div key={c.name} style={{
+                backgroundColor: "rgba(255,255,255,0.06)", borderRadius: "8px", padding: "8px 10px",
+                display: "flex", alignItems: "center", gap: "8px",
+              }}>
+                <div style={{
+                  width: 28, height: 28, borderRadius: 7, flexShrink: 0,
+                  backgroundColor: CONNECTION_AVATAR_COLORS[i % CONNECTION_AVATAR_COLORS.length],
+                  color: "#ffffff",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 10, fontWeight: 800,
+                }}>
+                  {inits}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: "11px", fontWeight: 800, color: "#F7F4D5", margin: 0 }}>{c.name}</p>
+                  <p style={{ fontSize: "10px", color: "rgba(247,244,213,0.45)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {c.role} · {c.company}
+                  </p>
+                </div>
+                <Link href="/communities" style={{
+                  fontSize: "10px", fontWeight: 700,
+                  backgroundColor: "#D3968C", color: "#ffffff",
+                  borderRadius: "6px", padding: "4px 10px", textDecoration: "none",
+                  whiteSpace: "nowrap", flexShrink: 0,
+                }}>
+                  Connect
+                </Link>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* ── Stats row ────────────────────────────────────────────────────── */}
+      {/* ── Stats row ── */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
         {[
-          { accent: "#839958", val: activeGoals.length, label: "Active goals",  badge: activeGoals.length > 0 ? "In progress" : "Start one!" },
-          { accent: "#D3968C", val: `${streak}🔥`,      label: "Day streak",    badge: streak > 0 ? "Active" : "Begin today" },
-          { accent: "#F7F4D5", val: sessionsDone,        label: "Sessions done", badge: "Completed" },
-          { accent: "#105666", val: daysToGoal,          label: "Days to goal",  badge: daysToGoal < 30 ? "This month!" : "On track" },
+          { accent: "#D3968C", val: referralCount,    label: "Referral connections", badge: referralCount > 0 ? "Active" : "Find some!" },
+          { accent: "#0A3323", val: 0,                label: "Circles joined",       badge: "Join one →"                               },
+          { accent: "#839958", val: `${streak}🔥`,   label: "Day streak",           badge: streak > 0 ? "Active" : "Begin today"       },
+          { accent: "#105666", val: daysToGoal,       label: "Days to goal",         badge: daysToGoal < 30 ? "This month!" : "On track" },
         ].map(({ accent, val, label, badge }) => (
           <div key={label} style={{
-            backgroundColor: "#ffffff",
-            border: "1px solid #e8e4ce",
-            borderRadius: "14px",
-            padding: "16px",
-            position: "relative",
-            overflow: "hidden",
+            backgroundColor: "#ffffff", border: "1px solid #e8e4ce",
+            borderRadius: "14px", padding: "16px",
+            position: "relative", overflow: "hidden",
           }}>
-            {/* Top accent bar */}
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", backgroundColor: accent }} />
-            {/* Top-right badge */}
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "10px" }}>
               <span style={{
                 fontSize: "10px", fontWeight: 600,
@@ -274,7 +228,58 @@ export default async function DashboardPage() {
         ))}
       </div>
 
-      {/* ── Two-column: goal (60%) + sessions (40%) ──────────────────────── */}
+      {/* ── Two-column: My circles + Referral connections ── */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+
+        {/* LEFT: My circles */}
+        <div style={{ backgroundColor: "#ffffff", border: "1px solid #e8e4ce", borderRadius: "16px", padding: "22px", display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+            <p style={{ fontSize: "10px", fontWeight: 700, color: "#839958", letterSpacing: "0.5px", textTransform: "uppercase", margin: 0 }}>
+              MY CIRCLES
+            </p>
+            <Link href="/communities" style={{ fontSize: "12px", fontWeight: 600, color: "#839958", textDecoration: "none" }}>Browse all →</Link>
+          </div>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "10px" }}>
+            <p style={{ fontSize: "13px", color: "#839958", margin: 0, lineHeight: 1.6 }}>
+              Join a circle to find referral connections at your target companies.
+            </p>
+            <Link href="/communities" style={{
+              alignSelf: "flex-start",
+              fontSize: "12px", fontWeight: 700,
+              backgroundColor: "#0A3323", color: "#F7F4D5",
+              borderRadius: "8px", padding: "9px 18px", textDecoration: "none",
+            }}>
+              Find your circle →
+            </Link>
+          </div>
+        </div>
+
+        {/* RIGHT: Referral connections */}
+        <div style={{ backgroundColor: "#ffffff", border: "1px solid #e8e4ce", borderRadius: "16px", padding: "22px", display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+            <p style={{ fontSize: "10px", fontWeight: 700, color: "#839958", letterSpacing: "0.5px", textTransform: "uppercase", margin: 0 }}>
+              REFERRAL CONNECTIONS
+            </p>
+            <Link href="/communities" style={{ fontSize: "12px", fontWeight: 600, color: "#839958", textDecoration: "none" }}>Find more</Link>
+          </div>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "10px" }}>
+            <p style={{ fontSize: "13px", color: "#839958", margin: 0, lineHeight: 1.6 }}>
+              No referral connections yet. Join circles to find people who can refer you.
+            </p>
+            <Link href="/communities" style={{
+              alignSelf: "flex-start",
+              fontSize: "12px", fontWeight: 700,
+              backgroundColor: "#F9F7EC", color: "#0A3323",
+              border: "1px solid #e8e4ce",
+              borderRadius: "8px", padding: "9px 18px", textDecoration: "none",
+            }}>
+              Join a circle →
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Bottom row: Active goal + Prep tools ── */}
       <div style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: "16px" }}>
 
         {/* LEFT: Active goal */}
@@ -288,11 +293,11 @@ export default async function DashboardPage() {
 
           {firstGoal ? (
             <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-              <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", flexWrap: "wrap" }}>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
                 <p style={{ fontSize: "16px", fontWeight: 800, color: "#1a1a1a", flex: 1, margin: 0 }}>{firstGoal.title}</p>
                 <span style={{
                   fontSize: "11px", fontWeight: 600,
-                  backgroundColor: "#D3968C", color: "#1a1a1a",
+                  backgroundColor: "#D3968C", color: "#ffffff",
                   borderRadius: "99px", padding: "3px 10px",
                   textTransform: "capitalize", whiteSpace: "nowrap",
                 }}>
@@ -322,9 +327,9 @@ export default async function DashboardPage() {
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: "12px", paddingTop: "8px" }}>
-              <p style={{ fontSize: "13px", color: "#839958", margin: 0 }}>No active goals. Setting one earns you 50 XP.</p>
+              <p style={{ fontSize: "13px", color: "#839958", margin: 0 }}>No active goals. Set one to track your journey.</p>
               <Link href="/goals" style={{
-                display: "inline-flex", alignItems: "center",
+                alignSelf: "flex-start",
                 backgroundColor: "#F7F4D5", color: "#1a1a1a",
                 fontSize: "13px", fontWeight: 700,
                 borderRadius: "8px", padding: "10px 18px",
@@ -336,205 +341,45 @@ export default async function DashboardPage() {
           )}
         </div>
 
-        {/* RIGHT: Sessions */}
-        <div style={{ backgroundColor: "#ffffff", border: "1px solid #e8e4ce", borderRadius: "16px", padding: "22px", display: "flex", flexDirection: "column" }}>
-          <p style={{ fontSize: "10px", fontWeight: 700, color: "#839958", letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: "14px" }}>
-            Sessions
-          </p>
-
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "12px" }}>
-            {upcomingBooks.length === 0 ? (
-              <p style={{ fontSize: "12px", color: "#839958", margin: 0 }}>No upcoming sessions.</p>
-            ) : (
-              upcomingBooks.map((b) => {
-                const expertName   = (b.expert as { full_name: string } | null)?.full_name ?? "Expert";
-                const serviceTitle = (b.service as { title: string } | null)?.title ?? "Session";
-                const dt           = b.scheduled_at ? new Date(b.scheduled_at) : null;
-                return (
-                  <div key={b.id} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <div style={{
-                      width: "38px", height: "44px", flexShrink: 0,
-                      backgroundColor: "#F7F4D5", borderRadius: "8px",
-                      display: "flex", flexDirection: "column",
-                      alignItems: "center", justifyContent: "center",
-                    }}>
-                      <span style={{ fontSize: "16px", fontWeight: 800, color: "#0A3323", lineHeight: 1 }}>{dt ? dt.getDate() : "–"}</span>
-                      <span style={{ fontSize: "8px", fontWeight: 700, color: "#0A3323aa", textTransform: "uppercase" }}>
-                        {dt ? dt.toLocaleDateString("en-US", { month: "short" }) : ""}
-                      </span>
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontSize: "12px", fontWeight: 700, color: "#1a1a1a", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{serviceTitle}</p>
-                      <p style={{ fontSize: "11px", color: "#839958", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{expertName}</p>
-                    </div>
-                    <button style={{
-                      flexShrink: 0,
-                      backgroundColor: "#0A3323", color: "#839958",
-                      fontSize: "11px", fontWeight: 700,
-                      borderRadius: "8px", padding: "5px 10px",
-                      border: "none", cursor: "pointer",
-                    }}>
-                      Join
-                    </button>
-                  </div>
-                );
-              })
-            )}
+        {/* RIGHT: Prep tools */}
+        <div style={{ backgroundColor: "#ffffff", border: "1px solid #e8e4ce", borderRadius: "16px", padding: "22px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+            <p style={{ fontSize: "10px", fontWeight: 700, color: "#839958", letterSpacing: "0.5px", textTransform: "uppercase", margin: 0 }}>
+              PREP TOOLS
+            </p>
+            <Link href="/resume" style={{ fontSize: "12px", fontWeight: 600, color: "#839958", textDecoration: "none" }}>All free →</Link>
           </div>
-
-          {/* Streak dots */}
-          <div style={{ marginTop: "16px", paddingTop: "12px", borderTop: "1px solid #e8e4ce", display: "flex", gap: "6px", justifyContent: "space-between" }}>
-            {streakDots.map((d, i) => (
-              <div key={i} style={{
-                width: "22px", height: "22px",
-                borderRadius: "6px",
-                backgroundColor: d.isDone ? "#0A3323" : d.isToday ? "#D3968C" : "#e8e4ce",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: "9px", fontWeight: 700,
-                color: d.isDone ? "#F7F4D5" : d.isToday ? "#ffffff" : "#1a1a1a99",
-              }}>
-                {d.letter}
-              </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            {PREP_TOOLS.map(({ icon, label, href }) => (
+              <Link
+                key={label}
+                href={href}
+                style={{
+                  display: "flex", alignItems: "center", gap: "10px",
+                  textDecoration: "none", padding: "7px 0",
+                  borderBottom: "1px solid #F9F7EC",
+                }}
+              >
+                <div style={{
+                  width: 30, height: 30, borderRadius: "8px",
+                  backgroundColor: "#F7F4D5",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 15, flexShrink: 0,
+                }}>
+                  {icon}
+                </div>
+                <span style={{ fontSize: "13px", fontWeight: 600, color: "#1a1a1a", flex: 1 }}>{label}</span>
+                <span style={{
+                  fontSize: "10px", fontWeight: 700,
+                  backgroundColor: "#F9F7EC", color: "#839958",
+                  borderRadius: "99px", padding: "2px 8px",
+                }}>
+                  Free
+                </span>
+              </Link>
             ))}
           </div>
         </div>
-      </div>
-
-      {/* ── Referral banner (only for users with no referrals) ──────────── */}
-      {!hasReferrals && (
-        <div style={{ backgroundColor: "#F7F4D5", borderRadius: "16px", padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
-          <div>
-            <p style={{ fontSize: "13px", fontWeight: 800, color: "#1a1a1a", margin: "0 0 2px" }}>Earn ₹200 for every friend you invite</p>
-            <p style={{ fontSize: "12px", color: "#8a720099", margin: 0 }}>They get ₹200 off their first session too.</p>
-          </div>
-          <Link href="/refer" style={{ fontSize: "12px", fontWeight: 800, backgroundColor: "#0A3323", color: "#839958", borderRadius: "10px", padding: "8px 18px", textDecoration: "none", whiteSpace: "nowrap" }}>
-            Invite friends →
-          </Link>
-        </div>
-      )}
-
-      {/* ── Practice interview card ─────────────────────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-        {/* Practice interview */}
-        <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: "20px 22px", display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ fontSize: 32, flexShrink: 0 }}>🎙️</div>
-          <div style={{ flex: 1 }}>
-            <p style={{ fontSize: "13px", fontWeight: 800, color: "#1a1a1a", margin: "0 0 2px" }}>AI Mock Interview</p>
-            {profile?.last_interview_score != null && profile.last_interview_at ? (
-              <p style={{ fontSize: "12px", color: "#839958", margin: 0 }}>
-                Last score: {profile.last_interview_score.toFixed(1)}/10 ·{" "}
-                {Math.ceil((Date.now() - new Date(profile.last_interview_at).getTime()) / 86_400_000)} days ago
-              </p>
-            ) : (
-              <p style={{ fontSize: "12px", color: "#839958", margin: 0 }}>Practice with AI · get scored</p>
-            )}
-          </div>
-          <Link href="/mock-interview" style={{ backgroundColor: "#0A3323", color: "#839958", fontSize: "12px", fontWeight: 700, borderRadius: 8, padding: "8px 14px", textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0 }}>
-            Practice →
-          </Link>
-        </div>
-
-        {/* Interview question bank */}
-        <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: "20px 22px", display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ fontSize: 32, flexShrink: 0 }}>❓</div>
-          <div style={{ flex: 1 }}>
-            <p style={{ fontSize: "13px", fontWeight: 800, color: "#1a1a1a", margin: "0 0 2px" }}>Question Bank</p>
-            <p style={{ fontSize: "12px", color: "#839958", margin: 0 }}>20 curated questions · AI answers</p>
-          </div>
-          <Link href="/questions" style={{ backgroundColor: "#F9F7EC", color: "#1a1a1a", fontSize: "12px", fontWeight: 700, borderRadius: 8, padding: "8px 14px", textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0, border: "1px solid #e8e4ce" }}>
-            Explore →
-          </Link>
-        </div>
-      </div>
-
-      {/* ── AI Resume Builder card ──────────────────────────────────────── */}
-      <div style={{ backgroundColor: "#0A3323", borderRadius: "16px", padding: "22px 24px", display: "flex", alignItems: "center", gap: "20px" }}>
-        <div style={{ fontSize: 36, flexShrink: 0 }}>📝</div>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-            <p style={{ fontSize: "14px", fontWeight: 800, color: "#ffffff", margin: 0 }}>AI Resume Builder</p>
-            <span style={{ fontSize: "10px", fontWeight: 700, backgroundColor: "#839958", color: "#0A3323", borderRadius: 99, padding: "2px 8px" }}>FREE</span>
-          </div>
-          <p style={{ fontSize: "12px", color: "#83995899", margin: 0 }}>Analyse your resume, build a new one, and export — powered by Claude.</p>
-        </div>
-        <Link href="/resume" style={{ backgroundColor: "#839958", color: "#0A3323", fontSize: "12px", fontWeight: 800, borderRadius: "10px", padding: "10px 20px", textDecoration: "none", flexShrink: 0, whiteSpace: "nowrap" }}>
-          Open →
-        </Link>
-      </div>
-
-      {/* ── Career paths ─────────────────────────────────────────────────── */}
-      <div style={{ backgroundColor: "#ffffff", border: "1px solid #e8e4ce", borderRadius: "16px", padding: "22px" }}>
-        <p style={{ fontSize: "10px", fontWeight: 700, color: "#839958", letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: "14px" }}>
-          Career Paths for You
-        </p>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-          {CAREER_PATHS.map(({ label, bg, color }) => (
-            <Link key={label} href="/experts" style={{
-              display: "inline-block",
-              backgroundColor: bg, color,
-              fontSize: "12px", fontWeight: 700,
-              borderRadius: "99px", padding: "8px 18px",
-              textDecoration: "none",
-            }}>
-              {label}
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Top Experts ──────────────────────────────────────────────────── */}
-      <div style={{ backgroundColor: "#ffffff", border: "1px solid #e8e4ce", borderRadius: "16px", padding: "22px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-          <p style={{ fontSize: "10px", fontWeight: 700, color: "#839958", letterSpacing: "0.5px", textTransform: "uppercase", margin: 0 }}>
-            Top Experts
-          </p>
-          <Link href="/experts" style={{ fontSize: "13px", fontWeight: 600, color: "#839958", textDecoration: "none" }}>
-            Browse all →
-          </Link>
-        </div>
-
-        {experts.length === 0 ? (
-          <p style={{ fontSize: "13px", color: "#839958" }}>No experts yet.</p>
-        ) : (
-          <div>
-            {experts.map((e, i) => {
-              const initials = e.full_name.split(" ").map((n: string) => n[0]).slice(0, 2).join("").toUpperCase();
-              const avatarBg = AVATAR_FILLS[i % AVATAR_FILLS.length];
-              const tag = e.expertise_areas?.[0] ?? (e.headline ?? "").split(" ").slice(0, 4).join(" ");
-              return (
-                <div key={e.id}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "12px", padding: "10px 0" }}>
-                    <div style={{
-                      width: "36px", height: "36px", flexShrink: 0,
-                      backgroundColor: avatarBg, color: "#1a1a1a",
-                      borderRadius: "10px",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: "13px", fontWeight: 700,
-                    }}>
-                      {initials}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontSize: "13px", fontWeight: 700, color: "#1a1a1a", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.full_name}</p>
-                      {tag && <p style={{ fontSize: "11px", color: "#839958", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{tag}</p>}
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
-                      <span style={{ fontSize: "11px", color: "#839958" }}>★ {e.rating.toFixed(1)}</span>
-                      <Link href={`/experts/${e.id}`} style={{
-                        backgroundColor: "#0A3323", color: "#839958",
-                        fontSize: "11px", fontWeight: 700,
-                        borderRadius: "8px", padding: "5px 14px",
-                        textDecoration: "none",
-                      }}>
-                        Book
-                      </Link>
-                    </div>
-                  </div>
-                  {i < experts.length - 1 && <div style={{ height: "1px", backgroundColor: "#e8e4ce" }} />}
-                </div>
-              );
-            })}
-          </div>
-        )}
       </div>
 
     </div>
