@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase";
 import { useSession } from "@/hooks/useSession";
 import { useProfile } from "@/hooks/useProfile";
 import type { Profile } from "@/types";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // ─── Level system ─────────────────────────────────────────────────────────────
 
@@ -46,25 +46,23 @@ function getLevelInfo(xp: number) {
 
 // ─── Nav structure ────────────────────────────────────────────────────────────
 
-type NavItem = {
-  href: string;
-  label: string;
-  badgeKey?: string;
-  newBadge?: boolean;
-};
+type SubItem  = { href: string; label: string };
+type TopItem  = { label: string; defaultHref: string; subItems: SubItem[] };
 
-const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
+const NAV: TopItem[] = [
   {
-    label: "Overview",
-    items: [
+    label: "Home",
+    defaultHref: "/dashboard",
+    subItems: [
       { href: "/dashboard", label: "Dashboard" },
-      { href: "/goals",     label: "My goals",  badgeKey: "goals"    },
-      { href: "/bookings",  label: "Sessions",  badgeKey: "bookings" },
+      { href: "/goals",     label: "My goals"  },
+      { href: "/bookings",  label: "Sessions"  },
     ],
   },
   {
-    label: "AI tools — free",
-    items: [
+    label: "Prepare",
+    defaultHref: "/resume",
+    subItems: [
       { href: "/resume",         label: "Resume builder"  },
       { href: "/mock-interview", label: "Mock interview"  },
       { href: "/questions",      label: "Question bank"   },
@@ -73,35 +71,45 @@ const NAV_SECTIONS: { label: string; items: NavItem[] }[] = [
   },
   {
     label: "Job search",
-    items: [
-      { href: "/jobs",      label: "Jobs for you",        newBadge: true },
-      { href: "/tracker",   label: "Application tracker"              },
-      { href: "/companies", label: "Companies"                        },
-      { href: "/salaries",  label: "Salary data"                      },
+    defaultHref: "/jobs",
+    subItems: [
+      { href: "/jobs",      label: "Jobs for you"        },
+      { href: "/tracker",   label: "Application tracker" },
+      { href: "/salaries",  label: "Salary data"         },
+      { href: "/companies", label: "Companies"           },
     ],
   },
   {
     label: "Community",
-    items: [
-      { href: "/communities", label: "My circles", badgeKey: "communities" },
-      { href: "/refer",       label: "Referrals"                           },
+    defaultHref: "/communities",
+    subItems: [
+      { href: "/communities", label: "My circles" },
+      { href: "/refer",       label: "Referrals"  },
     ],
   },
   {
     label: "Experts",
-    items: [
+    defaultHref: "/experts",
+    subItems: [
       { href: "/experts",            label: "Browse experts" },
       { href: "/experts?service=dm", label: "Priority DM"    },
     ],
   },
-  {
-    label: "Account",
-    items: [
-      { href: "/profile",  label: "Profile"  },
-      { href: "/settings", label: "Settings" },
-    ],
-  },
 ];
+
+function isSectionActive(section: TopItem, pathname: string): boolean {
+  return section.subItems.some((sub) => {
+    const base = sub.href.split("?")[0];
+    if (base === "/dashboard") return pathname === "/dashboard";
+    return pathname === base || pathname.startsWith(base + "/");
+  });
+}
+
+function isSubActive(href: string, pathname: string): boolean {
+  const base = href.split("?")[0];
+  if (base === "/dashboard") return pathname === "/dashboard";
+  return pathname === base || pathname.startsWith(base + "/");
+}
 
 // ─── Inner content (shared between desktop & mobile) ─────────────────────────
 
@@ -112,29 +120,22 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const { session } = useSession();
   const { profile }  = useProfile();
 
-  const [goalCount,    setGoalCount]    = useState<number | null>(null);
-  const [bookingCount, setBookingCount] = useState<number | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Close dropdown on outside click
   useEffect(() => {
-    if (!session?.user?.id) return;
-    const uid = session.user.id;
-
-    supabase
-      .from("goals")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", uid)
-      .neq("status", "completed")
-      .then(({ count }) => { if (count) setGoalCount(count); });
-
-    supabase
-      .from("bookings")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", uid)
-      .gte("scheduled_at", new Date().toISOString())
-      .then(({ count }) => { if (count) setBookingCount(count); });
-  }, [session?.user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+    function handler(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    if (dropdownOpen) document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [dropdownOpen]);
 
   const handleSignOut = async () => {
+    setDropdownOpen(false);
     await supabase.auth.signOut();
     router.push("/");
   };
@@ -147,18 +148,6 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const xp = calcXP(profile ?? null);
   const { current: currentLevel, nextLevel, progress, toNext } = getLevelInfo(xp);
 
-  const badgeCounts: Record<string, number | null> = {
-    goals:       goalCount,
-    bookings:    bookingCount,
-    communities: null,
-  };
-
-  function isActive(href: string) {
-    const base = href.split("?")[0];
-    if (base === "/dashboard") return pathname === "/dashboard";
-    return pathname === base || pathname.startsWith(base + "/");
-  }
-
   return (
     <div style={{
       width: 240,
@@ -168,7 +157,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       display: "flex",
       flexDirection: "column",
     }}>
-      {/* Header */}
+      {/* ── Header ── */}
       <div style={{ padding: "20px 16px 16px", borderBottom: "1px solid #e8e4ce", flexShrink: 0 }}>
         <Link
           href="/dashboard"
@@ -178,96 +167,118 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           mentor<span style={{ color: "#D3968C" }}>.</span>
         </Link>
 
-        <div style={{
-          marginTop: 14,
-          backgroundColor: "#F9F7EC", borderRadius: 10, padding: "10px 12px",
-          display: "flex", alignItems: "center", gap: 10,
-        }}>
-          <div style={{
-            width: 34, height: 34, borderRadius: "50%",
-            backgroundColor: "#D3968C", color: "#ffffff",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 12, fontWeight: 800, flexShrink: 0,
-          }}>
-            {initials || "?"}
-          </div>
-          <div style={{ minWidth: 0 }}>
-            <div style={{
-              fontSize: 13, fontWeight: 700, color: "#0A3323", lineHeight: 1.2,
-              whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
-            }}>
-              {displayName}
-            </div>
-            <div style={{ fontSize: 10, color: "#839958", marginTop: 2 }}>
-              Level {currentLevel.level} · {firstName}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Body */}
-      <div style={{ padding: "12px 10px", flex: 1, overflowY: "auto" }}>
-        {NAV_SECTIONS.map((section) => (
-          <div key={section.label} style={{ marginBottom: 4 }}>
-            <div style={{
-              fontSize: 10, fontWeight: 700, color: "#bbb",
-              textTransform: "uppercase", letterSpacing: "0.8px",
-              padding: "8px 10px 4px",
-            }}>
-              {section.label}
-            </div>
-
-            {section.items.map((item) => {
-              const active = isActive(item.href);
-              const count  = item.badgeKey ? badgeCounts[item.badgeKey] : null;
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={onNavigate}
-                  className={`sidebar-nav-item${active ? " sidebar-nav-item-active" : ""}`}
-                >
-                  <span>{item.label}</span>
-                  <span style={{ display: "flex", gap: 4, alignItems: "center" }}>
-                    {count !== null && count > 0 && (
-                      <span style={{
-                        fontSize: 10, fontWeight: 700,
-                        backgroundColor: "#D3968C", color: "#fff",
-                        borderRadius: 99, padding: "1px 6px", minWidth: 16, textAlign: "center",
-                      }}>
-                        {count}
-                      </span>
-                    )}
-                    {item.newBadge && (
-                      <span style={{
-                        fontSize: 9, fontWeight: 700,
-                        backgroundColor: "#F7F4D5", color: "#0A3323",
-                        border: "1px solid #0A3323", borderRadius: 99, padding: "1px 6px",
-                      }}>
-                        New
-                      </span>
-                    )}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-        ))}
-
-        {/* Sign out */}
-        <div style={{ marginTop: 4 }}>
-          <button
-            onClick={handleSignOut}
-            className="sidebar-nav-item"
-            style={{ width: "100%", border: "none", background: "transparent", textAlign: "left", cursor: "pointer", fontFamily: "inherit" }}
+        {/* Avatar block + dropdown */}
+        <div style={{ position: "relative", marginTop: 14 }} ref={dropdownRef}>
+          <div
+            onClick={() => setDropdownOpen((o) => !o)}
+            style={{
+              backgroundColor: "#F9F7EC", borderRadius: 10, padding: "10px 12px",
+              display: "flex", alignItems: "center", gap: 10, cursor: "pointer",
+              userSelect: "none",
+            }}
           >
-            Sign out
-          </button>
+            <div style={{
+              width: 34, height: 34, borderRadius: "50%",
+              backgroundColor: "#D3968C", color: "#ffffff",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 12, fontWeight: 800, flexShrink: 0,
+            }}>
+              {initials || "?"}
+            </div>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{
+                fontSize: 13, fontWeight: 700, color: "#0A3323", lineHeight: 1.2,
+                whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+              }}>
+                {displayName}
+              </div>
+              <div style={{ fontSize: 10, color: "#839958", marginTop: 2 }}>
+                Level {currentLevel.level} · {firstName}
+              </div>
+            </div>
+            <span style={{ fontSize: 9, color: "#839958", flexShrink: 0 }}>
+              {dropdownOpen ? "▲" : "▼"}
+            </span>
+          </div>
+
+          {/* Dropdown menu */}
+          {dropdownOpen && (
+            <div style={{
+              position: "absolute",
+              top: "calc(100% + 6px)",
+              left: 0, right: 0,
+              backgroundColor: "#ffffff",
+              border: "1px solid #e8e4ce",
+              borderRadius: 10,
+              padding: 6,
+              minWidth: 180,
+              zIndex: 100,
+              boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+            }}>
+              <Link
+                href="/profile"
+                onClick={() => { setDropdownOpen(false); onNavigate?.(); }}
+                className="sidebar-dropdown-item"
+              >
+                Edit profile
+              </Link>
+              <Link
+                href="/settings"
+                onClick={() => { setDropdownOpen(false); onNavigate?.(); }}
+                className="sidebar-dropdown-item"
+              >
+                Settings
+              </Link>
+              <div style={{ height: 1, backgroundColor: "#e8e4ce", margin: "4px 0" }} />
+              <button
+                onClick={handleSignOut}
+                className="sidebar-dropdown-item"
+                style={{ width: "100%", background: "none", border: "none", textAlign: "left", cursor: "pointer", fontFamily: "inherit" }}
+              >
+                Sign out
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Footer XP card */}
+      {/* ── Body ── */}
+      <div style={{ padding: "12px 10px", flex: 1, overflowY: "auto" }}>
+        {NAV.map((section) => {
+          const active = isSectionActive(section, pathname);
+          return (
+            <div key={section.label} style={{ marginBottom: 2 }}>
+              <Link
+                href={section.defaultHref}
+                onClick={onNavigate}
+                className={`sidebar-toplevel${active ? " sidebar-toplevel-active" : ""}`}
+              >
+                {section.label}
+              </Link>
+
+              {active && (
+                <div style={{ marginBottom: 4 }}>
+                  {section.subItems.map((sub) => {
+                    const subActive = isSubActive(sub.href, pathname);
+                    return (
+                      <Link
+                        key={sub.href}
+                        href={sub.href}
+                        onClick={onNavigate}
+                        className={`sidebar-subitem${subActive ? " sidebar-subitem-active" : ""}`}
+                      >
+                        {sub.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── Footer XP card ── */}
       <div style={{ padding: "12px 10px", borderTop: "1px solid #e8e4ce", flexShrink: 0 }}>
         <div style={{ backgroundColor: "#0A3323", borderRadius: 10, padding: "12px 14px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
@@ -312,7 +323,7 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Mobile: hamburger button */}
+      {/* Mobile: hamburger */}
       <button
         className="sidebar-hamburger"
         onClick={() => setMobileOpen(true)}

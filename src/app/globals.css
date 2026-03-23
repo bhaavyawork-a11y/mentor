@@ -102,34 +102,68 @@
 }
 
 /* ─── Sidebar nav items ─────────────────────────────────────────────────── */
-.sidebar-nav-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
+
+/* Top-level items */
+.sidebar-toplevel {
+  display: block;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
   color: #666;
   background: transparent;
   text-decoration: none;
-  margin-bottom: 1px;
   transition: background 0.12s, color 0.12s;
   cursor: pointer;
 }
-.sidebar-nav-item:hover {
+.sidebar-toplevel:hover {
   background: #F9F7EC;
   color: #0A3323;
 }
-.sidebar-nav-item-active {
+.sidebar-toplevel-active {
   background: #0A3323 !important;
   color: #F7F4D5 !important;
-  font-weight: 600;
+  font-weight: 700;
 }
-.sidebar-nav-item-active:hover {
+.sidebar-toplevel-active:hover {
   background: #0A3323 !important;
   color: #F7F4D5 !important;
+}
+
+/* Sub-items */
+.sidebar-subitem {
+  display: block;
+  padding: 7px 14px 7px 28px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #888;
+  background: transparent;
+  text-decoration: none;
+  transition: background 0.12s, color 0.12s;
+}
+.sidebar-subitem:hover {
+  background: #F9F7EC;
+  color: #0A3323;
+}
+.sidebar-subitem-active {
+  color: #D3968C !important;
+  font-weight: 600;
+  background: transparent !important;
+}
+
+/* Dropdown items */
+.sidebar-dropdown-item {
+  display: block;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #1a1a1a;
+  text-decoration: none;
+  border-radius: 7px;
+  transition: background 0.1s;
+}
+.sidebar-dropdown-item:hover {
+  background: #F9F7EC;
 }
 
 /* ─── Sidebar responsive ────────────────────────────────────────────────── */
