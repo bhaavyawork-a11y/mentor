@@ -3,7 +3,7 @@
 CREATE TABLE IF NOT EXISTS job_listings (
   id                  uuid        DEFAULT gen_random_uuid() PRIMARY KEY,
   external_id         text        UNIQUE NOT NULL,
-  source              text        NOT NULL CHECK (source IN ('lever', 'greenhouse')),
+  source              text        NOT NULL CHECK (source IN ('lever', 'greenhouse', 'seed')),
   title               text        NOT NULL,
   company_name        text        NOT NULL,
   company_slug        text        NOT NULL,
