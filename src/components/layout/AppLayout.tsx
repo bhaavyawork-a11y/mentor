@@ -1,13 +1,11 @@
-import TopNav from "@/components/layout/TopNav";
+import Sidebar from "@/components/layout/Sidebar";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#F9F7EC" }}>
-      <TopNav />
-      <main>
-        <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "32px 32px" }}>
-          {children}
-        </div>
+    <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "#F9F7EC" }}>
+      <Sidebar />
+      <main style={{ flex: 1, overflowX: "hidden", padding: "28px 32px" }}>
+        {children}
       </main>
     </div>
   );
