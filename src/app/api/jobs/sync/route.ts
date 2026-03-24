@@ -1,31 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
-// ─── Company maps (name + domain) ────────────────────────────────────────────
+// ─── Company maps ─────────────────────────────────────────────────────────────
 
 const LEVER_COMPANIES: Record<string, { name: string; domain: string }> = {
-  cred:         { name: "CRED",         domain: "cred.club"          },
-  meesho:       { name: "Meesho",       domain: "meesho.com"         },
-  zepto:        { name: "Zepto",        domain: "zepto.team"         },
-  swiggy:       { name: "Swiggy",       domain: "swiggy.com"         },
-  zomato:       { name: "Zomato",       domain: "zomato.com"         },
-  dream11:      { name: "Dream11",      domain: "dream11.com"        },
-  growwapp:     { name: "Groww",        domain: "groww.in"           },
-  phonepe:      { name: "PhonePe",      domain: "phonepe.com"        },
-  browserstack: { name: "BrowserStack", domain: "browserstack.com"   },
-  freshworks:   { name: "Freshworks",   domain: "freshworks.com"     },
-  chargebee:    { name: "Chargebee",    domain: "chargebee.com"      },
-  delhivery:    { name: "Delhivery",    domain: "delhivery.com"      },
-  sharechat:    { name: "ShareChat",    domain: "sharechat.com"      },
-  unacademy:    { name: "Unacademy",    domain: "unacademy.com"      },
-  practo:       { name: "Practo",       domain: "practo.com"         },
-  nykaa:        { name: "Nykaa",        domain: "nykaa.com"          },
-  zerodha:      { name: "Zerodha",      domain: "zerodha.com"        },
-  upstox:       { name: "Upstox",       domain: "upstox.com"         },
-  bharatpe:     { name: "BharatPe",     domain: "bharatpe.com"       },
-  jupitermoney: { name: "Jupiter",      domain: "jupiter.money"      },
-  sliceit:      { name: "slice",        domain: "sliceit.com"        },
-  ultrahuman:   { name: "Ultrahuman",   domain: "ultrahuman.com"     },
+  cred:         { name: "CRED",         domain: "cred.club"        },
+  meesho:       { name: "Meesho",       domain: "meesho.com"       },
+  zepto:        { name: "Zepto",        domain: "zepto.team"       },
+  swiggy:       { name: "Swiggy",       domain: "swiggy.com"       },
+  zomato:       { name: "Zomato",       domain: "zomato.com"       },
+  dream11:      { name: "Dream11",      domain: "dream11.com"      },
+  growwapp:     { name: "Groww",        domain: "groww.in"         },
+  phonepe:      { name: "PhonePe",      domain: "phonepe.com"      },
+  browserstack: { name: "BrowserStack", domain: "browserstack.com" },
+  freshworks:   { name: "Freshworks",   domain: "freshworks.com"   },
+  chargebee:    { name: "Chargebee",    domain: "chargebee.com"    },
+  delhivery:    { name: "Delhivery",    domain: "delhivery.com"    },
+  sharechat:    { name: "ShareChat",    domain: "sharechat.com"    },
+  unacademy:    { name: "Unacademy",    domain: "unacademy.com"    },
+  practo:       { name: "Practo",       domain: "practo.com"       },
+  nykaa:        { name: "Nykaa",        domain: "nykaa.com"        },
+  zerodha:      { name: "Zerodha",      domain: "zerodha.com"      },
+  upstox:       { name: "Upstox",       domain: "upstox.com"       },
+  bharatpe:     { name: "BharatPe",     domain: "bharatpe.com"     },
+  jupitermoney: { name: "Jupiter",      domain: "jupiter.money"    },
+  sliceit:      { name: "slice",        domain: "sliceit.com"      },
+  ultrahuman:   { name: "Ultrahuman",   domain: "ultrahuman.com"   },
 };
 
 const GREENHOUSE_COMPANIES: Record<string, { name: string; domain: string }> = {
@@ -45,11 +45,7 @@ const GREENHOUSE_COMPANIES: Record<string, { name: string; domain: string }> = {
 interface LeverPosting {
   id: string;
   text: string;
-  categories: {
-    commitment?: string;
-    department?: string;
-    location?: string;
-  };
+  categories: { commitment?: string; department?: string; location?: string };
   hostedUrl: string;
   descriptionPlain?: string;
   createdAt: number;
@@ -64,10 +60,6 @@ interface GreenhouseJob {
   updated_at: string;
 }
 
-interface GreenhouseResponse {
-  jobs: GreenhouseJob[];
-}
-
 // ─── Fetch helpers ────────────────────────────────────────────────────────────
 
 async function fetchLever(slug: string): Promise<LeverPosting[]> {
@@ -78,9 +70,7 @@ async function fetchLever(slug: string): Promise<LeverPosting[]> {
     });
     if (!res.ok) return [];
     return (await res.json()) as LeverPosting[];
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
 async function fetchGreenhouse(slug: string): Promise<GreenhouseJob[]> {
@@ -90,11 +80,9 @@ async function fetchGreenhouse(slug: string): Promise<GreenhouseJob[]> {
       signal: AbortSignal.timeout(10_000),
     });
     if (!res.ok) return [];
-    const data = (await res.json()) as GreenhouseResponse;
+    const data = await res.json() as { jobs: GreenhouseJob[] };
     return data.jobs ?? [];
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
 // ─── Row builders ─────────────────────────────────────────────────────────────
@@ -111,7 +99,7 @@ function leverRow(slug: string, p: LeverPosting) {
     location:            p.categories?.location ?? null,
     department:          p.categories?.department ?? null,
     job_type:            p.categories?.commitment ?? null,
-    apply_url:           p.hostedUrl,
+    apply_url:           p.hostedUrl,          // direct job page URL
     description_snippet: p.descriptionPlain?.slice(0, 200) ?? null,
     posted_at:           p.createdAt ? new Date(p.createdAt).toISOString() : null,
     is_active:           true,
@@ -130,11 +118,45 @@ function greenhouseRow(slug: string, j: GreenhouseJob) {
     location:            j.location?.name ?? null,
     department:          j.departments?.[0]?.name ?? null,
     job_type:            null,
-    apply_url:           j.absolute_url,
+    apply_url:           j.absolute_url,       // direct job page URL
     description_snippet: null,
     posted_at:           j.updated_at ?? null,
     is_active:           true,
   };
+}
+
+// ─── Safe per-company deactivation ───────────────────────────────────────────
+// Only marks a company's OLD jobs inactive after we've confirmed the fetch
+// succeeded. Uses .in() on a list of IDs to avoid NOT IN string bugs.
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function deactivateStale(
+  supabase: SupabaseClient<any>,
+  source: "lever" | "greenhouse",
+  slug: string,
+  activeExternalIds: string[],
+) {
+  // Fetch all current IDs for this company
+  const { data } = await supabase
+    .from("job_listings")
+    .select("external_id")
+    .eq("source", source)
+    .eq("company_slug", slug)
+    .eq("is_active", true);
+
+  if (!data || data.length === 0) return;
+
+  const activeSet = new Set(activeExternalIds);
+  const toDeactivate = data
+    .map((r: { external_id: string }) => r.external_id)
+    .filter((id: string) => !activeSet.has(id));
+
+  if (toDeactivate.length > 0) {
+    await supabase
+      .from("job_listings")
+      .update({ is_active: false })
+      .in("external_id", toDeactivate);
+  }
 }
 
 // ─── Route handler ────────────────────────────────────────────────────────────
@@ -151,49 +173,56 @@ export async function GET(req: NextRequest) {
     { auth: { persistSession: false } }
   );
 
-  type JobRow = ReturnType<typeof leverRow> | ReturnType<typeof greenhouseRow>;
-  const rows: JobRow[] = [];
   const errors: string[] = [];
   const companySummary: Record<string, number> = {};
+  let total = 0;
 
+  // ── Lever ────────────────────────────────────────────────
   for (const slug of Object.keys(LEVER_COMPANIES)) {
     const postings = await fetchLever(slug);
     if (postings.length === 0) {
-      errors.push(`lever:${slug} — 0 jobs returned`);
-    } else {
-      companySummary[`lever:${slug}`] = postings.length;
-      for (const p of postings) rows.push(leverRow(slug, p));
+      errors.push(`lever:${slug} — 0 jobs`);
+      continue; // don't touch this company's existing rows
     }
+
+    const rows = postings.map((p) => leverRow(slug, p));
+    const { error } = await supabase
+      .from("job_listings")
+      .upsert(rows, { onConflict: "external_id" });
+
+    if (error) {
+      errors.push(`lever:${slug} upsert failed: ${error.message}`);
+      continue;
+    }
+
+    // Only deactivate stale rows AFTER successful upsert
+    await deactivateStale(supabase, "lever", slug, rows.map((r) => r.external_id));
+    companySummary[`lever:${slug}`] = postings.length;
+    total += postings.length;
   }
 
+  // ── Greenhouse ───────────────────────────────────────────
   for (const slug of Object.keys(GREENHOUSE_COMPANIES)) {
     const jobs = await fetchGreenhouse(slug);
     if (jobs.length === 0) {
-      errors.push(`greenhouse:${slug} — 0 jobs returned`);
-    } else {
-      companySummary[`greenhouse:${slug}`] = jobs.length;
-      for (const j of jobs) rows.push(greenhouseRow(slug, j));
+      errors.push(`greenhouse:${slug} — 0 jobs`);
+      continue;
     }
+
+    const rows = jobs.map((j) => greenhouseRow(slug, j));
+    const { error } = await supabase
+      .from("job_listings")
+      .upsert(rows, { onConflict: "external_id" });
+
+    if (error) {
+      errors.push(`greenhouse:${slug} upsert failed: ${error.message}`);
+      continue;
+    }
+
+    await deactivateStale(supabase, "greenhouse", slug, rows.map((r) => r.external_id));
+    companySummary[`greenhouse:${slug}`] = jobs.length;
+    total += jobs.length;
   }
 
-  if (rows.length === 0) {
-    return NextResponse.json({ success: false, errors, summary: { total: 0, companies: companySummary } });
-  }
-
-  const { error: upsertError } = await supabase
-    .from("job_listings")
-    .upsert(rows, { onConflict: "external_id" });
-
-  if (upsertError) {
-    return NextResponse.json({ success: false, error: upsertError.message }, { status: 500 });
-  }
-
-  const fetchedExternalIds = rows.map((r) => r.external_id);
-  await supabase
-    .from("job_listings")
-    .update({ is_active: false })
-    .in("source", ["lever", "greenhouse"])
-    .not("external_id", "in", `(${fetchedExternalIds.map((id) => `"${id}"`).join(",")})`);
-
-  return NextResponse.json({ success: true, summary: { total: rows.length, companies: companySummary, errors } });
+  return NextResponse.json({ success: true, summary: { total, companies: companySummary, errors } });
 }
