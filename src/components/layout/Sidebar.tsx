@@ -55,7 +55,6 @@ const NAV: TopItem[] = [
     defaultHref: "/dashboard",
     subItems: [
       { href: "/dashboard", label: "Dashboard" },
-      { href: "/goals",     label: "My goals"  },
       { href: "/bookings",  label: "Sessions"  },
     ],
   },
