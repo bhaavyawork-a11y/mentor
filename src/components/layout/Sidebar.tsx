@@ -13,11 +13,11 @@ import { useEffect, useRef, useState } from "react";
 type LevelEntry = { level: number; name: string; min: number; next: number | null };
 
 const LEVELS: LevelEntry[] = [
-  { level: 1, name: "Rookie",        min: 0,    next: 200  },
-  { level: 2, name: "Explorer",      min: 200,  next: 500  },
-  { level: 3, name: "Practitioner",  min: 500,  next: 1000 },
-  { level: 4, name: "Expert",        min: 1000, next: 2000 },
-  { level: 5, name: "Master",        min: 2000, next: null },
+  { level: 1, name: "Rookie",       min: 0,    next: 200  },
+  { level: 2, name: "Explorer",     min: 200,  next: 500  },
+  { level: 3, name: "Practitioner", min: 500,  next: 1000 },
+  { level: 4, name: "Expert",       min: 1000, next: 2000 },
+  { level: 5, name: "Master",       min: 2000, next: null },
 ];
 
 function calcXP(profile: Profile | null): number {
@@ -35,94 +35,43 @@ function calcXP(profile: Profile | null): number {
 
 function getLevelInfo(xp: number) {
   let current: LevelEntry = LEVELS[0];
-  for (const l of LEVELS) {
-    if (xp >= l.min) current = l;
-  }
+  for (const l of LEVELS) { if (xp >= l.min) current = l; }
   const nextLevel = current.level < 5 ? LEVELS[current.level] : null;
   const progress  = nextLevel ? (xp - current.min) / (nextLevel.min - current.min) : 1;
   const toNext    = nextLevel ? nextLevel.min - xp : 0;
   return { current, nextLevel, progress, toNext };
 }
 
-// ─── Nav structure ────────────────────────────────────────────────────────────
+// ─── Nav items (5 top-level) ──────────────────────────────────────────────────
 
-type SubItem  = { href: string; label: string };
-type TopItem  = { label: string; defaultHref: string; subItems: SubItem[] };
+type NavItem = { label: string; href: string; icon: string; matchPrefixes: string[] };
 
-const NAV: TopItem[] = [
-  {
-    label: "Home",
-    defaultHref: "/dashboard",
-    subItems: [
-      { href: "/dashboard", label: "Dashboard" },
-      { href: "/bookings",  label: "Sessions"  },
-    ],
-  },
-  {
-    label: "Prepare",
-    defaultHref: "/resume",
-    subItems: [
-      { href: "/resume",         label: "Resume builder"  },
-      { href: "/mock-interview", label: "Mock interview"  },
-      { href: "/questions",      label: "Question bank"   },
-      { href: "/offer",          label: "Offer evaluator" },
-    ],
-  },
-  {
-    label: "Job search",
-    defaultHref: "/jobs",
-    subItems: [
-      { href: "/jobs",      label: "Jobs for you"        },
-      { href: "/tracker",   label: "Application tracker" },
-      { href: "/salaries",  label: "Salary data"         },
-      { href: "/companies", label: "Companies"           },
-    ],
-  },
-  {
-    label: "Community",
-    defaultHref: "/communities",
-    subItems: [
-      { href: "/communities", label: "My circles" },
-      { href: "/refer",       label: "Referrals"  },
-    ],
-  },
-  {
-    label: "Experts",
-    defaultHref: "/experts",
-    subItems: [
-      { href: "/experts",            label: "Browse experts" },
-      { href: "/experts?service=dm", label: "Priority DM"    },
-    ],
-  },
+const NAV: NavItem[] = [
+  { label: "Feed",      href: "/feed",        icon: "🏠", matchPrefixes: ["/feed", "/dashboard"]             },
+  { label: "Groups",    href: "/communities",  icon: "👥", matchPrefixes: ["/communities"]                    },
+  { label: "Jobs",      href: "/jobs",         icon: "💼", matchPrefixes: ["/jobs", "/tracker", "/companies"] },
+  { label: "Assistant", href: "/assistant",    icon: "✨", matchPrefixes: ["/assistant"]                      },
+  { label: "Profile",   href: "/profile",      icon: "👤", matchPrefixes: ["/profile", "/settings"]           },
 ];
 
-function isSectionActive(section: TopItem, pathname: string): boolean {
-  return section.subItems.some((sub) => {
-    const base = sub.href.split("?")[0];
-    if (base === "/dashboard") return pathname === "/dashboard";
-    return pathname === base || pathname.startsWith(base + "/");
-  });
+function isNavActive(item: NavItem, pathname: string): boolean {
+  return item.matchPrefixes.some((prefix) =>
+    pathname === prefix || pathname.startsWith(prefix + "/")
+  );
 }
 
-function isSubActive(href: string, pathname: string): boolean {
-  const base = href.split("?")[0];
-  if (base === "/dashboard") return pathname === "/dashboard";
-  return pathname === base || pathname.startsWith(base + "/");
-}
-
-// ─── Inner content (shared between desktop & mobile) ─────────────────────────
+// ─── Inner content ────────────────────────────────────────────────────────────
 
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
-  const pathname = usePathname();
-  const router   = useRouter();
-  const supabase = createClient();
-  const { session } = useSession();
+  const pathname  = usePathname();
+  const router    = useRouter();
+  const supabase  = createClient();
+  const { session }  = useSession();
   const { profile }  = useProfile();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handler(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -149,159 +98,148 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <div style={{
-      width: 240,
+      width: 225,
       height: "100vh",
       backgroundColor: "#ffffff",
       borderRight: "1px solid #e8e4ce",
       display: "flex",
       flexDirection: "column",
     }}>
-      {/* ── Header ── */}
-      <div style={{ padding: "20px 16px 16px", borderBottom: "1px solid #e8e4ce", flexShrink: 0 }}>
+      {/* ── Logo ── */}
+      <div style={{ padding: "18px 16px 14px", borderBottom: "1px solid #e8e4ce", flexShrink: 0 }}>
         <Link
-          href="/dashboard"
+          href="/feed"
           onClick={onNavigate}
           style={{ fontSize: 18, fontWeight: 800, color: "#0A3323", textDecoration: "none", display: "block" }}
         >
           mentor<span style={{ color: "#D3968C" }}>.</span>
         </Link>
+      </div>
 
-        {/* Avatar block + dropdown */}
-        <div style={{ position: "relative", marginTop: 14 }} ref={dropdownRef}>
+      {/* ── Nav items ── */}
+      <div style={{ padding: "10px 8px", flex: 1, overflowY: "auto" }}>
+        {NAV.map((item) => {
+          const active = isNavActive(item, pathname);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={onNavigate}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                padding: "10px 12px",
+                borderRadius: 10,
+                textDecoration: "none",
+                marginBottom: 2,
+                backgroundColor: active ? "#F7F4D5" : "transparent",
+                color: active ? "#0A3323" : "#555",
+                fontWeight: active ? 700 : 500,
+                fontSize: 14,
+                transition: "background 0.15s",
+              }}
+            >
+              <span style={{ fontSize: 16, lineHeight: 1 }}>{item.icon}</span>
+              {item.label}
+              {active && (
+                <span style={{
+                  marginLeft: "auto",
+                  width: 6, height: 6, borderRadius: "50%",
+                  backgroundColor: "#0A3323",
+                  flexShrink: 0,
+                }} />
+              )}
+            </Link>
+          );
+        })}
+
+        {/* ── Divider + quick links ── */}
+        <div style={{ borderTop: "1px solid #e8e4ce", margin: "12px 4px", paddingTop: 12 }}>
+          {[
+            { href: "/bookings",  label: "My sessions" },
+            { href: "/experts",   label: "Find experts" },
+            { href: "/refer",     label: "Invite friends" },
+          ].map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              onClick={onNavigate}
+              style={{
+                display: "block",
+                fontSize: 12,
+                color: "#839958",
+                textDecoration: "none",
+                padding: "6px 12px",
+                borderRadius: 8,
+                fontWeight: 500,
+              }}
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* ── XP footer + avatar ── */}
+      <div style={{ padding: "12px 10px", borderTop: "1px solid #e8e4ce", flexShrink: 0 }}>
+        {/* XP bar */}
+        <div style={{ backgroundColor: "#0A3323", borderRadius: 10, padding: "10px 12px", marginBottom: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+            <span style={{ fontSize: 10, color: "#F7F4D5", textTransform: "uppercase", letterSpacing: "0.6px", fontWeight: 700 }}>
+              Lv {currentLevel.level} · {currentLevel.name}
+            </span>
+            <span style={{ fontSize: 11, color: "#D3968C", fontWeight: 800 }}>{xp} XP</span>
+          </div>
+          <div style={{ height: 4, backgroundColor: "rgba(255,255,255,0.1)", borderRadius: 99, overflow: "hidden", marginBottom: 4 }}>
+            <div style={{ height: "100%", width: `${Math.min(progress * 100, 100)}%`, backgroundColor: "#D3968C", borderRadius: 99 }} />
+          </div>
+          <div style={{ fontSize: 9, color: "rgba(247,244,213,0.4)" }}>
+            {nextLevel ? `${toNext} XP to Lv ${nextLevel.level}` : "Max level · Master"}
+          </div>
+        </div>
+
+        {/* Avatar + dropdown */}
+        <div style={{ position: "relative" }} ref={dropdownRef}>
           <div
             onClick={() => setDropdownOpen((o) => !o)}
             style={{
-              backgroundColor: "#F9F7EC", borderRadius: 10, padding: "10px 12px",
-              display: "flex", alignItems: "center", gap: 10, cursor: "pointer",
-              userSelect: "none",
+              backgroundColor: "#F9F7EC", borderRadius: 10, padding: "9px 12px",
+              display: "flex", alignItems: "center", gap: 10, cursor: "pointer", userSelect: "none",
             }}
           >
             <div style={{
-              width: 34, height: 34, borderRadius: "50%",
+              width: 32, height: 32, borderRadius: "50%",
               backgroundColor: "#D3968C", color: "#ffffff",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 12, fontWeight: 800, flexShrink: 0,
+              fontSize: 11, fontWeight: 800, flexShrink: 0,
             }}>
               {initials || "?"}
             </div>
             <div style={{ minWidth: 0, flex: 1 }}>
-              <div style={{
-                fontSize: 13, fontWeight: 700, color: "#0A3323", lineHeight: 1.2,
-                whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
-              }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#0A3323", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {displayName}
               </div>
-              <div style={{ fontSize: 10, color: "#839958", marginTop: 2 }}>
-                Level {currentLevel.level} · {firstName}
-              </div>
+              <div style={{ fontSize: 10, color: "#839958" }}>{firstName}</div>
             </div>
-            <span style={{ fontSize: 9, color: "#839958", flexShrink: 0 }}>
-              {dropdownOpen ? "▲" : "▼"}
-            </span>
+            <span style={{ fontSize: 9, color: "#839958", flexShrink: 0 }}>{dropdownOpen ? "▲" : "▼"}</span>
           </div>
 
-          {/* Dropdown menu */}
           {dropdownOpen && (
             <div style={{
-              position: "absolute",
-              top: "calc(100% + 6px)",
-              left: 0, right: 0,
-              backgroundColor: "#ffffff",
-              border: "1px solid #e8e4ce",
-              borderRadius: 10,
-              padding: 6,
-              minWidth: 180,
-              zIndex: 100,
+              position: "absolute", bottom: "calc(100% + 6px)", left: 0, right: 0,
+              backgroundColor: "#ffffff", border: "1px solid #e8e4ce",
+              borderRadius: 10, padding: 6, zIndex: 100,
               boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
             }}>
-              <Link
-                href="/profile"
-                onClick={() => { setDropdownOpen(false); onNavigate?.(); }}
-                className="sidebar-dropdown-item"
-              >
-                Edit profile
-              </Link>
-              <Link
-                href="/settings"
-                onClick={() => { setDropdownOpen(false); onNavigate?.(); }}
-                className="sidebar-dropdown-item"
-              >
-                Settings
-              </Link>
+              <Link href="/profile"  onClick={() => { setDropdownOpen(false); onNavigate?.(); }} className="sidebar-dropdown-item">Edit profile</Link>
+              <Link href="/settings" onClick={() => { setDropdownOpen(false); onNavigate?.(); }} className="sidebar-dropdown-item">Settings</Link>
               <div style={{ height: 1, backgroundColor: "#e8e4ce", margin: "4px 0" }} />
-              <button
-                onClick={handleSignOut}
-                className="sidebar-dropdown-item"
-                style={{ width: "100%", background: "none", border: "none", textAlign: "left", cursor: "pointer", fontFamily: "inherit" }}
-              >
+              <button onClick={handleSignOut} className="sidebar-dropdown-item" style={{ width: "100%", background: "none", border: "none", textAlign: "left", cursor: "pointer", fontFamily: "inherit" }}>
                 Sign out
               </button>
             </div>
           )}
-        </div>
-      </div>
-
-      {/* ── Body ── */}
-      <div style={{ padding: "12px 10px", flex: 1, overflowY: "auto" }}>
-        {NAV.map((section) => {
-          const active = isSectionActive(section, pathname);
-          return (
-            <div key={section.label} style={{ marginBottom: 2 }}>
-              <Link
-                href={section.defaultHref}
-                onClick={onNavigate}
-                className={`sidebar-toplevel${active ? " sidebar-toplevel-active" : ""}`}
-              >
-                {section.label}
-              </Link>
-
-              {active && (
-                <div style={{ marginBottom: 4 }}>
-                  {section.subItems.map((sub) => {
-                    const subActive = isSubActive(sub.href, pathname);
-                    return (
-                      <Link
-                        key={sub.href}
-                        href={sub.href}
-                        onClick={onNavigate}
-                        className={`sidebar-subitem${subActive ? " sidebar-subitem-active" : ""}`}
-                      >
-                        {sub.label}
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* ── Footer XP card ── */}
-      <div style={{ padding: "12px 10px", borderTop: "1px solid #e8e4ce", flexShrink: 0 }}>
-        <div style={{ backgroundColor: "#0A3323", borderRadius: 10, padding: "12px 14px" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-            <span style={{ fontSize: 10, color: "#F7F4D5", textTransform: "uppercase", letterSpacing: "0.6px", fontWeight: 700 }}>
-              Level {currentLevel.level} · {firstName}
-            </span>
-            <span style={{ fontSize: 12, color: "#D3968C", fontWeight: 800 }}>
-              {xp} XP
-            </span>
-          </div>
-          <div style={{
-            height: 5, backgroundColor: "rgba(255,255,255,0.1)",
-            borderRadius: 99, overflow: "hidden", marginBottom: 6,
-          }}>
-            <div style={{
-              height: "100%", width: `${Math.min(progress * 100, 100)}%`,
-              backgroundColor: "#D3968C", borderRadius: 99,
-            }} />
-          </div>
-          <div style={{ fontSize: 10, color: "rgba(247,244,213,0.4)" }}>
-            {nextLevel
-              ? `${toNext} XP to Level ${nextLevel.level} · ${nextLevel.name}`
-              : "Max level reached · Master"}
-          </div>
         </div>
       </div>
     </div>
@@ -315,7 +253,7 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Desktop: in-flow sticky */}
+      {/* Desktop: sticky in-flow */}
       <div className="sidebar-desktop">
         <div style={{ position: "sticky", top: 0 }}>
           <SidebarContent />
@@ -323,27 +261,15 @@ export default function Sidebar() {
       </div>
 
       {/* Mobile: hamburger */}
-      <button
-        className="sidebar-hamburger"
-        onClick={() => setMobileOpen(true)}
-        aria-label="Open menu"
-      >
-        ☰
-      </button>
+      <button className="sidebar-hamburger" onClick={() => setMobileOpen(true)} aria-label="Open menu">☰</button>
 
       {/* Mobile: slide-in drawer */}
-      <div
-        className="sidebar-mobile"
-        style={{ transform: mobileOpen ? "translateX(0)" : "translateX(-240px)" }}
-      >
+      <div className="sidebar-mobile" style={{ transform: mobileOpen ? "translateX(0)" : "translateX(-240px)" }}>
         <SidebarContent onNavigate={() => setMobileOpen(false)} />
       </div>
 
       {/* Mobile: backdrop */}
-      <div
-        className={`sidebar-backdrop${mobileOpen ? " sidebar-backdrop-visible" : ""}`}
-        onClick={() => setMobileOpen(false)}
-      />
+      <div className={`sidebar-backdrop${mobileOpen ? " sidebar-backdrop-visible" : ""}`} onClick={() => setMobileOpen(false)} />
     </>
   );
 }

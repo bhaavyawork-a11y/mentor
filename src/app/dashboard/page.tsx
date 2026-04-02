@@ -74,20 +74,20 @@ export default async function DashboardPage() {
 
   const userId = session.user.id;
 
-  const [profileRes, goalsRes, expertsRes, activityRes, referralRes] = await Promise.all([
+  const [profileRes, goalsRes, expertsRes, activityRes, circlesRes] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", userId).single(),
     supabase.from("goals").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
     supabase.from("experts").select("id,full_name,headline,expertise_areas").eq("is_active", true).order("rating", { ascending: false }).limit(2),
     supabase.from("bookings").select("created_at").eq("user_id", userId).gte("created_at", new Date(Date.now() - 7 * 86_400_000).toISOString()),
-    supabase.from("referrals").select("id", { count: "exact" }).eq("referrer_id", userId),
+    supabase.from("community_members").select("community_id", { count: "exact" }).eq("user_id", userId),
   ]);
 
   const profile        = profileRes.data as Profile | null;
   const allGoals       = (goalsRes.data ?? []) as Goal[];
   const recentDates    = (activityRes.data ?? []).map((r: { created_at: string }) => r.created_at);
-  const referralCount  = referralRes.count ?? 0;
+  const circlesCount   = circlesRes.count ?? 0;
 
-  if (!profile?.current_job_role) redirect("/welcome");
+  if (!profile?.current_job_role) redirect("/profile");
 
   const activeGoals  = allGoals.filter((g) => g.status === "active");
   const streakDots   = buildStreakDots(recentDates);
@@ -202,8 +202,8 @@ export default async function DashboardPage() {
       {/* ── Stats row ── */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px" }}>
         {[
-          { accent: "#D3968C", val: referralCount,    label: "Referral connections", badge: referralCount > 0 ? "Active" : "Find some!" },
-          { accent: "#0A3323", val: 0,                label: "Circles joined",       badge: "Join one →"                               },
+          { accent: "#D3968C", val: circlesCount,    label: "Circles joined",    badge: circlesCount > 0 ? "Active" : "Join one →" },
+          { accent: "#0A3323", val: 0,               label: "Referrals given",   badge: "Coming soon"                              },
           { accent: "#839958", val: `${streak}🔥`,   label: "Day streak",           badge: streak > 0 ? "Active" : "Begin today"       },
           { accent: "#105666", val: daysToGoal,       label: "Days to goal",         badge: daysToGoal < 30 ? "This month!" : "On track" },
         ].map(({ accent, val, label, badge }) => (
