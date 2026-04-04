@@ -51,6 +51,7 @@ const NAV: NavItem[] = [
   { label: "Groups",    href: "/communities",  icon: "👥", matchPrefixes: ["/communities"]                    },
   { label: "Jobs",      href: "/jobs",         icon: "💼", matchPrefixes: ["/jobs", "/tracker", "/companies"] },
   { label: "Assistant", href: "/assistant",    icon: "✨", matchPrefixes: ["/assistant"]                      },
+  { label: "Messages",  href: "/messages",     icon: "💬", matchPrefixes: ["/messages"]                       },
   { label: "Profile",   href: "/profile",      icon: "👤", matchPrefixes: ["/profile", "/settings"]           },
 ];
 
