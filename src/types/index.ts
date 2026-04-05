@@ -24,6 +24,8 @@ export interface Profile {
   last_interview_score: number | null;
   last_interview_at: string | null;
   interview_xp: number;
+  followers_count: number;
+  following_count: number;
   created_at: string;
   updated_at: string;
 }
