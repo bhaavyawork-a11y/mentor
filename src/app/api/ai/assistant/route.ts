@@ -1,13 +1,7 @@
 import { NextRequest } from "next/server";
-import Groq from "groq-sdk";
 
-// Force dynamic so Next.js never tries to statically render this route
+// Force dynamic — never statically render this route
 export const dynamic = "force-dynamic";
-
-// Lazy client — instantiated per request so build-time analysis never touches it
-function getClient() {
-  return new Groq({ apiKey: process.env.GROQ_API_KEY });
-}
 
 // ─── System prompt ─────────────────────────────────────────────────────────────
 const SYSTEM_PROMPT = `You are a sharp, knowledgeable career advisor built into Mentor — a community platform for early-career professionals in India. You are NOT a generic chatbot. You are a trusted senior who has deep knowledge of the Indian job market, corporate culture, salary benchmarks, and hiring practices.
@@ -69,7 +63,6 @@ const SYSTEM_PROMPT = `You are a sharp, knowledgeable career advisor built into 
 - Keep responses focused — 150-300 words for most questions.
 - Use short paragraphs. Avoid bullet points unless listing multiple things.
 - If the user gives you their profile details, tailor everything to their exact numbers and situation.
-- If you don't know something specific (like a company's internal salary band you haven't seen), say so honestly and give a range based on what you know.
 - Never give generic advice. Be specific. Give numbers. Give examples.`;
 
 export async function POST(req: NextRequest) {
@@ -80,37 +73,75 @@ export async function POST(req: NextRequest) {
       return new Response(JSON.stringify({ error: "Invalid request" }), { status: 400 });
     }
 
-    // Inject profile context into system prompt
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) {
+      return new Response(JSON.stringify({ error: "GROQ_API_KEY not configured" }), { status: 500 });
+    }
+
     const systemWithProfile = profileContext
       ? `${SYSTEM_PROMPT}\n\n---\n## User's profile (tailor all advice to this)\n${profileContext}\n---`
       : SYSTEM_PROMPT;
 
-    // Build messages array (keep last 20 for context window)
     const chatMessages = messages.slice(-20).map((m: { role: string; content: string }) => ({
-      role: m.role as "user" | "assistant",
+      role: m.role,
       content: m.content,
     }));
 
-    // Stream the response
-    const stream = await getClient().chat.completions.create({
-      model: "llama-3.3-70b-versatile",
-      messages: [
-        { role: "system", content: systemWithProfile },
-        ...chatMessages,
-      ],
-      max_tokens: 1024,
-      temperature: 0.7,
-      stream: true,
+    // Call Groq API directly with fetch — no SDK, no bundling issues
+    const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          { role: "system", content: systemWithProfile },
+          ...chatMessages,
+        ],
+        max_tokens: 1024,
+        temperature: 0.7,
+        stream: true,
+      }),
     });
 
-    // Pipe the Groq stream to a Web ReadableStream
+    if (!groqRes.ok) {
+      const err = await groqRes.text();
+      console.error("Groq API error:", err);
+      return new Response(JSON.stringify({ error: "Groq API error" }), { status: 500 });
+    }
+
+    // Parse the SSE stream from Groq and forward plain text chunks to the client
     const encoder = new TextEncoder();
     const readable = new ReadableStream({
       async start(controller) {
+        const reader = groqRes.body!.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
         try {
-          for await (const chunk of stream) {
-            const text = chunk.choices[0]?.delta?.content ?? "";
-            if (text) controller.enqueue(encoder.encode(text));
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split("\n");
+            buffer = lines.pop() ?? ""; // keep incomplete line in buffer
+
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (!trimmed || trimmed === "data: [DONE]") continue;
+              if (!trimmed.startsWith("data: ")) continue;
+
+              try {
+                const json = JSON.parse(trimmed.slice(6));
+                const text = json.choices?.[0]?.delta?.content ?? "";
+                if (text) controller.enqueue(encoder.encode(text));
+              } catch {
+                // skip malformed lines
+              }
+            }
           }
         } finally {
           controller.close();
