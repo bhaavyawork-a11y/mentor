@@ -1,7 +1,13 @@
 import { NextRequest } from "next/server";
 import Groq from "groq-sdk";
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+// Force dynamic so Next.js never tries to statically render this route
+export const dynamic = "force-dynamic";
+
+// Lazy client — instantiated per request so build-time analysis never touches it
+function getClient() {
+  return new Groq({ apiKey: process.env.GROQ_API_KEY });
+}
 
 // ─── System prompt ─────────────────────────────────────────────────────────────
 const SYSTEM_PROMPT = `You are a sharp, knowledgeable career advisor built into Mentor — a community platform for early-career professionals in India. You are NOT a generic chatbot. You are a trusted senior who has deep knowledge of the Indian job market, corporate culture, salary benchmarks, and hiring practices.
@@ -86,7 +92,7 @@ export async function POST(req: NextRequest) {
     }));
 
     // Stream the response
-    const stream = await groq.chat.completions.create({
+    const stream = await getClient().chat.completions.create({
       model: "llama-3.3-70b-versatile",
       messages: [
         { role: "system", content: systemWithProfile },
