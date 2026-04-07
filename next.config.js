@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Prevent Next.js from bundling groq-sdk (mixed ESM/CJS exports cause build errors)
+  serverExternalPackages: ["groq-sdk"],
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "media.licdn.com" },
