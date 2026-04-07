@@ -49,7 +49,7 @@ type NavItem = { label: string; href: string; icon: string; matchPrefixes: strin
 const NAV: NavItem[] = [
   { label: "Feed",      href: "/feed",        icon: "🏠", matchPrefixes: ["/feed", "/dashboard"]                       },
   { label: "Groups",    href: "/communities",  icon: "👥", matchPrefixes: ["/communities"]                              },
-  { label: "Sessions",  href: "/sessions",     icon: "📅", matchPrefixes: ["/sessions", "/experts", "/bookings"]        },
+  { label: "Experts",   href: "/experts",      icon: "📅", matchPrefixes: ["/experts", "/sessions", "/bookings"]         },
   { label: "Jobs",      href: "/jobs",         icon: "💼", matchPrefixes: ["/jobs", "/tracker", "/companies"]           },
   { label: "Assistant", href: "/assistant",    icon: "✨", matchPrefixes: ["/assistant"]                                },
   { label: "Messages",  href: "/messages",     icon: "💬", matchPrefixes: ["/messages"]                                 },
