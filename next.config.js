@@ -13,7 +13,9 @@ const nextConfig = {
   },
   async redirects() {
     return [
-      { source: "/goals", destination: "/dashboard", permanent: true },
+      { source: "/goals",    destination: "/dashboard", permanent: true },
+      { source: "/bookings", destination: "/sessions",  permanent: true },
+      { source: "/experts",  destination: "/sessions",  permanent: true },
     ];
   },
 };

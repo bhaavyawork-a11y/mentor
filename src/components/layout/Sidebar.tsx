@@ -47,12 +47,13 @@ function getLevelInfo(xp: number) {
 type NavItem = { label: string; href: string; icon: string; matchPrefixes: string[] };
 
 const NAV: NavItem[] = [
-  { label: "Feed",      href: "/feed",        icon: "🏠", matchPrefixes: ["/feed", "/dashboard"]             },
-  { label: "Groups",    href: "/communities",  icon: "👥", matchPrefixes: ["/communities"]                    },
-  { label: "Jobs",      href: "/jobs",         icon: "💼", matchPrefixes: ["/jobs", "/tracker", "/companies"] },
-  { label: "Assistant", href: "/assistant",    icon: "✨", matchPrefixes: ["/assistant"]                      },
-  { label: "Messages",  href: "/messages",     icon: "💬", matchPrefixes: ["/messages"]                       },
-  { label: "Profile",   href: "/profile",      icon: "👤", matchPrefixes: ["/profile", "/settings"]           },
+  { label: "Feed",      href: "/feed",        icon: "🏠", matchPrefixes: ["/feed", "/dashboard"]                       },
+  { label: "Groups",    href: "/communities",  icon: "👥", matchPrefixes: ["/communities"]                              },
+  { label: "Sessions",  href: "/sessions",     icon: "📅", matchPrefixes: ["/sessions", "/experts", "/bookings"]        },
+  { label: "Jobs",      href: "/jobs",         icon: "💼", matchPrefixes: ["/jobs", "/tracker", "/companies"]           },
+  { label: "Assistant", href: "/assistant",    icon: "✨", matchPrefixes: ["/assistant"]                                },
+  { label: "Messages",  href: "/messages",     icon: "💬", matchPrefixes: ["/messages"]                                 },
+  { label: "Profile",   href: "/profile",      icon: "👤", matchPrefixes: ["/profile", "/settings"]                    },
 ];
 
 function isNavActive(item: NavItem, pathname: string): boolean {
@@ -158,9 +159,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         {/* ── Divider + quick links ── */}
         <div style={{ borderTop: "1px solid #e8e4ce", margin: "12px 4px", paddingTop: 12 }}>
           {[
-            { href: "/bookings",  label: "My sessions" },
-            { href: "/experts",   label: "Find experts" },
-            { href: "/refer",     label: "Invite friends" },
+            { href: "/refer", label: "Invite friends" },
           ].map(({ href, label }) => (
             <Link
               key={href}
