@@ -108,8 +108,12 @@ export async function POST(req: NextRequest) {
 
     if (!groqRes.ok) {
       const err = await groqRes.text();
-      console.error("Groq API error:", err);
-      return new Response(JSON.stringify({ error: "Groq API error" }), { status: 500 });
+      console.error("Groq API error:", groqRes.status, err);
+      // Return the actual status so the frontend can show a useful message
+      return new Response(
+        JSON.stringify({ error: `Groq API error ${groqRes.status}`, detail: err }),
+        { status: groqRes.status === 401 ? 401 : 502 }
+      );
     }
 
     // Parse the SSE stream from Groq and forward plain text chunks to the client

@@ -201,7 +201,13 @@ export default function AssistantPage() {
         signal: controller.signal,
       });
 
-      if (!res.ok || !res.body) throw new Error("API error");
+      if (!res.ok || !res.body) {
+        const errData = await res.json().catch(() => ({}));
+        const msg = res.status === 401
+          ? "Invalid API key — check GROQ_API_KEY in Vercel settings."
+          : errData.detail || "API error — please try again.";
+        throw new Error(msg);
+      }
 
       // Start streaming
       setIsWaiting(false);
@@ -227,7 +233,7 @@ export default function AssistantPage() {
       setIsWaiting(false);
       setMessages([...newMessages, {
         role: "assistant",
-        content: "Something went wrong — please try again. If the issue persists, the AI service may be temporarily unavailable.",
+        content: `Something went wrong — ${(err as Error).message || "please try again."}`,
       }]);
     } finally {
       setIsWaiting(false);
