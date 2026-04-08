@@ -250,7 +250,7 @@ export default function AssistantPage() {
   const busy = isStreaming || isWaiting;
 
   return (
-    <div style={{ maxWidth: 760, margin: "0 auto", display: "flex", flexDirection: "column", height: "calc(100vh - 56px)" }}>
+    <div className="page-chat">
 
       {/* ── Header ── */}
       <div style={{ padding: "20px 0 16px", borderBottom: "1px solid #e8e4ce", flexShrink: 0 }}>

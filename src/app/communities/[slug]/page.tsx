@@ -671,16 +671,9 @@ export default function CommunityDetailPage() {
   const iconBg = community.icon_color ?? "#F7F4D5";
 
   return (
-    <div style={{
-      display: "flex", height: "calc(100vh - 0px)",
-      maxHeight: "calc(100vh - 0px)", overflow: "hidden",
-    }}>
+    <div className="community-inner">
       {/* ── Left panel: community + channels ── */}
-      <div style={{
-        width: 260, flexShrink: 0, borderRight: "1px solid #e8e4ce",
-        display: "flex", flexDirection: "column", backgroundColor: "#fafaf8",
-        height: "100%", overflowY: "auto",
-      }}>
+      <div className="community-channels-panel">
         {/* Community header */}
         <div style={{ padding: "16px 14px", borderBottom: "1px solid #e8e4ce" }}>
           <button

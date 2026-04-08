@@ -384,7 +384,7 @@ export default function SessionsPage() {
   ).length;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 56px)", maxWidth: 1100, margin: "0 auto" }}>
+    <div className="experts-wrap">
 
       {/* ── Page header ── */}
       <div style={{ paddingBottom: 20, borderBottom: "1px solid #e8e4ce", flexShrink: 0 }}>
@@ -395,7 +395,7 @@ export default function SessionsPage() {
       </div>
 
       {/* ── Split layout ── */}
-      <div style={{ display: "flex", gap: 24, flex: 1, overflow: "hidden", paddingTop: 20 }}>
+      <div className="experts-split">
 
         {/* ── LEFT: Expert discovery ── */}
         <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
@@ -457,11 +457,7 @@ export default function SessionsPage() {
         </div>
 
         {/* ── RIGHT: My sessions ── */}
-        <div style={{
-          width: 300, flexShrink: 0, backgroundColor: "#fff",
-          border: "1px solid #e8e4ce", borderRadius: 16,
-          display: "flex", flexDirection: "column", overflow: "hidden",
-        }}>
+        <div className="experts-panel">
           {/* Panel header */}
           <div style={{ padding: "16px 20px 14px", borderBottom: "1px solid #e8e4ce", flexShrink: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>

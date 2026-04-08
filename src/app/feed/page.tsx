@@ -713,10 +713,10 @@ export default function FeedPage() {
     <>
       {sharePost && <ShareModal post={sharePost} currentUserId={userId} onClose={()=>setSharePost(null)} />}
 
-      <div style={{ maxWidth:1060, margin:"0 auto", display:"grid", gridTemplateColumns:"220px 1fr 280px", gap:16, alignItems:"start", padding:"8px 0 32px" }}>
+      <div className="feed-grid">
 
         {/* Left */}
-        <div>
+        <div className="feed-left-col">
           {userId && (
             <ProfileCard
               displayName={displayName}
@@ -794,7 +794,7 @@ export default function FeedPage() {
         </div>
 
         {/* Right */}
-        <div>
+        <div className="feed-right-col">
           <RightSidebar
             communities={communities} myCommIds={myCommIds}
             suggestedUsers={suggestedUsers} followingIds={followingIds}

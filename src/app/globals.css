@@ -187,47 +187,122 @@
 /* ─── Bottom nav: show only on mobile ──────────────────────────────────── */
 .mobile-bottom-nav { display: none; }
 
-/* Spacer inside BottomNav pushes content up */
+/* Spacer inside BottomNav pushes content up above the tab bar */
 .bottom-nav-spacer {
   display: none;
-  height: calc(56px + env(safe-area-inset-bottom, 0px));
+  height: calc(64px + env(safe-area-inset-bottom, 0px));
 }
 
 /* Desktop main padding */
 .app-main { padding: 28px 32px; }
 
-@media (max-width: 767px) {
-  /* Show bottom nav, hide sidebar */
-  .mobile-bottom-nav { display: block; }
-  .sidebar-desktop   { display: none; }
-  .bottom-nav-spacer { display: block; }
+/* ─── Feed layout ──────────────────────────────────────────────────────── */
+.feed-grid {
+  max-width: 1060px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 220px 1fr 280px;
+  gap: 16px;
+  align-items: start;
+  padding: 8px 0 32px;
+}
 
-  /* Reduce main content padding on mobile */
+/* ─── Experts split layout ─────────────────────────────────────────────── */
+.experts-wrap {
+  display: flex;
+  flex-direction: column;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+.experts-split {
+  display: flex;
+  gap: 24px;
+  flex: 1;
+  overflow: hidden;
+  padding-top: 20px;
+}
+.experts-panel {
+  width: 300px;
+  flex-shrink: 0;
+  background: #fff;
+  border: 1px solid #e8e4ce;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── Chat pages (assistant + community) ───────────────────────────────── */
+/* Full-height flex column that fits in the available viewport */
+.page-chat {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 56px); /* 28px top + 28px bottom padding */
+}
+
+/* Community full-screen layout negates AppLayout padding */
+.community-slug-layout {
+  margin: -28px -32px;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.community-inner {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+.community-channels-panel {
+  width: 260px;
+  flex-shrink: 0;
+  border-right: 1px solid #e8e4ce;
+  display: flex;
+  flex-direction: column;
+  background: #fafaf8;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* ─── Mobile breakpoint ─────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  /* ── Bottom nav on, sidebar OFF ── */
+  .mobile-bottom-nav  { display: block; }
+  .sidebar-desktop    { display: none; }
+  .sidebar-hamburger  { display: none !important; }   /* replaced by bottom nav */
+  .sidebar-mobile     { display: none !important; }
+  .sidebar-backdrop   { display: none !important; }
+  .bottom-nav-spacer  { display: block; }
+
+  /* ── Main content padding ── */
   .app-main {
     padding: 16px !important;
-    /* Extra top space since no sidebar header */
-    padding-top: 20px !important;
+    padding-top: 16px !important;
   }
 
-  .sidebar-hamburger {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    top: 12px; left: 12px;
-    z-index: 200;
-    width: 40px; height: 40px;
-    background: #0A3323;
-    color: #F7F4D5;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 18px;
+  /* ── Feed: single column, hide sidebars ── */
+  .feed-grid {
+    grid-template-columns: 1fr !important;
+    padding: 0 0 16px !important;
+    gap: 0 !important;
   }
+  .feed-left-col  { display: none !important; }
+  .feed-right-col { display: none !important; }
 
-  /* ── Main content: add top padding on mobile so hamburger doesn't overlap ── */
-  .app-content {
-    padding-top: 64px !important;
+  /* ── Experts: stack vertically, hide sessions panel ── */
+  .experts-wrap {
+    height: auto !important;
+  }
+  .experts-split {
+    flex-direction: column !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  .experts-panel {
+    display: none !important;   /* hide "My Sessions" sidebar on mobile */
   }
 
   /* ── Expert dashboard: stack sidebar on mobile ── */
@@ -243,15 +318,34 @@
     gap: 6px !important;
   }
 
-  /* ── Grid columns collapse on mobile ── */
-  .mobile-stack {
-    flex-direction: column !important;
+  /* ── Generic responsive helpers ── */
+  .mobile-stack   { flex-direction: column !important; }
+  .mobile-full    { width: 100% !important; max-width: 100% !important; }
+  .mobile-hide    { display: none !important; }
+
+  /* ── Responsive grid overrides ── */
+  .grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+  .grid-3 { grid-template-columns: 1fr !important; }
+  .grid-2 { grid-template-columns: 1fr !important; }
+
+  /* ── Assistant chat page ── */
+  .page-chat {
+    /* 16px top + 16px bottom padding + ~64px bottom nav */
+    height: calc(100dvh - 96px - env(safe-area-inset-bottom, 0px));
+    max-height: none;
   }
-  .mobile-full {
-    width: 100% !important;
-    max-width: 100% !important;
+
+  /* ── Community full-screen layout ── */
+  .community-slug-layout {
+    margin: -16px -16px;       /* undo mobile padding */
+    /* leave room for bottom nav */
+    height: calc(100dvh - env(safe-area-inset-bottom, 0px) - 56px);
   }
-  .mobile-hide {
+  .community-inner {
+    height: 100%;
+  }
+  /* Hide the 260px channels sidebar — use bottom nav instead */
+  .community-channels-panel {
     display: none !important;
   }
 }

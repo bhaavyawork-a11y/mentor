@@ -222,7 +222,7 @@ export default function CommunitiesPage() {
               <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 14px" }}>
                 Discover communities
               </p>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }} className="grid-3">
                 {browseComms.map((c) => (
                   <BrowseCard key={c.id} community={c} onJoin={handleJoin} />
                 ))}
