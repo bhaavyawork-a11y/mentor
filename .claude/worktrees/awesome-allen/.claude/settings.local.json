@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Skill(claude-api)",
+      "Bash(npx supabase:*)",
+      "Bash(curl:*)",
+      "Bash(PROJECT_REF=\"tvlqmghozpcpoygvlzrp\")",
+      "Bash(SERVICE_KEY=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2bHFtZ2hvenBjcG95Z3ZsenJwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3Mzk0NDI0NywiZXhwIjoyMDg5NTIwMjQ3fQ.T8ITVrLgIdPKpdEIwGc6mAwKo1qBFbs3F5UGeqMP2aw\")",
+      "Bash(__NEW_LINE_4ae4f3c4d9664f81__ curl:*)",
+      "Bash(sed -i '' 's/#eee\\\\\\([^0-9a-fA-F]\\\\\\)/#e8e4ce\\\\1/g' src/app/dashboard/page.tsx)",
+      "Bash(sed -i '' 's/#eee\"\"/#e8e4ce\"\"/g' src/app/dashboard/page.tsx)",
+      "Bash(sed -i '' 's/#eee\\\\\\([^0-9a-fA-F]\\\\\\)/#e8e4ce\\\\1/g' src/app/mock-interview/page.tsx)",
+      "Bash(sed -i '' 's/#eee\"\"/#e8e4ce\"\"/g' src/app/mock-interview/page.tsx)",
+      "Bash(cd \"/Users/bhaavyagupta/Downloads/mentor 3\" grep -rn '#[0-9a-fA-F]\\\\{3,6\\\\}' src/app/tracker/page.tsx)",
+      "Bash(cd:*)",
+      "Bash(cd \"/Users/bhaavyagupta/Downloads/mentor 3\" echo \"=== New colors usage ===\" echo \"--- #0A3323 ---\" grep -rn '#0A3323' src/ --include=\"*.tsx\" --include=\"*.ts\" --include=\"*.css\")",
+      "Bash(vercel --version)",
+      "Bash(npx vercel:*)",
+      "Bash(python3 -m json.tool)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}

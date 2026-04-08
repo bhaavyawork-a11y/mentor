@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { createClient } from "@supabase/supabase-js";
+import { sendSessionConfirmedToUser, sendSessionCompletedToUser } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
+
+// Service-role client for fetching user email (bypasses RLS)
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 function makeSupabase() {
   const cookieStore = cookies();
@@ -84,7 +92,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   // Verify expert ownership
   const { data: expert } = await supabase
     .from("experts")
-    .select("id, google_refresh_token")
+    .select("id, full_name, google_refresh_token")
     .eq("user_id", session.user.id)
     .single();
   if (!expert) return NextResponse.json({ error: "Expert profile not found" }, { status: 404 });
@@ -142,5 +150,45 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // ── Fire emails based on new status ────────────────────────────────────────
+  if (body.status === "confirmed" || body.status === "completed") {
+    try {
+      const updatedService = Array.isArray(data.service) ? data.service[0] : data.service;
+      const updatedUser    = Array.isArray(data.user)    ? data.user[0]    : data.user;
+
+      // Get user email via admin client (RLS would block this otherwise)
+      const { data: userProfile } = await supabaseAdmin
+        .from("profiles")
+        .select("email")
+        .eq("id", booking.user_id)
+        .single();
+
+      if (userProfile?.email) {
+        if (body.status === "confirmed") {
+          await sendSessionConfirmedToUser({
+            to:          userProfile.email,
+            userName:    updatedUser?.full_name ?? "there",
+            expertName:  expert.full_name ?? "your expert",
+            serviceTitle: updatedService?.title ?? "session",
+            scheduledAt: booking.scheduled_at ?? undefined,
+            meetingUrl:  (update.meeting_url as string | undefined) ?? booking.meeting_url ?? undefined,
+          });
+        } else if (body.status === "completed") {
+          await sendSessionCompletedToUser({
+            to:          userProfile.email,
+            userName:    updatedUser?.full_name ?? "there",
+            expertName:  expert.full_name ?? "your expert",
+            serviceTitle: updatedService?.title ?? "session",
+            expertId:    expert.id,
+          });
+        }
+      }
+    } catch (emailErr) {
+      console.error("Email send failed:", emailErr);
+      // Don't fail the request — booking update succeeded
+    }
+  }
+
   return NextResponse.json(data);
 }

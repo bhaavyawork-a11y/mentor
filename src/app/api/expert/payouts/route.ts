@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { sendPayoutRequestedToExpert } from "@/lib/email";
 
 function makeSupabase() {
   const cookieStore = cookies();
@@ -79,6 +80,19 @@ export async function POST(req: NextRequest) {
     ...(method === "upi"          ? { upi_id }                                                           : {}),
     ...(method === "bank_transfer" ? { bank_account_number: bank_account, bank_ifsc, bank_account_name: bank_name } : {}),
   }).eq("id", expert.id);
+
+  // Send payout confirmation email
+  const { data: { session: authSession } } = await supabase.auth.getSession();
+  if (authSession?.user?.email) {
+    const { data: expertRecord } = await supabase.from("experts").select("full_name").eq("id", expert.id).single();
+    sendPayoutRequestedToExpert({
+      to:         authSession.user.email,
+      expertName: expertRecord?.full_name ?? "Expert",
+      amountInr:  new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(amount_cents / 100),
+      method:     method ?? "upi",
+      payoutId:   data.id,
+    }).catch(console.error);
+  }
 
   return NextResponse.json(data, { status: 201 });
 }

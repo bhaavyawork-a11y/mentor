@@ -203,4 +203,34 @@
     cursor: pointer;
     font-size: 18px;
   }
+
+  /* ── Main content: add top padding on mobile so hamburger doesn't overlap ── */
+  .app-content {
+    padding-top: 64px !important;
+  }
+
+  /* ── Expert dashboard: stack sidebar on mobile ── */
+  .expert-layout {
+    flex-direction: column !important;
+  }
+  .expert-sidebar {
+    width: 100% !important;
+    min-height: auto !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    padding: 12px !important;
+    gap: 6px !important;
+  }
+
+  /* ── Grid columns collapse on mobile ── */
+  .mobile-stack {
+    flex-direction: column !important;
+  }
+  .mobile-full {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .mobile-hide {
+    display: none !important;
+  }
 }
