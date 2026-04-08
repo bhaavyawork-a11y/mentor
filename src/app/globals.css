@@ -184,10 +184,31 @@
 }
 .sidebar-backdrop-visible { display: block; }
 
+/* ─── Bottom nav: show only on mobile ──────────────────────────────────── */
+.mobile-bottom-nav { display: none; }
+
+/* Spacer inside BottomNav pushes content up */
+.bottom-nav-spacer {
+  display: none;
+  height: calc(56px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Desktop main padding */
+.app-main { padding: 28px 32px; }
+
 @media (max-width: 767px) {
-  .sidebar-desktop {
-    display: none;
+  /* Show bottom nav, hide sidebar */
+  .mobile-bottom-nav { display: block; }
+  .sidebar-desktop   { display: none; }
+  .bottom-nav-spacer { display: block; }
+
+  /* Reduce main content padding on mobile */
+  .app-main {
+    padding: 16px !important;
+    /* Extra top space since no sidebar header */
+    padding-top: 20px !important;
   }
+
   .sidebar-hamburger {
     display: flex;
     align-items: center;
