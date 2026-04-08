@@ -1,6 +1,9 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy-init so Next.js build doesn't blow up when RESEND_API_KEY isn't set
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY ?? "");
+}
 
 const FROM = "Mentor <hello@mentorapp.in>";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://mentorapp.in";
@@ -112,7 +115,7 @@ export async function sendBookingConfirmedToUser(opts: {
     ${btn(`${APP_URL}/experts`, "View my bookings", false)}
   `);
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM,
     to,
     subject: `Booking confirmed: ${serviceTitle} with ${expertName}`,
@@ -149,7 +152,7 @@ export async function sendNewBookingToExpert(opts: {
     ${btn(`${APP_URL}/expert-dashboard/bookings`, "View in dashboard")}
   `);
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM,
     to,
     subject: `New booking from ${userName}: ${serviceTitle}`,
@@ -193,7 +196,7 @@ export async function sendSessionConfirmedToUser(opts: {
     </p>
   `);
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM,
     to,
     subject: `Session confirmed with ${expertName} — ${dateStr}`,
@@ -222,7 +225,7 @@ export async function sendSessionCompletedToUser(opts: {
     ${btn(`${APP_URL}/experts`, "Browse experts", false)}
   `);
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM,
     to,
     subject: `How was your session with ${expertName}?`,
@@ -269,7 +272,7 @@ export async function sendWelcomeEmail(opts: {
     ${btn(`${APP_URL}/welcome`, "Set up your profile →")}
   `);
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM,
     to,
     subject: `Welcome to Mentor, ${firstName} 🎉`,
@@ -302,7 +305,7 @@ export async function sendPayoutRequestedToExpert(opts: {
     ${btn(`${APP_URL}/expert-dashboard/earnings`, "View earnings")}
   `);
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM,
     to,
     subject: `Payout of ${amountInr} is being processed`,
