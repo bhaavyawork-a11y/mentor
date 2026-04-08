@@ -577,7 +577,7 @@ function RightSidebar({ communities, myCommIds, suggestedUsers, followingIds, on
 
 export default function FeedPage() {
   const supabase = createClient();
-  const { session } = useSession();
+  const { session, loading: sessionLoading } = useSession();
   const { profile } = useProfile();
 
   const [posts, setPosts] = useState<Post[]>([]);
@@ -593,6 +593,13 @@ export default function FeedPage() {
   const [sharePost, setSharePost] = useState<Post|null>(null);
 
   const userId = session?.user?.id ?? "";
+
+  // Once we know the auth state, stop the loading spinner for unauthenticated users
+  useEffect(() => {
+    if (!sessionLoading && !userId) {
+      setLoading(false);
+    }
+  }, [sessionLoading, userId]);
 
   const load = useCallback(async () => {
     if (!userId) return;
@@ -757,11 +764,35 @@ export default function FeedPage() {
             ))}
           </div>
 
+          {/* ── Not logged in: sign-in CTA ── */}
+          {!sessionLoading && !userId && (
+            <div style={{ backgroundColor:"#fff", border:"1px solid #e8e4ce", borderRadius:16, padding:"40px 24px", textAlign:"center", marginBottom:12 }}>
+              <div style={{ fontSize:40, marginBottom:12 }}>👋</div>
+              <p style={{ fontSize:16, fontWeight:800, color:"#0A3323", margin:"0 0 8px" }}>
+                Welcome to Mentor
+              </p>
+              <p style={{ fontSize:13, color:"#839958", margin:"0 0 24px", lineHeight:1.6 }}>
+                The career community for early-career professionals in India.<br/>
+                Sign in to see posts from your circles, get referrals, and book expert sessions.
+              </p>
+              <Link href="/auth/login" style={{
+                display:"inline-block", fontSize:13, fontWeight:700,
+                backgroundColor:"#0A3323", color:"#F7F4D5",
+                borderRadius:10, padding:"12px 28px", textDecoration:"none",
+              }}>
+                Sign in with LinkedIn →
+              </Link>
+              <p style={{ fontSize:11, color:"#b0ab8c", margin:"16px 0 0" }}>
+                Free to join · 2,000+ members
+              </p>
+            </div>
+          )}
+
           {loading ? (
             <div style={{ backgroundColor:"#fff", border:"1px solid #e8e4ce", borderRadius:14, padding:32, textAlign:"center" }}>
               <p style={{ color:"#839958", fontSize:13 }}>Loading your feed…</p>
             </div>
-          ) : filteredPosts.length === 0 ? (
+          ) : !userId ? null : filteredPosts.length === 0 ? (
             <div style={{ backgroundColor:"#fff", border:"1px solid #e8e4ce", borderRadius:14, padding:"48px 32px", textAlign:"center" }}>
               <div style={{ fontSize:40, marginBottom:12 }}>
                 {filter==="saved" ? "🔖" : "💬"}

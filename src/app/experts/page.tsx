@@ -394,6 +394,31 @@ export default function SessionsPage() {
         </p>
       </div>
 
+      {/* ── Sign-in banner for unauthenticated users ── */}
+      {!session && (
+        <div style={{
+          backgroundColor: "#0A3323", borderRadius: 12,
+          padding: "16px 20px", margin: "16px 0 4px",
+          display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap",
+        }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "#F7F4D5", margin: "0 0 2px" }}>
+              Sign in to book a session
+            </p>
+            <p style={{ fontSize: 11, color: "rgba(247,244,213,0.6)", margin: 0 }}>
+              Browse experts for free · Sign in when you&apos;re ready to book
+            </p>
+          </div>
+          <Link href="/auth/login?next=/experts" style={{
+            fontSize: 12, fontWeight: 700, color: "#0A3323",
+            backgroundColor: "#F7F4D5", borderRadius: 8,
+            padding: "8px 16px", textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0,
+          }}>
+            Sign in →
+          </Link>
+        </div>
+      )}
+
       {/* ── Split layout ── */}
       <div className="experts-split">
 

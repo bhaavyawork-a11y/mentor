@@ -1,7 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 
-const PROTECTED = ["/dashboard", "/profile", "/goals", "/experts", "/bookings"];
+// /experts is intentionally NOT protected — unauthenticated users can browse;
+// the booking flow gates auth inline. Other pages require login.
+const PROTECTED = ["/dashboard", "/profile", "/goals", "/bookings"];
 const AUTH_ROUTES = ["/auth/login"];
 
 export async function middleware(req: NextRequest) {
