@@ -62,5 +62,5 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.redirect(new URL("/feed", request.url));
+  return NextResponse.redirect(new URL("/communities", request.url));
 }

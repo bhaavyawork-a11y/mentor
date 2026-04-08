@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { useSession } from "@/hooks/useSession";
-import { useProfile } from "@/hooks/useProfile";
 
-/* ─── Types ─────────────────────────────────────────────────────── */
+// ─── Types ────────────────────────────────────────────────────────────────────
 interface Community {
   id: string;
   slug: string;
@@ -19,75 +18,103 @@ interface Community {
   rules: string[];
 }
 
-interface Channel {
+interface Post {
   id: string;
-  name: string;
-  slug: string;
-  emoji: string;
-  description: string | null;
-  position: number;
+  community_id: string;
+  user_id: string;
+  type: string;
+  content: string;
+  channel_type: string;
+  link_url: string | null;
+  referral_company: string | null;
+  referral_role: string | null;
+  helpful_count: number;
+  reply_count: number;
+  created_at: string;
+  author?: {
+    full_name: string | null;
+    avatar_url: string | null;
+    current_job_role: string | null;
+  };
 }
 
-interface ChannelMessage {
-  id: string;
-  channel_id: string;
-  user_id: string;
-  content: string;
-  is_pinned: boolean;
-  created_at: string;
-  author?: { full_name: string | null; avatar_url: string | null; current_job_role: string | null };
+interface MemberProfile {
+  full_name: string | null;
+  avatar_url: string | null;
+  current_job_role: string | null;
+  bio: string | null;
+  linkedin_url: string | null;
+  location: string | null;
 }
 
 interface Member {
   user_id: string;
   joined_at: string;
+  status: string;
   can_refer: boolean;
   employer: string | null;
   role: string | null;
-  profile?: {
-    full_name: string | null;
-    avatar_url: string | null;
-    current_job_role: string | null;
-    bio: string | null;
-    linkedin_url: string | null;
-    location: string | null;
-  };
+  profile?: MemberProfile | MemberProfile[] | null;
 }
 
-/* ─── Helpers ───────────────────────────────────────────────────── */
-const PALETTE = ["#F7F4D5", "#D3968C", "#839958", "#FFB5C8", "#B5D5FF", "#FFCBA4"];
+// ─── Channel config ───────────────────────────────────────────────────────────
+const CHANNELS = [
+  { type: "discussions", label: "Discussions", emoji: "💬", desc: "Ask questions, share thoughts, start conversations", postTypes: ["Discussion", "Poll"] },
+  { type: "upskilling",  label: "Upskilling",  emoji: "📚", desc: "Courses, resources, events and learning opportunities", postTypes: ["Resource", "Event"] },
+  { type: "referrals",   label: "Referrals",   emoji: "🤝", desc: "Warm intros, referral requests and job connections", postTypes: ["Referral"] },
+  { type: "job_board",   label: "Job Board",   emoji: "💼", desc: "Open roles, hiring announcements and job listings", postTypes: ["Job Listing"] },
+];
 
+const POST_TYPE_COLORS: Record<string, string> = {
+  "Discussion":  "#e8e4ce",
+  "Poll":        "#D3E4FF",
+  "Resource":    "#D3F4E8",
+  "Event":       "#FDE8C8",
+  "Referral":    "#FFE4F0",
+  "Job Listing": "#EAE4FF",
+};
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function groupEmoji(slug: string): string {
+  const map: Record<string, string> = {
+    "product-managers": "📦",
+    "early-engineers":  "⚙️",
+    "founders-office":  "🚀",
+    "vc-investing":     "💹",
+    "growth-marketing": "📈",
+    "data-ai":          "🤖",
+    "ops-strategy":     "🔧",
+    "sales-bd":         "🤝",
+  };
+  return map[slug] ?? "👥";
+}
+
+const PALETTE = ["#F7F4D5", "#D3968C", "#839958", "#FFB5C8", "#B5D5FF", "#FFCBA4"];
 function avatarBg(id: string) {
   let h = 0;
   for (const c of id) h = (h * 31 + c.charCodeAt(0)) & 0xfffff;
   return PALETTE[h % PALETTE.length];
 }
-
 function initials(name: string | null | undefined) {
-  return (name ?? "?").split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
+  return (name ?? "?").split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase();
+}
+function relativeTime(iso: string) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days}d ago`;
+  return new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
 }
 
-function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
-}
-
-function formatDateGroup(iso: string) {
-  const d = new Date(iso);
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-  if (d.toDateString() === today.toDateString()) return "Today";
-  if (d.toDateString() === yesterday.toDateString()) return "Yesterday";
-  return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
-}
-
-/* ─── Avatar ────────────────────────────────────────────────────── */
-function Avatar({ userId, name, size = 34 }: { userId: string; name: string | null | undefined; size?: number }) {
-  const bg = avatarBg(userId);
+function Avatar({ userId, name, size = 32 }: { userId: string; name?: string | null; size?: number }) {
   return (
     <div style={{
-      width: size, height: size, borderRadius: size / 3,
-      backgroundColor: bg, flexShrink: 0,
+      width: size, height: size, borderRadius: size / 3, flexShrink: 0,
+      backgroundColor: avatarBg(userId),
       display: "flex", alignItems: "center", justifyContent: "center",
       fontSize: size * 0.33, fontWeight: 800, color: "#1a1a1a",
     }}>
@@ -96,711 +123,593 @@ function Avatar({ userId, name, size = 34 }: { userId: string; name: string | nu
   );
 }
 
-/* ─── Channel Chat View ─────────────────────────────────────────── */
-function ChannelChat({
-  channel, communityId, isMember, userId,
-}: {
-  channel: Channel; communityId: string; isMember: boolean; userId: string | null;
-}) {
-  const supabase = createClient();
-  const { profile } = useProfile();
-  const [messages, setMessages] = useState<ChannelMessage[]>([]);
-  const [pinned, setPinned] = useState<ChannelMessage | null>(null);
-  const [showPinned, setShowPinned] = useState(true);
-  const [text, setText] = useState("");
-  const [sending, setSending] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const bottomRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  const scrollToBottom = () => {
-    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
-  };
-
-  const loadMessages = useCallback(async () => {
-    setLoading(true);
-    const { data } = await supabase
-      .from("channel_messages")
-      .select("*, author:profiles(full_name, avatar_url, current_job_role)")
-      .eq("channel_id", channel.id)
-      .order("created_at", { ascending: true })
-      .limit(100);
-
-    const msgs = (data as ChannelMessage[]) ?? [];
-    setMessages(msgs);
-    const p = msgs.find((m) => m.is_pinned);
-    setPinned(p ?? null);
-    setLoading(false);
-    scrollToBottom();
-  }, [channel.id, supabase]);
-
-  useEffect(() => {
-    loadMessages();
-
-    const sub = supabase
-      .channel(`channel-${channel.id}`)
-      .on("postgres_changes", {
-        event: "INSERT",
-        schema: "public",
-        table: "channel_messages",
-        filter: `channel_id=eq.${channel.id}`,
-      }, async (payload) => {
-        const newMsg = payload.new as ChannelMessage;
-        const { data: authorData } = await supabase
-          .from("profiles")
-          .select("full_name, avatar_url, current_job_role")
-          .eq("id", newMsg.user_id)
-          .single();
-        const enriched = { ...newMsg, author: authorData ?? undefined };
-        setMessages((prev) => [...prev, enriched]);
-        scrollToBottom();
-      })
-      .subscribe();
-
-    return () => { supabase.removeChannel(sub); };
-  }, [channel.id, loadMessages, supabase]);
-
-  const handleSend = async () => {
-    if (!text.trim() || !userId || sending) return;
-    setSending(true);
-    const optimistic: ChannelMessage = {
-      id: `opt-${Date.now()}`,
-      channel_id: channel.id,
-      user_id: userId,
-      content: text.trim(),
-      is_pinned: false,
-      created_at: new Date().toISOString(),
-      author: { full_name: profile?.full_name ?? null, avatar_url: null, current_job_role: profile?.current_job_role ?? null },
-    };
-    setMessages((prev) => [...prev, optimistic]);
-    setText("");
-    scrollToBottom();
-
-    const { error } = await supabase.from("channel_messages").insert({
-      channel_id: channel.id,
-      user_id: userId,
-      content: optimistic.content,
-    });
-    if (error) setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
-    setSending(false);
-    textareaRef.current?.focus();
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }
-  };
-
-  const handlePin = async (msg: ChannelMessage) => {
-    const newPinned = !msg.is_pinned;
-    await supabase.from("channel_messages").update({ is_pinned: false }).eq("channel_id", channel.id);
-    if (newPinned) {
-      await supabase.from("channel_messages").update({ is_pinned: true }).eq("id", msg.id);
-    }
-    loadMessages();
-  };
-
-  // Group messages by date and consecutive sender
-  const grouped: { date: string; msgs: ChannelMessage[] }[] = [];
-  let currentDate = "";
-  for (const msg of messages) {
-    const d = formatDateGroup(msg.created_at);
-    if (d !== currentDate) {
-      grouped.push({ date: d, msgs: [msg] });
-      currentDate = d;
-    } else {
-      grouped[grouped.length - 1].msgs.push(msg);
-    }
-  }
-
+// ─── Post card ────────────────────────────────────────────────────────────────
+function PostCard({ post, onHelpful }: { post: Post; onHelpful: (id: string) => void }) {
+  const typeColor = POST_TYPE_COLORS[post.type] ?? "#e8e4ce";
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      {/* Channel header */}
-      <div style={{
-        padding: "14px 20px", borderBottom: "1px solid #e8e4ce",
-        display: "flex", alignItems: "center", gap: 10, flexShrink: 0,
-        backgroundColor: "#fff",
-      }}>
-        <span style={{ fontSize: 20 }}>{channel.emoji}</span>
-        <div>
-          <p style={{ fontSize: 14, fontWeight: 800, color: "#1a1a1a", margin: 0 }}>{channel.name}</p>
-          {channel.description && <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>{channel.description}</p>}
+    <div style={{
+      backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14,
+      padding: "16px 18px", marginBottom: 12,
+    }}>
+      {/* Author row */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+        <Avatar userId={post.user_id} name={post.author?.full_name} size={36} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a" }}>
+            {post.author?.full_name ?? "Member"}
+          </div>
+          <div style={{ fontSize: 11, color: "#839958" }}>
+            {post.author?.current_job_role ?? ""}
+            {post.author?.current_job_role ? " · " : ""}{relativeTime(post.created_at)}
+          </div>
         </div>
+        <span style={{
+          fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 99,
+          backgroundColor: typeColor, color: "#1a1a1a",
+        }}>
+          {post.type}
+        </span>
       </div>
 
-      {/* Pinned message */}
-      {pinned && showPinned && (
-        <div style={{
-          backgroundColor: "#F7F4D5", borderBottom: "1px solid #e8e4ce",
-          padding: "8px 20px", display: "flex", alignItems: "center", gap: 10, flexShrink: 0,
+      {/* Content */}
+      <p style={{ fontSize: 14, color: "#1a1a1a", margin: "0 0 12px", lineHeight: 1.65, whiteSpace: "pre-wrap" }}>
+        {post.content}
+      </p>
+
+      {/* Link */}
+      {post.link_url && (
+        <a href={post.link_url} target="_blank" rel="noopener noreferrer" style={{
+          display: "inline-block", fontSize: 12, color: "#0A3323", fontWeight: 600,
+          marginBottom: 10, textDecoration: "underline",
         }}>
-          <span style={{ fontSize: 14 }}>📌</span>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <span style={{ fontSize: 11, fontWeight: 700, color: "#839958", marginRight: 6 }}>Pinned</span>
-            <span style={{ fontSize: 12, color: "#555", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {pinned.content.length > 80 ? pinned.content.slice(0, 80) + "…" : pinned.content}
-            </span>
-          </div>
-          <button onClick={() => setShowPinned(false)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14, color: "#b0ab8c", padding: 0 }}>✕</button>
+          {post.link_url.replace(/^https?:\/\//, "").split("/")[0]} ↗
+        </a>
+      )}
+
+      {/* Referral/Job details */}
+      {(post.referral_company || post.referral_role) && (
+        <div style={{
+          display: "inline-flex", gap: 12, padding: "8px 12px", borderRadius: 8,
+          backgroundColor: "#f5f3ea", marginBottom: 10,
+        }}>
+          {post.referral_company && (
+            <span style={{ fontSize: 12, fontWeight: 600, color: "#1a1a1a" }}>🏢 {post.referral_company}</span>
+          )}
+          {post.referral_role && (
+            <span style={{ fontSize: 12, color: "#555" }}>{post.referral_role}</span>
+          )}
         </div>
       )}
 
-      {/* Messages */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px", display: "flex", flexDirection: "column", gap: 0 }}>
-        {loading ? (
-          <div style={{ textAlign: "center", padding: "40px 0", color: "#839958", fontSize: 13 }}>Loading messages…</div>
-        ) : messages.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "60px 0" }}>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>{channel.emoji}</div>
-            <p style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a", margin: "0 0 6px" }}>
-              Welcome to #{channel.name.toLowerCase()}
-            </p>
-            <p style={{ fontSize: 13, color: "#839958", margin: 0 }}>
-              {channel.description ?? "Start the conversation!"}
-            </p>
-          </div>
-        ) : (
-          grouped.map(({ date, msgs: dayMsgs }) => (
-            <div key={date}>
-              {/* Date separator */}
-              <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "20px 0 16px" }}>
-                <div style={{ flex: 1, height: 1, backgroundColor: "#e8e4ce" }} />
-                <span style={{ fontSize: 11, color: "#b0ab8c", fontWeight: 600, whiteSpace: "nowrap" }}>{date}</span>
-                <div style={{ flex: 1, height: 1, backgroundColor: "#e8e4ce" }} />
-              </div>
-
-              {dayMsgs.map((msg, i) => {
-                const prev = dayMsgs[i - 1];
-                const sameAuthor = prev && prev.user_id === msg.user_id &&
-                  new Date(msg.created_at).getTime() - new Date(prev.created_at).getTime() < 5 * 60 * 1000;
-                const isMine = msg.user_id === userId;
-                const name = msg.author?.full_name;
-
-                return (
-                  <div key={msg.id} style={{
-                    display: "flex", gap: 10,
-                    marginBottom: sameAuthor ? 2 : 12,
-                    marginTop: sameAuthor ? 0 : 4,
-                    opacity: msg.id.startsWith("opt-") ? 0.6 : 1,
-                  }}>
-                    {/* Avatar (only on first of group) */}
-                    <div style={{ width: 34, flexShrink: 0 }}>
-                      {!sameAuthor && <Avatar userId={msg.user_id} name={name} size={34} />}
-                    </div>
-
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      {/* Name + time (only on first of group) */}
-                      {!sameAuthor && (
-                        <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 3 }}>
-                          <span style={{ fontSize: 13, fontWeight: 700, color: isMine ? "#0A3323" : "#1a1a1a" }}>
-                            {isMine ? "You" : (name ?? "Member")}
-                          </span>
-                          <span style={{ fontSize: 10, color: "#b0ab8c" }}>{formatTime(msg.created_at)}</span>
-                          {msg.is_pinned && <span style={{ fontSize: 10, color: "#839958" }}>📌</span>}
-                        </div>
-                      )}
-
-                      {/* Message bubble */}
-                      <div style={{ display: "flex", alignItems: "flex-end", gap: 6 }}>
-                        <div style={{
-                          backgroundColor: isMine ? "#0A3323" : "#f5f5f0",
-                          color: isMine ? "#c8e6b0" : "#333",
-                          borderRadius: sameAuthor
-                            ? (isMine ? "12px 12px 4px 12px" : "12px 12px 12px 4px")
-                            : "12px",
-                          padding: "8px 12px",
-                          fontSize: 14,
-                          lineHeight: 1.5,
-                          maxWidth: 480,
-                          wordBreak: "break-word",
-                          whiteSpace: "pre-wrap",
-                        }}>
-                          {msg.content}
-                        </div>
-                        {sameAuthor && (
-                          <span style={{ fontSize: 9, color: "#b0ab8c", whiteSpace: "nowrap", paddingBottom: 2 }}>
-                            {formatTime(msg.created_at)}
-                          </span>
-                        )}
-                        {/* Pin button on hover (only for members) */}
-                        {isMember && !msg.id.startsWith("opt-") && (
-                          <button
-                            onClick={() => handlePin(msg)}
-                            title={msg.is_pinned ? "Unpin" : "Pin message"}
-                            style={{
-                              background: "none", border: "none", cursor: "pointer",
-                              fontSize: 12, opacity: 0.4, padding: "0 2px",
-                              color: msg.is_pinned ? "#839958" : "#999",
-                            }}
-                          >
-                            📌
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ))
-        )}
-        <div ref={bottomRef} />
-      </div>
-
-      {/* Composer */}
-      {isMember && userId ? (
-        <div style={{
-          padding: "12px 20px", borderTop: "1px solid #e8e4ce",
-          backgroundColor: "#fff", flexShrink: 0,
+      {/* Actions */}
+      <div style={{ display: "flex", gap: 16, marginTop: 4 }}>
+        <button onClick={() => onHelpful(post.id)} style={{
+          background: "none", border: "none", cursor: "pointer", fontSize: 12,
+          color: "#839958", fontFamily: "inherit", padding: 0, display: "flex", alignItems: "center", gap: 4,
         }}>
-          <div style={{
-            display: "flex", gap: 10, alignItems: "flex-end",
-            backgroundColor: "#f5f5f0", borderRadius: 14,
-            padding: "10px 14px", border: "1px solid #e8e4ce",
-          }}>
-            <Avatar userId={userId} name={profile?.full_name} size={30} />
-            <textarea
-              ref={textareaRef}
-              rows={1}
-              value={text}
-              onChange={(e) => { setText(e.target.value); e.target.style.height = "auto"; e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px"; }}
-              onKeyDown={handleKeyDown}
-              placeholder={`Message #${channel.name.toLowerCase()}…`}
-              style={{
-                flex: 1, border: "none", background: "transparent", resize: "none",
-                fontSize: 14, color: "#1a1a1a", outline: "none", fontFamily: "inherit",
-                lineHeight: 1.5, minHeight: 22, maxHeight: 120, overflowY: "auto",
-              }}
-            />
-            <button
-              onClick={handleSend}
-              disabled={!text.trim() || sending}
-              style={{
-                backgroundColor: text.trim() ? "#0A3323" : "#e8e4ce",
-                color: text.trim() ? "#839958" : "#b0ab8c",
-                border: "none", borderRadius: 8, padding: "6px 14px",
-                fontSize: 13, fontWeight: 700, cursor: text.trim() ? "pointer" : "default",
-                transition: "all 0.15s", flexShrink: 0,
-              }}
-            >
-              Send
-            </button>
-          </div>
-          <p style={{ fontSize: 10, color: "#b0ab8c", margin: "6px 0 0", textAlign: "center" }}>
-            Enter to send · Shift+Enter for new line
-          </p>
-        </div>
-      ) : !isMember ? (
-        <div style={{
-          padding: "16px 20px", borderTop: "1px solid #e8e4ce",
-          backgroundColor: "#F7F4D5", textAlign: "center", flexShrink: 0,
-        }}>
-          <p style={{ fontSize: 13, color: "#839958", margin: 0 }}>
-            Join this community to participate in the conversation
-          </p>
-        </div>
-      ) : null}
+          👍 {post.helpful_count > 0 ? post.helpful_count : ""} Helpful
+        </button>
+        <span style={{ fontSize: 12, color: "#b0ab8c" }}>
+          💬 {post.reply_count} replies
+        </span>
+      </div>
     </div>
   );
 }
 
-/* ─── Directory View ────────────────────────────────────────────── */
-function DirectoryView({ communityId }: { communityId: string }) {
+// ─── Post Composer ────────────────────────────────────────────────────────────
+function PostComposer({ communityId, channelType, postTypes, onPosted, userId }: {
+  communityId: string;
+  channelType: string;
+  postTypes: string[];
+  onPosted: () => void;
+  userId: string;
+}) {
   const supabase = createClient();
-  const [members, setMembers] = useState<Member[]>([]);
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [open, setOpen]       = useState(false);
+  const [content, setContent] = useState("");
+  const [type, setType]       = useState(postTypes[0]);
+  const [linkUrl, setLinkUrl] = useState("");
+  const [company, setCompany] = useState("");
+  const [roleTitle, setRole]  = useState("");
+  const [posting, setPosting] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      const { data } = await supabase
-        .from("community_members")
-        .select("user_id, joined_at, can_refer, employer, role, profile:profiles(full_name, avatar_url, current_job_role, bio, linkedin_url, location)")
-        .eq("community_id", communityId)
-        .order("joined_at", { ascending: false });
+  const showLink    = ["Resource", "Event", "Job Listing"].includes(type);
+  const showReferral = ["Referral", "Job Listing"].includes(type);
 
-      const raw = (data ?? []) as Array<{
-        user_id: string; joined_at: string; can_refer: boolean; employer: string | null; role: string | null;
-        profile: Member["profile"] | Member["profile"][];
-      }>;
-      setMembers(raw.map((m) => ({
-        ...m,
-        profile: Array.isArray(m.profile) ? m.profile[0] : m.profile,
-      })));
-      setLoading(false);
-    })();
-  }, [communityId, supabase]);
-
-  const filtered = members.filter((m) => {
-    const q = search.toLowerCase();
-    return !q ||
-      m.profile?.full_name?.toLowerCase().includes(q) ||
-      m.profile?.current_job_role?.toLowerCase().includes(q) ||
-      m.employer?.toLowerCase().includes(q);
-  });
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      {/* Header */}
-      <div style={{
-        padding: "14px 20px", borderBottom: "1px solid #e8e4ce",
-        display: "flex", alignItems: "center", gap: 10, flexShrink: 0, backgroundColor: "#fff",
-      }}>
-        <span style={{ fontSize: 20 }}>👥</span>
-        <div>
-          <p style={{ fontSize: 14, fontWeight: 800, color: "#1a1a1a", margin: 0 }}>Member Directory</p>
-          <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>{members.length} members</p>
-        </div>
-      </div>
-
-      {/* Search */}
-      <div style={{ padding: "12px 20px", borderBottom: "1px solid #e8e4ce", flexShrink: 0, backgroundColor: "#fff" }}>
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search members by name, role, or company…"
-          style={{
-            width: "100%", boxSizing: "border-box", border: "1px solid #e8e4ce",
-            borderRadius: 10, padding: "9px 14px", fontSize: 13, color: "#1a1a1a",
-            backgroundColor: "#f9f9f7", outline: "none", fontFamily: "inherit",
-          }}
-        />
-      </div>
-
-      {/* Members grid */}
-      <div style={{ flex: 1, overflowY: "auto", padding: 20 }}>
-        {loading ? (
-          <p style={{ fontSize: 13, color: "#839958" }}>Loading members…</p>
-        ) : filtered.length === 0 ? (
-          <p style={{ fontSize: 13, color: "#839958" }}>No members found.</p>
-        ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 14 }}>
-            {filtered.map((m) => (
-              <div key={m.user_id} style={{
-                backgroundColor: "#fff", border: "1px solid #e8e4ce",
-                borderRadius: 14, padding: 16,
-                display: "flex", flexDirection: "column", gap: 10,
-              }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <Avatar userId={m.user_id} name={m.profile?.full_name} size={38} />
-                  <div style={{ minWidth: 0 }}>
-                    <p style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {m.profile?.full_name ?? "Member"}
-                    </p>
-                    {m.profile?.current_job_role && (
-                      <p style={{ fontSize: 11, color: "#839958", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {m.profile.current_job_role}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {m.profile?.location && (
-                  <p style={{ fontSize: 11, color: "#b0ab8c", margin: 0 }}>📍 {m.profile.location}</p>
-                )}
-
-                {m.can_refer && m.employer && (
-                  <div style={{
-                    backgroundColor: "#F7F4D5", borderRadius: 8,
-                    padding: "6px 10px", fontSize: 11, fontWeight: 700, color: "#8a7200",
-                  }}>
-                    🤝 Can refer at {m.employer}
-                    {m.role && <span style={{ fontWeight: 500, color: "#839958" }}> · {m.role}</span>}
-                  </div>
-                )}
-
-                {m.profile?.bio && (
-                  <p style={{
-                    fontSize: 12, color: "#555", margin: 0, lineHeight: 1.5,
-                    display: "-webkit-box", WebkitLineClamp: 2,
-                    WebkitBoxOrient: "vertical", overflow: "hidden",
-                  }}>
-                    {m.profile.bio}
-                  </p>
-                )}
-
-                <div style={{ display: "flex", gap: 8, marginTop: "auto" }}>
-                  {m.profile?.linkedin_url && (
-                    <a
-                      href={m.profile.linkedin_url}
-                      target="_blank" rel="noopener noreferrer"
-                      style={{
-                        fontSize: 11, fontWeight: 700, color: "#0A3323",
-                        border: "1px solid #0A3323", borderRadius: 7,
-                        padding: "5px 10px", textDecoration: "none",
-                      }}
-                    >
-                      LinkedIn ↗
-                    </a>
-                  )}
-                  <span style={{ fontSize: 10, color: "#b0ab8c", alignSelf: "center" }}>
-                    Joined {new Date(m.joined_at).toLocaleDateString("en-IN", { month: "short", year: "numeric" })}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ─── Rules View ────────────────────────────────────────────────── */
-function RulesView({ community }: { community: Community }) {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      <div style={{
-        padding: "14px 20px", borderBottom: "1px solid #e8e4ce",
-        display: "flex", alignItems: "center", gap: 10, flexShrink: 0, backgroundColor: "#fff",
-      }}>
-        <span style={{ fontSize: 20 }}>📋</span>
-        <div>
-          <p style={{ fontSize: 14, fontWeight: 800, color: "#1a1a1a", margin: 0 }}>Community Rules</p>
-          <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>{community.name}</p>
-        </div>
-      </div>
-      <div style={{ flex: 1, overflowY: "auto", padding: 24 }}>
-        {community.description && (
-          <div style={{ backgroundColor: "#F7F4D5", borderRadius: 12, padding: 16, marginBottom: 24 }}>
-            <p style={{ fontSize: 12, fontWeight: 700, color: "#839958", margin: "0 0 6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>About</p>
-            <p style={{ fontSize: 14, color: "#333", margin: 0, lineHeight: 1.7 }}>{community.description}</p>
-          </div>
-        )}
-        {community.rules?.length > 0 ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {community.rules.map((rule, i) => (
-              <div key={i} style={{
-                backgroundColor: "#fff", border: "1px solid #e8e4ce",
-                borderRadius: 12, padding: "14px 18px",
-                display: "flex", gap: 12, alignItems: "flex-start",
-              }}>
-                <div style={{
-                  width: 28, height: 28, borderRadius: 8,
-                  backgroundColor: "#0A3323", color: "#839958",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 12, fontWeight: 800, flexShrink: 0,
-                }}>
-                  {i + 1}
-                </div>
-                <p style={{ fontSize: 14, color: "#333", margin: 0, lineHeight: 1.6, paddingTop: 4 }}>{rule}</p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p style={{ fontSize: 14, color: "#839958" }}>No rules have been set for this community yet.</p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ─── Page ──────────────────────────────────────────────────────── */
-export default function CommunityDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const slug = params?.slug as string;
-  const supabase = createClient();
-  const { session } = useSession();
-
-  const [community, setCommunity] = useState<Community | null>(null);
-  const [channels, setChannels] = useState<Channel[]>([]);
-  const [activeChannel, setActiveChannel] = useState<Channel | null>(null);
-  const [isMember, setIsMember] = useState(false);
-  const [memberCount, setMemberCount] = useState(0);
-  const [view, setView] = useState<"chat" | "directory" | "rules">("chat");
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    (async () => {
-      const { data: c } = await supabase.from("communities").select("*").eq("slug", slug).single();
-      if (!c) { setLoading(false); return; }
-      setCommunity(c as Community);
-      setMemberCount((c as Community).member_count);
-
-      const { data: ch } = await supabase
-        .from("community_channels")
-        .select("*")
-        .eq("community_id", c.id)
-        .order("position", { ascending: true });
-      const chList = (ch as Channel[]) ?? [];
-      setChannels(chList);
-      if (chList.length > 0) setActiveChannel(chList[0]);
-
-      if (session?.user.id) {
-        const { data: mem } = await supabase
-          .from("community_members")
-          .select("user_id")
-          .eq("community_id", c.id)
-          .eq("user_id", session.user.id)
-          .single();
-        setIsMember(!!mem);
-
-        const { count } = await supabase
-          .from("community_members")
-          .select("user_id", { count: "exact", head: true })
-          .eq("community_id", c.id);
-        if (count !== null) setMemberCount(count);
-      }
-      setLoading(false);
-    })();
-  }, [slug, session?.user.id, supabase]);
-
-  const handleJoin = async () => {
-    if (!session?.user.id || !community) return;
-    await supabase.from("community_members").upsert({
-      community_id: community.id,
-      user_id: session.user.id,
+  const handlePost = async () => {
+    if (!content.trim()) return;
+    setPosting(true);
+    await supabase.from("community_posts").insert({
+      community_id: communityId,
+      user_id: userId,
+      type,
+      content: content.trim(),
+      channel_type: channelType,
+      link_url: linkUrl.trim() || null,
+      referral_company: company.trim() || null,
+      referral_role: roleTitle.trim() || null,
     });
-    setIsMember(true);
-    setMemberCount((n) => n + 1);
+    setContent(""); setLinkUrl(""); setCompany(""); setRole(""); setOpen(false);
+    onPosted();
+    setPosting(false);
   };
 
-  if (loading) return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}>
-      <p style={{ color: "#839958", fontSize: 14 }}>Loading…</p>
-    </div>
-  );
-
-  if (!community) return (
-    <div style={{ padding: 32 }}>
-      <p style={{ color: "#839958" }}>Community not found.</p>
-      <Link href="/communities" style={{ color: "#0A3323", fontSize: 14 }}>← Back to Groups</Link>
-    </div>
-  );
-
-  const iconBg = community.icon_color ?? "#F7F4D5";
+  if (!open) {
+    return (
+      <button
+        onClick={() => setOpen(true)}
+        style={{
+          display: "flex", alignItems: "center", gap: 10, width: "100%",
+          padding: "12px 16px", borderRadius: 12, marginBottom: 16,
+          border: "1.5px dashed #c8c4ae", backgroundColor: "#fff",
+          cursor: "pointer", fontFamily: "inherit", color: "#b0ab8c", fontSize: 13,
+        }}
+      >
+        <Avatar userId={userId} size={28} />
+        <span>Write a post in this channel…</span>
+      </button>
+    );
+  }
 
   return (
-    <div className="community-inner">
-      {/* ── Left panel: community + channels ── */}
-      <div className="community-channels-panel">
-        {/* Community header */}
-        <div style={{ padding: "16px 14px", borderBottom: "1px solid #e8e4ce" }}>
-          <button
-            onClick={() => router.push("/communities")}
-            style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, color: "#839958", padding: 0, marginBottom: 12, display: "flex", alignItems: "center", gap: 4 }}
-          >
-            ← All Groups
+    <div style={{
+      backgroundColor: "#fff", border: "1.5px solid #0A3323", borderRadius: 14,
+      padding: "16px 18px", marginBottom: 16,
+    }}>
+      {/* Type selector */}
+      <div style={{ display: "flex", gap: 6, marginBottom: 12, flexWrap: "wrap" }}>
+        {postTypes.map(pt => (
+          <button key={pt} onClick={() => setType(pt)} style={{
+            padding: "5px 12px", borderRadius: 99, border: "1.5px solid",
+            borderColor: type === pt ? "#0A3323" : "#e8e4ce",
+            backgroundColor: type === pt ? "#0A3323" : "#fff",
+            color: type === pt ? "#F7F4D5" : "#839958",
+            fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
+          }}>
+            {pt}
           </button>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-            <div style={{
-              width: 42, height: 42, borderRadius: 12,
-              backgroundColor: iconBg,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 20, fontWeight: 800, color: "#1a1a1a", flexShrink: 0,
-            }}>
-              {community.name[0]}
-            </div>
-            <div>
-              <p style={{ fontSize: 14, fontWeight: 800, color: "#1a1a1a", margin: 0 }}>{community.name}</p>
-              <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>{memberCount.toLocaleString()} members</p>
-            </div>
-          </div>
-          {isMember ? (
-            <span style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#83995822", color: "#0A3323", borderRadius: 99, padding: "3px 10px" }}>
-              Member ✓
-            </span>
-          ) : (
-            <button onClick={handleJoin} style={{
-              backgroundColor: "#0A3323", color: "#839958", border: "none",
-              borderRadius: 8, padding: "8px 16px", fontSize: 12, fontWeight: 700,
-              cursor: "pointer", width: "100%",
-            }}>
-              Join Community
-            </button>
-          )}
-        </div>
+        ))}
+      </div>
 
-        {/* Channel list */}
-        <div style={{ padding: "12px 10px", flex: 1 }}>
-          <p style={{ fontSize: 10, fontWeight: 700, color: "#b0ab8c", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 4px 8px" }}>
-            Channels
-          </p>
-          {channels.map((ch) => {
-            const active = view === "chat" && activeChannel?.id === ch.id;
+      <textarea
+        value={content}
+        onChange={e => setContent(e.target.value)}
+        placeholder={
+          type === "Poll" ? "Ask your question…" :
+          type === "Referral" ? "I can refer for this role at my company. Here's what to know…" :
+          type === "Job Listing" ? "Describe the role, team, and requirements…" :
+          type === "Resource" ? "Share what you found and why it's valuable…" :
+          "What's on your mind?"
+        }
+        style={{
+          width: "100%", boxSizing: "border-box", padding: "10px 0",
+          fontSize: 14, border: "none", borderBottom: "1px solid #e8e4ce",
+          fontFamily: "inherit", outline: "none", backgroundColor: "transparent",
+          color: "#1a1a1a", minHeight: 80, resize: "vertical" as const, lineHeight: 1.6,
+        }}
+      />
+
+      {showLink && (
+        <input
+          value={linkUrl}
+          onChange={e => setLinkUrl(e.target.value)}
+          placeholder="Link URL (optional)"
+          style={{
+            width: "100%", boxSizing: "border-box", padding: "8px 0",
+            fontSize: 13, border: "none", borderBottom: "1px solid #f0ede0",
+            fontFamily: "inherit", outline: "none", color: "#555",
+            backgroundColor: "transparent", marginTop: 8,
+          }}
+        />
+      )}
+      {showReferral && (
+        <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
+          <input value={company} onChange={e => setCompany(e.target.value)} placeholder="Company name" style={{
+            flex: 1, boxSizing: "border-box", padding: "8px 10px", fontSize: 12,
+            border: "1px solid #e8e4ce", borderRadius: 8, fontFamily: "inherit", outline: "none",
+          }} />
+          <input value={roleTitle} onChange={e => setRole(e.target.value)} placeholder="Role title" style={{
+            flex: 1, boxSizing: "border-box", padding: "8px 10px", fontSize: 12,
+            border: "1px solid #e8e4ce", borderRadius: 8, fontFamily: "inherit", outline: "none",
+          }} />
+        </div>
+      )}
+
+      <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 12 }}>
+        <button onClick={() => { setOpen(false); setContent(""); }} style={{
+          padding: "8px 16px", borderRadius: 8, border: "1px solid #e8e4ce",
+          backgroundColor: "transparent", fontSize: 13, color: "#839958",
+          cursor: "pointer", fontFamily: "inherit",
+        }}>
+          Cancel
+        </button>
+        <button onClick={handlePost} disabled={!content.trim() || posting} style={{
+          padding: "8px 20px", borderRadius: 8, border: "none",
+          backgroundColor: content.trim() ? "#0A3323" : "#c8c4ae",
+          color: "#F7F4D5", fontSize: 13, fontWeight: 700,
+          cursor: content.trim() && !posting ? "pointer" : "default",
+          fontFamily: "inherit",
+        }}>
+          {posting ? "Posting…" : "Post →"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Member Directory ─────────────────────────────────────────────────────────
+function MemberDirectory({ members, onClose }: { members: Member[]; onClose: () => void }) {
+  const approvedMembers = members.filter(m => m.status === "approved" || !m.status);
+  return (
+    <div style={{
+      position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.4)",
+      display: "flex", alignItems: "flex-end", justifyContent: "center",
+      zIndex: 50, padding: "0 0 0 0",
+    }} onClick={onClose}>
+      <div onClick={e => e.stopPropagation()} style={{
+        backgroundColor: "#fff", borderRadius: "20px 20px 0 0",
+        width: "100%", maxWidth: 520, maxHeight: "80vh",
+        display: "flex", flexDirection: "column", overflow: "hidden",
+      }}>
+        {/* Handle */}
+        <div style={{ padding: "12px 20px", borderBottom: "1px solid #e8e4ce", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <h3 style={{ fontSize: 16, fontWeight: 800, color: "#1a1a1a", margin: 0 }}>Members</h3>
+            <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>{approvedMembers.length} verified members</p>
+          </div>
+          <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 18, cursor: "pointer", color: "#839958" }}>×</button>
+        </div>
+        <div style={{ overflowY: "auto", padding: "16px 20px", flex: 1 }}>
+          {approvedMembers.map(m => {
+            const p = Array.isArray(m.profile) ? m.profile[0] : m.profile;
             return (
-              <button
-                key={ch.id}
-                onClick={() => { setActiveChannel(ch); setView("chat"); }}
-                style={{
-                  width: "100%", display: "flex", alignItems: "center", gap: 8,
-                  padding: "8px 10px", borderRadius: 8, border: "none",
-                  backgroundColor: active ? "#0A3323" : "transparent",
-                  color: active ? "#839958" : "#555",
-                  fontWeight: active ? 700 : 500, fontSize: 13,
-                  cursor: "pointer", textAlign: "left", marginBottom: 2,
-                  transition: "all 0.12s",
-                }}
-              >
-                <span style={{ fontSize: 15 }}>{ch.emoji}</span>
-                <span>{ch.name}</span>
-              </button>
+            <div key={m.user_id} style={{
+              display: "flex", alignItems: "center", gap: 12,
+              padding: "10px 0", borderBottom: "1px solid #f5f3ea",
+            }}>
+              <Avatar userId={m.user_id} name={p?.full_name} size={40} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a", marginBottom: 1 }}>
+                  {p?.full_name ?? "Member"}
+                </div>
+                <div style={{ fontSize: 11, color: "#839958" }}>
+                  {p?.current_job_role ?? m.role ?? ""}
+                  {m.employer ? ` · ${m.employer}` : ""}
+                  {p?.location ? ` · ${p.location}` : ""}
+                </div>
+              </div>
+              {m.can_refer && (
+                <span style={{
+                  fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 99,
+                  backgroundColor: "#FFE4F0", color: "#c04080",
+                }}>
+                  Can refer
+                </span>
+              )}
+              {p?.linkedin_url && (
+                <a href={p.linkedin_url} target="_blank" rel="noopener noreferrer" style={{ color: "#0A3323", fontSize: 14 }}>
+                  in
+                </a>
+              )}
+            </div>
             );
           })}
+        </div>
+      </div>
+    </div>
+  );
+}
 
-          {/* Directory + Rules */}
-          <div style={{ borderTop: "1px solid #e8e4ce", marginTop: 12, paddingTop: 12 }}>
-            <button
-              onClick={() => setView("directory")}
-              style={{
-                width: "100%", display: "flex", alignItems: "center", gap: 8,
-                padding: "8px 10px", borderRadius: 8, border: "none",
-                backgroundColor: view === "directory" ? "#0A3323" : "transparent",
-                color: view === "directory" ? "#839958" : "#555",
-                fontWeight: view === "directory" ? 700 : 500, fontSize: 13,
-                cursor: "pointer", textAlign: "left", marginBottom: 2,
-              }}
-            >
-              <span style={{ fontSize: 15 }}>👥</span>
-              <span>Member Directory</span>
+// ─── Rules Panel ──────────────────────────────────────────────────────────────
+function RulesPanel({ rules }: { rules: string[] }) {
+  if (!rules?.length) return null;
+  return (
+    <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: "16px 18px", marginTop: 16 }}>
+      <h4 style={{ fontSize: 12, fontWeight: 800, color: "#0A3323", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 12px" }}>
+        Community Rules
+      </h4>
+      <ol style={{ margin: 0, paddingLeft: 16, display: "flex", flexDirection: "column", gap: 8 }}>
+        {rules.map((rule, i) => (
+          <li key={i} style={{ fontSize: 12, color: "#555", lineHeight: 1.5 }}>{rule}</li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
+export default function CommunityPage() {
+  const params  = useParams();
+  const router  = useRouter();
+  const slug    = params.slug as string;
+  const { session } = useSession();
+  const supabase    = createClient();
+  const userId      = session?.user?.id ?? null;
+
+  const [community, setCommunity]     = useState<Community | null>(null);
+  const [isMember, setIsMember]       = useState(false);
+  const [members, setMembers]         = useState<Member[]>([]);
+  const [activeTab, setActiveTab]     = useState<string>("discussions");
+  const [posts, setPosts]             = useState<Post[]>([]);
+  const [loadingPosts, setLoadingPosts] = useState(true);
+  const [showMembers, setShowMembers] = useState(false);
+  const [showMobileNav, setShowMobileNav] = useState(false);
+  const [loading, setLoading]         = useState(true);
+
+  // ─── Load community ────────────────────────────────────────────────────────
+  useEffect(() => {
+    supabase
+      .from("communities")
+      .select("id, slug, name, description, role_type, icon_color, member_count, rules")
+      .eq("slug", slug)
+      .single()
+      .then(({ data, error }) => {
+        if (error || !data) { router.push("/communities"); return; }
+        setCommunity(data as Community);
+        setLoading(false);
+      });
+  }, [slug, supabase, router]);
+
+  // ─── Check membership ─────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!community?.id || !userId) return;
+    supabase
+      .from("community_members")
+      .select("status")
+      .eq("community_id", community.id)
+      .eq("user_id", userId)
+      .single()
+      .then(({ data }) => {
+        setIsMember(data?.status === "approved" || !!data);
+      });
+  }, [community?.id, userId, supabase]);
+
+  // ─── Load members ──────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!community?.id) return;
+    supabase
+      .from("community_members")
+      .select("user_id, joined_at, can_refer, employer, role, status, profile:profiles(full_name, avatar_url, current_job_role, bio, linkedin_url, location)")
+      .eq("community_id", community.id)
+      .order("joined_at", { ascending: true })
+      .limit(100)
+      .then(({ data }) => {
+        setMembers((data as Member[]) ?? []);
+      });
+  }, [community?.id, supabase]);
+
+  // ─── Load posts for active channel ────────────────────────────────────────
+  const loadPosts = useCallback(async () => {
+    if (!community?.id) return;
+    setLoadingPosts(true);
+    const { data } = await supabase
+      .from("community_posts")
+      .select("*, author:profiles(full_name, avatar_url, current_job_role)")
+      .eq("community_id", community.id)
+      .eq("channel_type", activeTab)
+      .order("created_at", { ascending: false })
+      .limit(50);
+    setPosts((data as Post[]) ?? []);
+    setLoadingPosts(false);
+  }, [community?.id, activeTab, supabase]);
+
+  useEffect(() => { loadPosts(); }, [loadPosts]);
+
+  const handleHelpful = async (postId: string) => {
+    if (!userId) return;
+    // Optimistic update
+    setPosts(prev => prev.map(p => p.id === postId ? { ...p, helpful_count: p.helpful_count + 1 } : p));
+    try {
+      await supabase.rpc("increment_helpful", { post_id_arg: postId });
+    } catch {
+      // RPC may not exist yet — optimistic update stays
+    }
+  };
+
+  if (loading || !community) {
+    return (
+      <div style={{ display: "flex", height: "100%", alignItems: "center", justifyContent: "center" }}>
+        <p style={{ fontSize: 14, color: "#839958" }}>Loading…</p>
+      </div>
+    );
+  }
+
+  const activeChannel = CHANNELS.find(c => c.type === activeTab) ?? CHANNELS[0];
+
+  return (
+    <div style={{ display: "flex", height: "100%", overflow: "hidden" }}>
+      {/* ─── Left sidebar (desktop only) ───────────────────────────────────── */}
+      <div className="community-channels-panel" style={{
+        backgroundColor: "#fff", borderRight: "1px solid #e8e4ce",
+        display: "flex", flexDirection: "column", overflowY: "auto",
+      }}>
+        {/* Community header */}
+        <div style={{ padding: "18px 16px 14px", borderBottom: "1px solid #e8e4ce" }}>
+          <Link href="/communities" style={{ fontSize: 11, color: "#839958", textDecoration: "none", display: "block", marginBottom: 12 }}>
+            ← All Groups
+          </Link>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: 9, flexShrink: 0,
+              backgroundColor: community.icon_color ?? "#FDE68A",
+              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18,
+            }}>
+              {groupEmoji(community.slug)}
+            </div>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 800, color: "#1a1a1a" }}>{community.name}</div>
+              <div style={{ fontSize: 10, color: "#839958" }}>{community.member_count.toLocaleString()} members</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Channel nav */}
+        <div style={{ padding: "12px 10px", flex: 1 }}>
+          <p style={{ fontSize: 10, fontWeight: 700, color: "#b0ab8c", textTransform: "uppercase", letterSpacing: "0.5px", padding: "0 6px", margin: "0 0 6px" }}>
+            Channels
+          </p>
+          {CHANNELS.map(ch => (
+            <button key={ch.type} onClick={() => setActiveTab(ch.type)} style={{
+              display: "flex", alignItems: "center", gap: 10, width: "100%",
+              padding: "9px 10px", borderRadius: 9, marginBottom: 2,
+              border: "none", textAlign: "left", cursor: "pointer", fontFamily: "inherit",
+              backgroundColor: activeTab === ch.type ? "#F0EFD8" : "transparent",
+              color: activeTab === ch.type ? "#0A3323" : "#555",
+              transition: "background 0.1s",
+            }}>
+              <span style={{ fontSize: 16 }}>{ch.emoji}</span>
+              <span style={{ fontSize: 13, fontWeight: activeTab === ch.type ? 700 : 500 }}>{ch.label}</span>
             </button>
-            <button
-              onClick={() => setView("rules")}
-              style={{
-                width: "100%", display: "flex", alignItems: "center", gap: 8,
-                padding: "8px 10px", borderRadius: 8, border: "none",
-                backgroundColor: view === "rules" ? "#0A3323" : "transparent",
-                color: view === "rules" ? "#839958" : "#555",
-                fontWeight: view === "rules" ? 700 : 500, fontSize: 13,
-                cursor: "pointer", textAlign: "left", marginBottom: 2,
-              }}
-            >
-              <span style={{ fontSize: 15 }}>📋</span>
-              <span>Rules</span>
+          ))}
+        </div>
+
+        {/* Members + Rules */}
+        <div style={{ padding: "12px 10px", borderTop: "1px solid #f0ede0" }}>
+          <button onClick={() => setShowMembers(true)} style={{
+            display: "flex", alignItems: "center", gap: 8, width: "100%",
+            padding: "9px 10px", borderRadius: 9, border: "none",
+            backgroundColor: "transparent", cursor: "pointer", fontFamily: "inherit",
+            color: "#555", fontSize: 13,
+          }}>
+            👥 Members ({members.filter(m => !m.status || m.status === "approved").length})
+          </button>
+        </div>
+
+        <RulesPanel rules={community.rules} />
+        <div style={{ height: 16 }} />
+      </div>
+
+      {/* ─── Main content ───────────────────────────────────────────────────── */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflowY: "auto", backgroundColor: "#F9F7EC" }}>
+        {/* Channel header */}
+        <div style={{
+          backgroundColor: "#fff", borderBottom: "1px solid #e8e4ce",
+          padding: "14px 20px",
+          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
+          flexShrink: 0,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            {/* Mobile: back to communities link */}
+            <Link href="/communities" className="mobile-only" style={{ color: "#839958", fontSize: 18, textDecoration: "none" }}>←</Link>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ fontSize: 18 }}>{activeChannel.emoji}</span>
+                <h2 style={{ fontSize: 15, fontWeight: 800, color: "#1a1a1a", margin: 0 }}>
+                  {activeChannel.label}
+                </h2>
+              </div>
+              <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>{activeChannel.desc}</p>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={() => setShowMembers(true)} style={{
+              padding: "7px 14px", borderRadius: 8, border: "1px solid #e8e4ce",
+              backgroundColor: "#fff", cursor: "pointer", fontSize: 12, color: "#555",
+              fontFamily: "inherit",
+            }}>
+              👥 {members.filter(m => !m.status || m.status === "approved").length}
+            </button>
+            {/* Mobile: channel tab switcher */}
+            <button className="mobile-only" onClick={() => setShowMobileNav(!showMobileNav)} style={{
+              padding: "7px 12px", borderRadius: 8, border: "1px solid #e8e4ce",
+              backgroundColor: "#fff", cursor: "pointer", fontSize: 12, color: "#555",
+              fontFamily: "inherit",
+            }}>
+              # Channels
             </button>
           </div>
         </div>
 
-        {/* Role type badge */}
-        {community.role_type && (
-          <div style={{ padding: "10px 14px", borderTop: "1px solid #e8e4ce" }}>
-            <span style={{ fontSize: 11, backgroundColor: "#e8e4ce", color: "#839958", borderRadius: 99, padding: "3px 10px", fontWeight: 600 }}>
-              {community.role_type}
-            </span>
+        {/* Mobile channel nav (drawer) */}
+        {showMobileNav && (
+          <div style={{
+            backgroundColor: "#fff", borderBottom: "1px solid #e8e4ce",
+            padding: "8px 16px", display: "flex", gap: 8, overflowX: "auto", flexShrink: 0,
+          }}>
+            {CHANNELS.map(ch => (
+              <button key={ch.type} onClick={() => { setActiveTab(ch.type); setShowMobileNav(false); }} style={{
+                padding: "7px 14px", borderRadius: 99, border: "1.5px solid",
+                borderColor: activeTab === ch.type ? "#0A3323" : "#e8e4ce",
+                backgroundColor: activeTab === ch.type ? "#0A3323" : "#fff",
+                color: activeTab === ch.type ? "#F7F4D5" : "#555",
+                fontSize: 12, fontWeight: activeTab === ch.type ? 700 : 500,
+                cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap" as const,
+                display: "flex", alignItems: "center", gap: 5, flexShrink: 0,
+              }}>
+                {ch.emoji} {ch.label}
+              </button>
+            ))}
           </div>
         )}
+
+        {/* Feed */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "20px 20px 16px" }}>
+          {/* Gate: must be member to post */}
+          {!isMember && (
+            <div style={{
+              backgroundColor: "#fff", border: "1.5px solid #e8e4ce", borderRadius: 14,
+              padding: "20px 20px", marginBottom: 16, textAlign: "center",
+            }}>
+              <p style={{ fontSize: 14, fontWeight: 700, color: "#0A3323", margin: "0 0 6px" }}>
+                🔒 This is a verified-members-only group
+              </p>
+              <p style={{ fontSize: 13, color: "#839958", margin: "0 0 14px" }}>
+                Apply to join {community.name} to read and post in channels.
+              </p>
+              <Link href="/communities" style={{
+                display: "inline-block", padding: "10px 20px", backgroundColor: "#0A3323",
+                color: "#F7F4D5", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none",
+              }}>
+                Apply to join →
+              </Link>
+            </div>
+          )}
+
+          {/* Composer (members only) */}
+          {isMember && userId && (
+            <PostComposer
+              communityId={community.id}
+              channelType={activeTab}
+              postTypes={activeChannel.postTypes}
+              onPosted={loadPosts}
+              userId={userId}
+            />
+          )}
+
+          {/* Posts */}
+          {loadingPosts ? (
+            <p style={{ fontSize: 13, color: "#839958", textAlign: "center", marginTop: 40 }}>Loading posts…</p>
+          ) : posts.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "48px 0" }}>
+              <p style={{ fontSize: 32, margin: "0 0 8px" }}>{activeChannel.emoji}</p>
+              <p style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a", margin: "0 0 6px" }}>
+                No posts in {activeChannel.label} yet
+              </p>
+              {isMember && (
+                <p style={{ fontSize: 13, color: "#839958", margin: 0 }}>Be the first to post here!</p>
+              )}
+            </div>
+          ) : (
+            posts.map(post => (
+              <PostCard key={post.id} post={post} onHelpful={handleHelpful} />
+            ))
+          )}
+        </div>
       </div>
 
-      {/* ── Right panel ── */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-        {view === "chat" && activeChannel ? (
-          <ChannelChat
-            key={activeChannel.id}
-            channel={activeChannel}
-            communityId={community.id}
-            isMember={isMember}
-            userId={session?.user.id ?? null}
-          />
-        ) : view === "directory" ? (
-          <DirectoryView communityId={community.id} />
-        ) : view === "rules" ? (
-          <RulesView community={community} />
-        ) : (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
-            <p style={{ color: "#839958", fontSize: 14 }}>Select a channel to start chatting</p>
-          </div>
-        )}
-      </div>
+      {/* Member directory modal */}
+      {showMembers && (
+        <MemberDirectory members={members} onClose={() => setShowMembers(false)} />
+      )}
+
+      <style>{`
+        .mobile-only { display: none; }
+        @media (max-width: 767px) {
+          .mobile-only { display: flex !important; align-items: center; }
+        }
+      `}</style>
     </div>
   );
 }

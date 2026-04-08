@@ -12,7 +12,8 @@ interface Post {
   id: string;
   community_id: string;
   user_id: string;
-  type: "Discussion" | "Resource" | "Job referral" | "Repost";
+  type: string;
+  channel_type: string;
   content: string;
   link_url: string | null;
   referral_company: string | null;
@@ -52,7 +53,19 @@ const TYPE_STYLE: Record<string, {bg:string; color:string; label:string}> = {
   "Discussion":  { bg:"#e8e4ce",   color:"#839958", label:"Discussion"  },
   "Resource":    { bg:"#B5D5FF33", color:"#105666", label:"Resource 🔗" },
   "Job referral":{ bg:"#D3968C22", color:"#a05a44", label:"Referral 🤝" },
+  "Referral":    { bg:"#FFE4F0",   color:"#c04080", label:"Referral 🤝" },
+  "Job Listing": { bg:"#EAE4FF",   color:"#5a44a0", label:"Job 💼"      },
+  "Event":       { bg:"#FDE8C8",   color:"#a07020", label:"Event 📅"    },
+  "Poll":        { bg:"#D3E4FF",   color:"#2060a0", label:"Poll 📊"     },
+  "Course":      { bg:"#D3F4E8",   color:"#0A7050", label:"Course 📚"   },
   "Repost":      { bg:"#83995822", color:"#0A3323", label:"Repost 🔁"   },
+};
+
+const CHANNEL_LABELS: Record<string, string> = {
+  "discussions": "💬 Discussions",
+  "upskilling":  "📚 Upskilling",
+  "referrals":   "🤝 Referrals",
+  "job_board":   "💼 Job Board",
 };
 
 // ─── Share Modal ──────────────────────────────────────────────────────────────
@@ -243,6 +256,10 @@ function PostCard({
             {post.community && (
               <><span>·</span>
               <Link href={`/communities/${post.community.slug}`} style={{ color:"#105666", textDecoration:"none", fontWeight:600 }}>{post.community.name}</Link></>
+            )}
+            {post.channel_type && CHANNEL_LABELS[post.channel_type] && (
+              <><span>·</span>
+              <span style={{ color:"#839958" }}>{CHANNEL_LABELS[post.channel_type]}</span></>
             )}
           </div>
         </div>
@@ -589,7 +606,7 @@ export default function FeedPage() {
   const [suggestedUsers, setSuggestedUsers] = useState<{id:string; full_name:string|null; current_job_role:string|null}[]>([]);
   const [circlesCount, setCirclesCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all"|"referrals"|"saved">("all");
+  const [filter, setFilter] = useState<"all"|"discussions"|"upskilling"|"referrals"|"job_board"|"saved">("all");
   const [sharePost, setSharePost] = useState<Post|null>(null);
 
   const userId = session?.user?.id ?? "";
@@ -607,7 +624,8 @@ export default function FeedPage() {
 
     const [commsRes, memRes, likedRes, savedRes, followingRes, usersRes] = await Promise.all([
       supabase.from("communities").select("id,slug,name,member_count,posts_this_week,icon_color").order("member_count", { ascending: false }),
-      supabase.from("community_members").select("community_id").eq("user_id", userId),
+      // Only approved memberships feed the timeline
+      supabase.from("community_members").select("community_id, status").eq("user_id", userId),
       supabase.from("post_likes").select("post_id").eq("user_id", userId),
       supabase.from("saved_posts").select("post_id").eq("user_id", userId),
       supabase.from("follows").select("following_id").eq("follower_id", userId),
@@ -617,7 +635,11 @@ export default function FeedPage() {
     const allComms = (commsRes.data as Community[]) ?? [];
     setCommunities(allComms);
 
-    const memberSet = new Set((memRes.data ?? []).map((m: {community_id:string}) => m.community_id));
+    // Only count/use approved memberships for the feed
+    const approvedMembers = (memRes.data ?? []).filter((m: {community_id:string; status:string}) =>
+      !m.status || m.status === "approved"
+    );
+    const memberSet = new Set(approvedMembers.map((m: {community_id:string}) => m.community_id));
     setMyCommIds(memberSet);
     setCirclesCount(memberSet.size);
 
@@ -626,8 +648,8 @@ export default function FeedPage() {
     setFollowingIds(new Set((followingRes.data ?? []).map((f: { following_id: string }) => f.following_id)));
     setSuggestedUsers((usersRes.data ?? []) as {id:string; full_name:string|null; current_job_role:string|null}[]);
 
-    // Load posts
-    const myCommList = (memRes.data ?? []).map((m: {community_id:string}) => m.community_id);
+    // Load posts only from approved groups
+    const myCommList = Array.from(memberSet);
     let allPosts: Post[] = [];
 
     if (myCommList.length > 0) {
@@ -636,19 +658,8 @@ export default function FeedPage() {
         .select("*, author:profiles(full_name,current_job_role), community:communities(name,slug)")
         .in("community_id", myCommList)
         .order("created_at", { ascending: false })
-        .limit(30);
+        .limit(40);
       allPosts = (data as Post[]) ?? [];
-    }
-
-    if (allPosts.length < 10) {
-      const existingIds = new Set(allPosts.map(p => p.id));
-      const { data } = await supabase
-        .from("community_posts")
-        .select("*, author:profiles(full_name,current_job_role), community:communities(name,slug)")
-        .order("created_at", { ascending: false })
-        .limit(20);
-      const extras = ((data as Post[]) ?? []).filter(p => !existingIds.has(p.id));
-      allPosts = [...allPosts, ...extras].slice(0, 30);
     }
 
     setPosts(allPosts);
@@ -710,11 +721,13 @@ export default function FeedPage() {
   const userInits = initials(displayName);
   const myMemberComms = communities.filter(c => myCommIds.has(c.id));
 
-  const filteredPosts = filter === "referrals"
-    ? posts.filter(p => p.type === "Job referral")
-    : filter === "saved"
-    ? posts.filter(p => savedPostIds.has(p.id))
-    : posts;
+  const filteredPosts =
+    filter === "discussions" ? posts.filter(p => p.channel_type === "discussions") :
+    filter === "upskilling"  ? posts.filter(p => p.channel_type === "upskilling")  :
+    filter === "referrals"   ? posts.filter(p => p.channel_type === "referrals")   :
+    filter === "job_board"   ? posts.filter(p => p.channel_type === "job_board")   :
+    filter === "saved"       ? posts.filter(p => savedPostIds.has(p.id))           :
+    posts;
 
   return (
     <>
@@ -755,10 +768,17 @@ export default function FeedPage() {
             <PostComposer userId={userId} userInitials={userInits} userAvatarBg={userBg} communities={myMemberComms} onPosted={load} />
           )}
 
-          {/* Filters */}
-          <div style={{ display:"flex", gap:4, marginBottom:12 }}>
-            {([["all","All posts"],["referrals","Referrals 🤝"],["saved","Saved 🔖"]] as const).map(([key,label]) => (
-              <button key={key} onClick={()=>setFilter(key)} style={{ fontSize:12, fontWeight:filter===key?700:500, border:"none", cursor:"pointer", padding:"6px 14px", borderRadius:20, backgroundColor:filter===key?"#0A3323":"#e8e4ce", color:filter===key?"#F7F4D5":"#839958", fontFamily:"inherit" }}>
+          {/* Channel filters */}
+          <div style={{ display:"flex", gap:4, marginBottom:12, overflowX:"auto", paddingBottom:2 }}>
+            {([
+              ["all","All"],
+              ["discussions","💬 Discussions"],
+              ["upskilling","📚 Upskilling"],
+              ["referrals","🤝 Referrals"],
+              ["job_board","💼 Jobs"],
+              ["saved","🔖 Saved"],
+            ] as const).map(([key,label]) => (
+              <button key={key} onClick={()=>setFilter(key)} style={{ fontSize:11, fontWeight:filter===key?700:500, border:"none", cursor:"pointer", padding:"6px 14px", borderRadius:20, backgroundColor:filter===key?"#0A3323":"#e8e4ce", color:filter===key?"#F7F4D5":"#839958", fontFamily:"inherit", whiteSpace:"nowrap", flexShrink:0 }}>
                 {label}
               </button>
             ))}
@@ -792,20 +812,32 @@ export default function FeedPage() {
             <div style={{ backgroundColor:"#fff", border:"1px solid #e8e4ce", borderRadius:14, padding:32, textAlign:"center" }}>
               <p style={{ color:"#839958", fontSize:13 }}>Loading your feed…</p>
             </div>
-          ) : !userId ? null : filteredPosts.length === 0 ? (
+          ) : !userId ? null : myCommIds.size === 0 ? (
+            // No approved group memberships — prompt to join
+            <div style={{ backgroundColor:"#fff", border:"1.5px dashed #e8e4ce", borderRadius:16, padding:"40px 28px", textAlign:"center" }}>
+              <p style={{ fontSize:36, margin:"0 0 12px" }}>🔒</p>
+              <p style={{ fontSize:16, fontWeight:800, color:"#0A3323", margin:"0 0 8px" }}>Your feed lives inside your groups</p>
+              <p style={{ fontSize:13, color:"#839958", margin:"0 0 24px", lineHeight:1.6 }}>
+                Mentor is community-first. Apply to a verified group to start seeing<br />posts, referrals, job listings, and upskilling content.
+              </p>
+              <Link href="/communities" style={{ display:"inline-block", fontSize:13, fontWeight:700, backgroundColor:"#0A3323", color:"#F7F4D5", borderRadius:10, padding:"12px 28px", textDecoration:"none" }}>
+                Apply to a group →
+              </Link>
+            </div>
+          ) : filteredPosts.length === 0 ? (
             <div style={{ backgroundColor:"#fff", border:"1px solid #e8e4ce", borderRadius:14, padding:"48px 32px", textAlign:"center" }}>
               <div style={{ fontSize:40, marginBottom:12 }}>
                 {filter==="saved" ? "🔖" : "💬"}
               </div>
               <p style={{ fontSize:14, fontWeight:700, color:"#1a1a1a", margin:"0 0 8px" }}>
-                {filter==="saved" ? "No saved posts yet" : "Your feed is empty"}
+                {filter==="saved" ? "No saved posts yet" : "Nothing here yet"}
               </p>
               <p style={{ fontSize:13, color:"#839958", margin:"0 0 20px" }}>
-                {filter==="saved" ? "Save posts to read later by clicking 🔖" : "Join circles to see posts from people in your target companies."}
+                {filter==="saved" ? "Save posts to read later by clicking 🔖" : "Be the first to post in this channel."}
               </p>
               {filter!=="saved" && (
                 <Link href="/communities" style={{ display:"inline-block", fontSize:13, fontWeight:700, backgroundColor:"#0A3323", color:"#F7F4D5", borderRadius:10, padding:"10px 24px", textDecoration:"none" }}>
-                  Find your circles →
+                  Go to your groups →
                 </Link>
               )}
             </div>

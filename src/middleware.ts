@@ -42,7 +42,7 @@ export async function middleware(req: NextRequest) {
 
   // Redirect authenticated users away from auth pages
   if (session && AUTH_ROUTES.some((r) => pathname.startsWith(r))) {
-    const next = req.nextUrl.searchParams.get("next") ?? "/feed";
+    const next = req.nextUrl.searchParams.get("next") ?? "/communities";
     return NextResponse.redirect(new URL(next, req.url));
   }
 

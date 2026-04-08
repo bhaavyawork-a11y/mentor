@@ -47,8 +47,8 @@ function getLevelInfo(xp: number) {
 type NavItem = { label: string; href: string; icon: string; matchPrefixes: string[] };
 
 const NAV: NavItem[] = [
-  { label: "Feed",      href: "/feed",        icon: "🏠", matchPrefixes: ["/feed", "/dashboard"]                       },
   { label: "Groups",    href: "/communities",  icon: "👥", matchPrefixes: ["/communities"]                              },
+  { label: "Feed",      href: "/feed",         icon: "🏠", matchPrefixes: ["/feed", "/dashboard"]                       },
   { label: "Experts",   href: "/experts",      icon: "📅", matchPrefixes: ["/experts", "/sessions", "/bookings"]         },
   { label: "Jobs",      href: "/jobs",         icon: "💼", matchPrefixes: ["/jobs", "/tracker", "/companies"]           },
   { label: "Assistant", href: "/assistant",    icon: "✨", matchPrefixes: ["/assistant"]                                },

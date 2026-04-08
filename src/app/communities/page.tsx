@@ -5,7 +5,13 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import { useSession } from "@/hooks/useSession";
 
-/* ─── Types ─────────────────────────────────────────────────────── */
+// ─── Types ────────────────────────────────────────────────────────────────────
+interface ScreeningQuestion {
+  id: string;
+  question: string;
+  placeholder?: string;
+}
+
 interface Community {
   id: string;
   slug: string;
@@ -15,228 +21,464 @@ interface Community {
   icon_color: string;
   member_count: number;
   posts_this_week: number;
+  requires_verification: boolean;
+  screening_questions: ScreeningQuestion[];
 }
 
-/* ─── Helpers ───────────────────────────────────────────────────── */
-const EMOJI_MAP: Record<string, string> = {
-  "SWE":        "💻",
-  "Product":    "🧩",
-  "Design":     "🎨",
-  "Data":       "📊",
-  "Finance":    "💰",
-  "Marketing":  "📣",
-  "Operations": "⚙️",
-  "Sales":      "📈",
+interface MemberRecord { community_id: string; status: string; }
+interface AppRecord    { community_id: string; status: string; ai_score: number | null; ai_feedback: string | null; }
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function groupEmoji(slug: string): string {
+  const map: Record<string, string> = {
+    "product-managers": "📦",
+    "early-engineers":  "⚙️",
+    "founders-office":  "🚀",
+    "vc-investing":     "💹",
+    "growth-marketing": "📈",
+    "data-ai":          "🤖",
+    "ops-strategy":     "🔧",
+    "sales-bd":         "🤝",
+  };
+  return map[slug] ?? "👥";
+}
+
+const textareaStyle: React.CSSProperties = {
+  width: "100%", boxSizing: "border-box", padding: "10px 12px",
+  fontSize: 13, border: "1px solid #e8e4ce", borderRadius: 8,
+  fontFamily: "inherit", outline: "none", backgroundColor: "#fff", color: "#1a1a1a",
+  minHeight: 72, resize: "vertical" as const, lineHeight: 1.5,
 };
 
-function communityEmoji(community: Community) {
-  for (const [key, emoji] of Object.entries(EMOJI_MAP)) {
-    if (community.name.toLowerCase().includes(key.toLowerCase()) ||
-        community.role_type?.toLowerCase().includes(key.toLowerCase())) {
-      return emoji;
-    }
-  }
-  return community.name[0]?.toUpperCase() ?? "●";
-}
-
-/* ─── My Group Card (joined) ────────────────────────────────────── */
+// ─── My Group Card ────────────────────────────────────────────────────────────
 function MyGroupCard({ community }: { community: Community }) {
-  const icon = communityEmoji(community);
-  const isEmoji = icon.length > 1 || icon.codePointAt(0)! > 127;
-
   return (
-    <Link
-      href={`/communities/${community.slug}`}
-      style={{ textDecoration: "none" }}
-    >
+    <Link href={`/communities/${community.slug}`} style={{ textDecoration: "none" }}>
       <div style={{
-        backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14,
-        padding: 16, display: "flex", alignItems: "center", gap: 12,
+        backgroundColor: "#fff", border: "1.5px solid #e8e4ce", borderRadius: 14,
+        padding: "14px 16px", display: "flex", alignItems: "center", gap: 12,
         cursor: "pointer", transition: "all 0.15s",
       }}
-        onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "#0A3323"; (e.currentTarget as HTMLDivElement).style.boxShadow = "0 2px 12px rgba(10,51,35,0.08)"; }}
-        onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = "#e8e4ce"; (e.currentTarget as HTMLDivElement).style.boxShadow = "none"; }}
+        onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = "#0A3323"; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = "#e8e4ce"; }}
       >
         <div style={{
-          width: 46, height: 46, borderRadius: 12, flexShrink: 0,
-          backgroundColor: community.icon_color ?? "#F7F4D5",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: isEmoji ? 22 : 20, fontWeight: 800, color: "#1a1a1a",
+          width: 44, height: 44, borderRadius: 10, flexShrink: 0,
+          backgroundColor: community.icon_color ?? "#FDE68A",
+          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22,
         }}>
-          {icon}
+          {groupEmoji(community.slug)}
         </div>
-
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
-            <p style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {community.name}
-            </p>
-            <span style={{ fontSize: 10, fontWeight: 700, backgroundColor: "#83995822", color: "#0A3323", borderRadius: 99, padding: "2px 7px", flexShrink: 0 }}>
-              ✓
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 1 }}>
+            <span style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a" }}>{community.name}</span>
+            <span style={{ fontSize: 10, fontWeight: 700, backgroundColor: "#e6f4ea", color: "#0A3323", borderRadius: 99, padding: "2px 8px" }}>
+              ✓ Member
             </span>
           </div>
-          <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>
+          <span style={{ fontSize: 11, color: "#839958" }}>
             {community.member_count.toLocaleString()} members
-            {community.posts_this_week > 0 && <span style={{ color: "#b0ab8c" }}> · {community.posts_this_week} active this week</span>}
-          </p>
+            {community.posts_this_week > 0 && ` · ${community.posts_this_week} posts this week`}
+          </span>
         </div>
-
-        <span style={{ fontSize: 18, color: "#e8e4ce", flexShrink: 0 }}>→</span>
+        <span style={{ fontSize: 16, color: "#c8c4ae", flexShrink: 0 }}>→</span>
       </div>
     </Link>
   );
 }
 
-/* ─── Browse Card (not joined) ──────────────────────────────────── */
-function BrowseCard({ community, onJoin }: { community: Community; onJoin: (id: string) => void }) {
-  const icon = communityEmoji(community);
-  const isEmoji = icon.length > 1 || icon.codePointAt(0)! > 127;
-
+// ─── Pending Card ─────────────────────────────────────────────────────────────
+function PendingCard({ community, app }: { community: Community; app: AppRecord }) {
+  const rejected = app.status === "rejected";
   return (
     <div style={{
-      backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16,
-      padding: 20, display: "flex", flexDirection: "column", gap: 14,
+      backgroundColor: rejected ? "#fff8f5" : "#fffdf0",
+      border: `1.5px solid ${rejected ? "#f0cbbf" : "#e8e4ce"}`,
+      borderRadius: 14, padding: "14px 16px",
+      display: "flex", alignItems: "center", gap: 12,
     }}>
       <div style={{
-        width: 52, height: 52, borderRadius: 14, flexShrink: 0,
-        backgroundColor: community.icon_color ?? "#F7F4D5",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: isEmoji ? 24 : 22, fontWeight: 800, color: "#1a1a1a",
+        width: 44, height: 44, borderRadius: 10, flexShrink: 0,
+        backgroundColor: community.icon_color ?? "#FDE68A",
+        display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22,
+        opacity: 0.7,
       }}>
-        {icon}
+        {groupEmoji(community.slug)}
       </div>
-
-      <div>
-        <h3 style={{ fontSize: 16, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>{community.name}</h3>
-        {community.role_type && (
-          <span style={{ fontSize: 11, fontWeight: 600, backgroundColor: "#e8e4ce", color: "#839958", borderRadius: 99, padding: "3px 10px" }}>
-            {community.role_type}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a" }}>{community.name}</span>
+          <span style={{
+            fontSize: 10, fontWeight: 700, borderRadius: 99, padding: "2px 8px",
+            backgroundColor: rejected ? "#fef3ee" : "#fffbea",
+            color: rejected ? "#c0714a" : "#9a7d00",
+          }}>
+            {rejected ? "Not approved" : "Under review"}
           </span>
+        </div>
+        {rejected && app.ai_feedback && (
+          <p style={{ fontSize: 11, color: "#c0714a", margin: "3px 0 0", lineHeight: 1.4 }}>
+            {app.ai_feedback.slice(0, 100)}{app.ai_feedback.length > 100 ? "…" : ""}
+          </p>
+        )}
+        {!rejected && (
+          <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>
+            Screening completed — reviewing your application
+          </p>
         )}
       </div>
+    </div>
+  );
+}
 
-      <div style={{ display: "flex", gap: 14 }}>
-        <span style={{ fontSize: 12, color: "#839958" }}>{community.member_count.toLocaleString()} members</span>
-        {community.posts_this_week > 0 && (
-          <span style={{ fontSize: 11, color: "#b0ab8c" }}>{community.posts_this_week} posts this week</span>
-        )}
-      </div>
+// ─── Apply Panel (inline screening flow) ─────────────────────────────────────
+function ApplyPanel({ community, onDone }: {
+  community: Community;
+  onDone: (result: { status: "approved" | "rejected"; score: number; feedback: string }) => void;
+}) {
+  const [answers, setAnswers]     = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [result, setResult]       = useState<{
+    status: "approved" | "rejected"; score: number; feedback: string;
+  } | null>(null);
 
-      {community.description && (
-        <p style={{
-          fontSize: 13, color: "#666", margin: 0, lineHeight: 1.6,
-          display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
-        }}>
-          {community.description}
+  const questions = community.screening_questions ?? [];
+  const canSubmit = questions.every(q => (answers[q.id] || "").trim().length >= 20);
+
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/groups/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ community_id: community.id, answers }),
+      });
+      const data = await res.json();
+      const r = { status: data.status, score: data.score ?? 0, feedback: data.feedback ?? "" };
+      setResult(r);
+      onDone(r);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (result) {
+    const ok = result.status === "approved";
+    return (
+      <div style={{ padding: "16px", borderTop: "1px solid #e8e4ce" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+          <span style={{ fontSize: 22 }}>{ok ? "🎉" : "😔"}</span>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: ok ? "#0A3323" : "#c0714a" }}>
+              {ok ? `Welcome to ${community.name}!` : "Application not approved"}
+            </div>
+            <div style={{ fontSize: 11, color: "#839958" }}>AI score: {result.score}/100</div>
+          </div>
+        </div>
+        <p style={{ fontSize: 12, color: "#555", lineHeight: 1.5, margin: "0 0 12px" }}>
+          {result.feedback}
         </p>
-      )}
+        {ok && (
+          <Link href={`/communities/${community.slug}`} style={{
+            display: "inline-block", padding: "10px 20px", backgroundColor: "#0A3323", color: "#F7F4D5",
+            borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none",
+          }}>
+            Enter group →
+          </Link>
+        )}
+      </div>
+    );
+  }
 
-      <div style={{ marginTop: "auto" }}>
+  return (
+    <div style={{ padding: "16px", borderTop: "1px solid #e8e4ce", backgroundColor: "#fafaf4" }}>
+      <p style={{ fontSize: 12, color: "#839958", margin: "0 0 14px", lineHeight: 1.5 }}>
+        Answer {questions.length} short questions. AI evaluates your fit — be specific with real examples.
+      </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        {questions.map((q, i) => {
+          const val = answers[q.id] || "";
+          return (
+            <div key={q.id}>
+              <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#0A3323", marginBottom: 5, lineHeight: 1.4 }}>
+                Q{i + 1}. {q.question}
+              </label>
+              <textarea
+                value={val}
+                onChange={e => setAnswers({ ...answers, [q.id]: e.target.value })}
+                placeholder={q.placeholder ?? "Be specific — give real examples…"}
+                style={{
+                  ...textareaStyle,
+                  borderColor: val.trim().length > 0 && val.trim().length < 20 ? "#e8b4a0" : "#e8e4ce",
+                }}
+              />
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 14 }}>
         <button
-          onClick={() => onJoin(community.id)}
+          onClick={handleSubmit}
+          disabled={!canSubmit || submitting}
           style={{
-            width: "100%", fontSize: 13, fontWeight: 700,
-            backgroundColor: "#0A3323", color: "#839958",
-            border: "none", borderRadius: 9, padding: "10px 0",
-            cursor: "pointer",
+            padding: "10px 22px", borderRadius: 10, border: "none",
+            backgroundColor: canSubmit && !submitting ? "#0A3323" : "#c8c4ae",
+            color: "#F7F4D5", fontSize: 13, fontWeight: 700,
+            cursor: canSubmit && !submitting ? "pointer" : "default",
+            fontFamily: "inherit", display: "flex", alignItems: "center", gap: 8,
           }}
         >
-          Join community
+          {submitting ? (
+            <>
+              <span style={{ animation: "spin 1s linear infinite", display: "inline-block" }}>⟳</span>
+              Evaluating…
+            </>
+          ) : "Submit application →"}
         </button>
       </div>
     </div>
   );
 }
 
-/* ─── Page ──────────────────────────────────────────────────────── */
+// ─── Discover Card ────────────────────────────────────────────────────────────
+function DiscoverCard({ community, onApplied }: {
+  community: Community;
+  onApplied: (communityId: string, status: "approved" | "rejected") => void;
+}) {
+  const [applying, setApplying] = useState(false);
+
+  return (
+    <div style={{
+      backgroundColor: "#fff", border: "1.5px solid #e8e4ce", borderRadius: 16,
+      overflow: "hidden", transition: "border-color 0.15s",
+    }}>
+      {/* Card header */}
+      <div style={{ padding: "18px 18px 14px", display: "flex", gap: 14 }}>
+        <div style={{
+          width: 48, height: 48, borderRadius: 12, flexShrink: 0,
+          backgroundColor: community.icon_color ?? "#FDE68A",
+          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24,
+        }}>
+          {groupEmoji(community.slug)}
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <h3 style={{ fontSize: 14, fontWeight: 800, color: "#1a1a1a", margin: "0 0 4px" }}>{community.name}</h3>
+          {community.role_type && (
+            <span style={{ fontSize: 10, fontWeight: 600, backgroundColor: "#f0ede0", color: "#839958", borderRadius: 99, padding: "2px 8px" }}>
+              {community.role_type}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {community.description && (
+        <p style={{
+          fontSize: 12, color: "#666", margin: "0 18px 10px", lineHeight: 1.55,
+          display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as const, overflow: "hidden",
+        }}>
+          {community.description}
+        </p>
+      )}
+
+      <div style={{ display: "flex", gap: 16, padding: "0 18px 14px" }}>
+        <span style={{ fontSize: 11, color: "#839958" }}>{community.member_count.toLocaleString()} members</span>
+        {community.posts_this_week > 0 && (
+          <span style={{ fontSize: 11, color: "#b0ab8c" }}>{community.posts_this_week} posts/wk</span>
+        )}
+        {community.requires_verification && (
+          <span style={{ fontSize: 10, color: "#0A3323", fontWeight: 600 }}>🔒 Verified only</span>
+        )}
+      </div>
+
+      {/* Channels preview */}
+      <div style={{ display: "flex", gap: 6, padding: "0 18px 14px", flexWrap: "wrap" }}>
+        {["💬 Discussions", "📚 Upskilling", "🤝 Referrals", "💼 Job Board"].map(ch => (
+          <span key={ch} style={{
+            fontSize: 10, padding: "3px 8px", borderRadius: 6,
+            backgroundColor: "#f5f3ea", color: "#839958", fontWeight: 500,
+          }}>
+            {ch}
+          </span>
+        ))}
+      </div>
+
+      {/* Apply button */}
+      {!applying && (
+        <div style={{ padding: "0 18px 18px" }}>
+          <button
+            onClick={() => setApplying(true)}
+            style={{
+              width: "100%", padding: "11px", borderRadius: 10, border: "1.5px solid #0A3323",
+              backgroundColor: "transparent", color: "#0A3323",
+              fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
+            }}
+          >
+            Apply to join →
+          </button>
+        </div>
+      )}
+
+      {/* Inline screening panel */}
+      {applying && (
+        <ApplyPanel
+          community={community}
+          onDone={r => {
+            onApplied(community.id, r.status);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
 export default function CommunitiesPage() {
   const supabase = createClient();
   const { session } = useSession();
-  const [communities, setCommunities] = useState<Community[]>([]);
-  const [memberIds, setMemberIds] = useState<Set<string>>(new Set());
-  const [loading, setLoading] = useState(true);
+
+  const [communities, setCommunities]   = useState<Community[]>([]);
+  const [memberMap, setMemberMap]       = useState<Map<string, MemberRecord>>(new Map());
+  const [appMap, setAppMap]             = useState<Map<string, AppRecord>>(new Map());
+  const [loading, setLoading]           = useState(true);
 
   const load = useCallback(async () => {
-    const { data: comms } = await supabase.from("communities").select("*").order("member_count", { ascending: false });
+    const { data: comms } = await supabase
+      .from("communities")
+      .select("id, slug, name, description, role_type, icon_color, member_count, posts_this_week, requires_verification, screening_questions")
+      .order("member_count", { ascending: false });
+
     setCommunities((comms as Community[]) ?? []);
 
     if (session?.user.id) {
-      const { data: mem } = await supabase.from("community_members").select("community_id").eq("user_id", session.user.id);
-      setMemberIds(new Set((mem ?? []).map((m: { community_id: string }) => m.community_id)));
+      const [{ data: members }, { data: apps }] = await Promise.all([
+        supabase.from("community_members").select("community_id, status").eq("user_id", session.user.id),
+        supabase.from("community_applications").select("community_id, status, ai_score, ai_feedback").eq("user_id", session.user.id),
+      ]);
+
+      const mm = new Map<string, MemberRecord>();
+      (members ?? []).forEach((m: MemberRecord) => mm.set(m.community_id, m));
+      setMemberMap(mm);
+
+      const am = new Map<string, AppRecord>();
+      (apps ?? []).forEach((a: AppRecord) => am.set(a.community_id, a));
+      setAppMap(am);
     }
     setLoading(false);
   }, [session?.user.id, supabase]);
 
   useEffect(() => { load(); }, [load]);
 
-  const handleJoin = async (communityId: string) => {
-    if (!session?.user.id) return;
-    await supabase.from("community_members").upsert({ community_id: communityId, user_id: session.user.id });
-    setMemberIds((prev) => { const next = new Set(prev); next.add(communityId); return next; });
+  const handleApplied = (communityId: string, status: "approved" | "rejected") => {
+    if (status === "approved") {
+      setMemberMap(prev => {
+        const next = new Map(prev);
+        next.set(communityId, { community_id: communityId, status: "approved" });
+        return next;
+      });
+      setAppMap(prev => {
+        const next = new Map(prev);
+        next.set(communityId, { community_id: communityId, status: "approved", ai_score: null, ai_feedback: null });
+        return next;
+      });
+    } else {
+      setAppMap(prev => {
+        const next = new Map(prev);
+        next.set(communityId, { community_id: communityId, status: "rejected", ai_score: null, ai_feedback: "Application not approved" });
+        return next;
+      });
+    }
   };
 
-  const myComms = communities.filter((c) => memberIds.has(c.id));
-  const browseComms = communities.filter((c) => !memberIds.has(c.id));
+  const myGroups      = communities.filter(c => memberMap.get(c.id)?.status === "approved");
+  const pendingGroups = communities.filter(c => {
+    const app = appMap.get(c.id);
+    return app && app.status !== "approved" && !memberMap.has(c.id);
+  });
+  const discoverGroups = communities.filter(c =>
+    !memberMap.has(c.id) &&
+    (!appMap.has(c.id) || appMap.get(c.id)?.status === "rejected")
+  );
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 860, margin: "0 auto", padding: "40px 0" }}>
+        <p style={{ fontSize: 14, color: "#839958" }}>Loading groups…</p>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ maxWidth: 960, margin: "0 auto", padding: "32px 0" }}>
+    <div style={{ maxWidth: 860, margin: "0 auto", padding: "0 0 80px" }}>
       {/* Header */}
-      <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>Your circles</h1>
+      <div style={{ marginBottom: 28 }}>
+        <h1 style={{ fontSize: 24, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>Groups</h1>
         <p style={{ fontSize: 14, color: "#839958", margin: 0 }}>
-          Connect with people at the same stage, in the same role.
+          Exclusive verified communities for professionals like you. Apply to join, post in channels, get referrals.
         </p>
       </div>
 
-      {loading ? (
-        <p style={{ fontSize: 14, color: "#839958" }}>Loading…</p>
-      ) : (
-        <>
-          {/* My joined groups */}
-          {myComms.length > 0 && (
-            <div style={{ marginBottom: 40 }}>
-              <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 14px" }}>
-                My communities
-              </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {myComms.map((c) => <MyGroupCard key={c.id} community={c} />)}
-              </div>
-            </div>
-          )}
-
-          {myComms.length === 0 && (
-            <div style={{
-              backgroundColor: "#fff", border: "1px dashed #e8e4ce", borderRadius: 16,
-              padding: "28px 24px", textAlign: "center", marginBottom: 36,
-            }}>
-              <p style={{ fontSize: 22, margin: "0 0 8px" }}>👋</p>
-              <p style={{ fontSize: 14, color: "#839958", margin: 0 }}>
-                You haven&apos;t joined any communities yet — pick one below to get started.
-              </p>
-            </div>
-          )}
-
-          {/* Browse */}
-          {browseComms.length > 0 && (
-            <div>
-              <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 14px" }}>
-                Discover communities
-              </p>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }} className="grid-3">
-                {browseComms.map((c) => (
-                  <BrowseCard key={c.id} community={c} onJoin={handleJoin} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {browseComms.length === 0 && myComms.length > 0 && (
-            <p style={{ fontSize: 13, color: "#b0ab8c", textAlign: "center", marginTop: 20 }}>
-              You&apos;re in all available communities 🎉
-            </p>
-          )}
-        </>
+      {/* My groups */}
+      {myGroups.length > 0 && (
+        <section style={{ marginBottom: 36 }}>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 12px" }}>
+            My Groups ({myGroups.length})
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {myGroups.map(c => <MyGroupCard key={c.id} community={c} />)}
+          </div>
+        </section>
       )}
+
+      {/* Pending */}
+      {pendingGroups.length > 0 && (
+        <section style={{ marginBottom: 36 }}>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 12px" }}>
+            Applications
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {pendingGroups.map(c => (
+              <PendingCard key={c.id} community={c} app={appMap.get(c.id)!} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Empty state — no groups yet */}
+      {myGroups.length === 0 && pendingGroups.length === 0 && (
+        <div style={{
+          backgroundColor: "#fff", border: "1.5px dashed #e8e4ce", borderRadius: 16,
+          padding: "28px 24px", textAlign: "center", marginBottom: 32,
+        }}>
+          <p style={{ fontSize: 24, margin: "0 0 8px" }}>🔒</p>
+          <p style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a", margin: "0 0 6px" }}>Discover your community</p>
+          <p style={{ fontSize: 13, color: "#839958", margin: 0, lineHeight: 1.5 }}>
+            Apply to a group below. Each group is verified — so everyone you meet belongs there.
+          </p>
+        </div>
+      )}
+
+      {/* Discover */}
+      {discoverGroups.length > 0 && (
+        <section>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 12px" }}>
+            Discover Groups — Apply to Join
+          </p>
+          <div className="communities-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16 }}>
+            {discoverGroups.map(c => (
+              <DiscoverCard key={c.id} community={c} onApplied={handleApplied} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      <style>{`
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @media (max-width: 767px) {
+          .communities-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </div>
   );
 }
