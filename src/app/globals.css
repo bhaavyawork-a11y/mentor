@@ -349,3 +349,250 @@
     display: none !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LANDING PAGE  (page.tsx — server component, no AppLayout)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Nav */
+.landing-nav {
+  background: #ffffff;
+  border-bottom: 1px solid #e8e4ce;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 48px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  gap: 16px;
+}
+.landing-logo {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0A3323;
+  text-decoration: none;
+  margin-right: auto;
+  flex-shrink: 0;
+}
+.landing-nav-links {
+  display: flex;
+  gap: 2px;
+  margin-right: 16px;
+}
+.landing-nav-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.landing-nav-signin {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-decoration: none;
+  border: 1.5px solid #e8e4ce;
+  border-radius: 8px;
+  padding: 7px 16px;
+  white-space: nowrap;
+}
+.landing-cta-primary {
+  font-size: 13px;
+  font-weight: 700;
+  color: #F7F4D5;
+  text-decoration: none;
+  background-color: #0A3323;
+  border-radius: 8px;
+  padding: 7px 16px;
+  white-space: nowrap;
+  display: inline-block;
+}
+.landing-cta-primary:hover { opacity: 0.9; }
+.landing-cta-secondary {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0A3323;
+  text-decoration: none;
+  background-color: #F7F4D5;
+  border: 1px solid #e8e4ce;
+  border-radius: 10px;
+  padding: 12px 24px;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+/* Hero */
+.landing-hero {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 72px 48px 48px;
+  text-align: center;
+}
+.landing-h1 {
+  font-size: 56px;
+  font-weight: 800;
+  color: #0A3323;
+  letter-spacing: -2px;
+  line-height: 1.1;
+  margin: 0 0 20px;
+}
+.landing-hero-sub {
+  font-size: 16px;
+  color: #839958;
+  line-height: 1.75;
+  max-width: 500px;
+  margin: 0 auto 28px;
+}
+.landing-hero-ctas {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.landing-proof {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Shared section wrapper */
+.landing-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 56px 48px;
+}
+
+/* Eyebrow label */
+.landing-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  color: #b0ab8c;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 0 0 10px;
+}
+
+/* Section heading */
+.landing-h2 {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0A3323;
+  letter-spacing: -1px;
+  margin: 0 0 28px;
+}
+
+/* Grids */
+.landing-stats-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+.landing-features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 24px;
+}
+.landing-communities-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.landing-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+/* Referral row button */
+.landing-refer-btn {
+  font-size: 11px;
+  font-weight: 700;
+  background-color: #0A3323;
+  color: #F7F4D5;
+  border-radius: 7px;
+  padding: 6px 12px;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Testimonial */
+.landing-testimonial {
+  background-color: #0A3323;
+  border-radius: 20px;
+  padding: 40px 48px;
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+/* Final CTA section */
+.landing-final-cta {
+  background-color: #ffffff;
+  padding: 72px 48px;
+  text-align: center;
+}
+
+/* Footer */
+.landing-footer {
+  background-color: #0A3323;
+  padding: 28px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* ─── Landing page mobile overrides ─────────────────────────────────────── */
+@media (max-width: 767px) {
+  /* Nav: just logo + "Get started" on mobile */
+  .landing-nav { padding: 0 16px; }
+  .landing-nav-links { display: none; }
+  .landing-nav-signin { display: none; }
+  .landing-cta-primary { font-size: 12px; padding: 7px 14px; }
+
+  /* Hero */
+  .landing-hero { padding: 40px 16px 32px; }
+  .landing-h1 { font-size: 34px; letter-spacing: -1px; }
+  .landing-hero-sub { font-size: 14px; }
+  .landing-h2 { font-size: 24px; letter-spacing: -0.5px; margin-bottom: 20px; }
+
+  /* Section padding */
+  .landing-section { padding: 40px 16px; }
+
+  /* Grids: 2-col on mobile */
+  .landing-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .landing-features-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .landing-communities-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .landing-steps-grid { grid-template-columns: 1fr; gap: 12px; }
+
+  /* Hide request referral button on mobile (too cramped) */
+  .landing-refer-btn { display: none; }
+
+  /* Testimonial: stack */
+  .landing-testimonial {
+    flex-direction: column;
+    padding: 28px 20px;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .landing-testimonial p:first-child { font-size: 15px; }
+
+  /* Final CTA */
+  .landing-final-cta { padding: 48px 16px; }
+
+  /* Footer */
+  .landing-footer {
+    padding: 24px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+}

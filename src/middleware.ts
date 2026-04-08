@@ -1,9 +1,14 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 
-// /experts is intentionally NOT protected — unauthenticated users can browse;
-// the booking flow gates auth inline. Other pages require login.
-const PROTECTED = ["/dashboard", "/profile", "/goals", "/bookings"];
+// All core app routes require auth. Unauthenticated users are sent to
+// /auth/login?next=<original_path> so they land on the right page after sign-in.
+const PROTECTED = [
+  "/feed", "/communities", "/jobs", "/assistant",
+  "/experts", "/messages", "/profile", "/dashboard",
+  "/goals", "/bookings", "/tracker", "/salaries",
+  "/offer", "/resume", "/mock-interview",
+];
 const AUTH_ROUTES = ["/auth/login"];
 
 export async function middleware(req: NextRequest) {
@@ -37,7 +42,8 @@ export async function middleware(req: NextRequest) {
 
   // Redirect authenticated users away from auth pages
   if (session && AUTH_ROUTES.some((r) => pathname.startsWith(r))) {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
+    const next = req.nextUrl.searchParams.get("next") ?? "/feed";
+    return NextResponse.redirect(new URL(next, req.url));
   }
 
   // Redirect unauthenticated users to login
