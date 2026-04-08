@@ -2,7 +2,7 @@
   "name": "Mentor — Get in through the side door",
   "short_name": "Mentor",
   "description": "Career community for early-career professionals in India. AI-powered coaching, expert sessions, job referrals.",
-  "start_url": "/feed",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

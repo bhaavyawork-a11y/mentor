@@ -46,11 +46,9 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(next, req.url));
   }
 
-  // Redirect unauthenticated users to login
+  // Redirect unauthenticated users to the homepage (which has sign-in built in)
   if (!session && PROTECTED.some((r) => pathname.startsWith(r))) {
-    const loginUrl = new URL("/auth/login", req.url);
-    loginUrl.searchParams.set("next", pathname);
-    return NextResponse.redirect(loginUrl);
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
   return res;
