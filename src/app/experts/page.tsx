@@ -394,6 +394,11 @@ export default function SessionsPage() {
         </p>
       </div>
 
+      {/* ── Integration banner ── */}
+      <div style={{ backgroundColor: "#1a5c3a", border: "1px solid #0a7c4f", borderRadius: 8, padding: 16, margin: "16px 0 0", fontSize: 14, color: "#c8e6b0" }}>
+        Expert profiles are being integrated into verified groups. Experts will be discoverable inside the communities they are members of.
+      </div>
+
       {/* ── Sign-in banner for unauthenticated users ── */}
       {!session && (
         <div style={{

@@ -45,6 +45,7 @@ interface MemberProfile {
   bio: string | null;
   linkedin_url: string | null;
   location: string | null;
+  headline: string | null;
 }
 
 interface Member {
@@ -68,9 +69,9 @@ interface OnboardingState {
 // ─── Channel config ───────────────────────────────────────────────────────────
 const CHANNELS = [
   { type: "discussions", label: "Discussions", emoji: "💬", desc: "Ask questions, share thoughts, start conversations", postTypes: ["Discussion", "Poll"] },
-  { type: "upskilling",  label: "Upskilling",  emoji: "📚", desc: "Courses, resources, events and learning opportunities", postTypes: ["Resource", "Event"] },
-  { type: "referrals",   label: "Referrals",   emoji: "🤝", desc: "Warm intros, referral requests and job connections", postTypes: ["Referral"] },
-  { type: "job_board",   label: "Job Board",   emoji: "💼", desc: "Open roles, hiring announcements and job listings", postTypes: ["Job Listing"] },
+  { type: "upskilling",  label: "Library",     emoji: "📚", desc: "Courses, resources, events and learning opportunities", postTypes: ["Resource", "Event"] },
+  { type: "referrals",   label: "Warm Intros", emoji: "🤝", desc: "Warm intros, referral requests and job connections", postTypes: ["Referral"] },
+  { type: "job_board",   label: "Open Roles",  emoji: "💼", desc: "Open roles, hiring announcements and job listings", postTypes: ["Job Listing"] },
 ];
 
 const POST_TYPE_COLORS: Record<string, string> = {
@@ -378,8 +379,13 @@ function MemberDirectory({ members, onClose }: { members: Member[]; onClose: () 
             }}>
               <Avatar userId={m.user_id} name={p?.full_name} size={40} />
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a", marginBottom: 1 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a", marginBottom: 1, display: "flex", alignItems: "center", gap: 6 }}>
                   {p?.full_name ?? "Member"}
+                  {p?.headline && /founder|vp|director|head of|partner|principal|chief|cto|cpo|cmo|coo|ceo/i.test(p.headline) && (
+                    <span style={{ marginLeft: "6px", display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "10px", fontWeight: 600, backgroundColor: "#a0822040", color: "#9a7d00", borderRadius: "4px", padding: "2px 8px", border: "0.5px solid #c0a08080" }}>
+                      Expert
+                    </span>
+                  )}
                 </div>
                 <div style={{ fontSize: 11, color: "#839958" }}>
                   {p?.current_job_role ?? m.role ?? ""}
@@ -998,7 +1004,7 @@ export default function CommunityPage() {
     if (!community?.id) return;
     supabase
       .from("community_members")
-      .select("user_id, joined_at, can_refer, employer, role, status, profile:profiles(full_name, avatar_url, current_job_role, bio, linkedin_url, location)")
+      .select("user_id, joined_at, can_refer, employer, role, status, profile:profiles(full_name, avatar_url, current_job_role, bio, linkedin_url, location, headline)")
       .eq("community_id", community.id)
       .order("joined_at", { ascending: true })
       .limit(100)

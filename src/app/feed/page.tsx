@@ -29,7 +29,6 @@ interface Post {
 }
 
 interface Community { id: string; slug: string; name: string; member_count: number; posts_this_week: number; icon_color: string }
-interface FollowedUser { following_id: string }
 interface LikedPost { post_id: string }
 interface SavedPost { post_id: string }
 
@@ -63,9 +62,9 @@ const TYPE_STYLE: Record<string, {bg:string; color:string; label:string}> = {
 
 const CHANNEL_LABELS: Record<string, string> = {
   "discussions": "💬 Discussions",
-  "upskilling":  "📚 Upskilling",
-  "referrals":   "🤝 Referrals",
-  "job_board":   "💼 Job Board",
+  "upskilling":  "📚 Library",
+  "referrals":   "🤝 Warm Intros",
+  "job_board":   "💼 Open Roles",
 };
 
 // ─── Share Modal ──────────────────────────────────────────────────────────────
@@ -212,13 +211,12 @@ function MediaGrid({ urls }: { urls: string[] }) {
 
 function PostCard({
   post, currentUserId, isLiked, isSaved,
-  isFollowing, onLike, onSave, onRepost, onShare, onFollow,
+  onLike, onSave, onRepost, onShare,
 }: {
   post: Post; currentUserId: string;
-  isLiked: boolean; isSaved: boolean; isFollowing: boolean;
+  isLiked: boolean; isSaved: boolean;
   onLike: (id:string) => void; onSave: (id:string) => void;
   onRepost: (post:Post) => void; onShare: (post:Post) => void;
-  onFollow: (uid:string) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   const authorName = post.author?.full_name ?? "Member";
@@ -243,11 +241,6 @@ function PostCard({
           <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
             <Link href={`/profile/${post.user_id}`} style={{ fontSize:14, fontWeight:700, color:"#1a1a1a", textDecoration:"none" }}>{authorName}</Link>
             <span style={{ fontSize:11, backgroundColor:typeStyle.bg, color:typeStyle.color, borderRadius:99, padding:"2px 8px", fontWeight:600 }}>{typeStyle.label}</span>
-            {!isOwnPost && (
-              <button onClick={() => onFollow(post.user_id)} style={{ marginLeft:"auto", fontSize:11, fontWeight:700, border:`1px solid ${isFollowing?"#e8e4ce":"#0A3323"}`, borderRadius:99, padding:"3px 10px", cursor:"pointer", backgroundColor:"transparent", color:isFollowing?"#839958":"#0A3323", fontFamily:"inherit" }}>
-                {isFollowing ? "Following" : "+ Follow"}
-              </button>
-            )}
           </div>
           <div style={{ fontSize:11, color:"#839958", marginTop:2, display:"flex", gap:4, alignItems:"center", flexWrap:"wrap" }}>
             {authorRole && <span>{authorRole}</span>}
@@ -508,10 +501,8 @@ function ProfileCard({ displayName, role, targetRole, circlesCount, followersCou
 
 // ─── Right sidebar ────────────────────────────────────────────────────────────
 
-function RightSidebar({ communities, myCommIds, suggestedUsers, followingIds, onFollow }: {
+function RightSidebar({ communities, myCommIds }: {
   communities: Community[]; myCommIds: Set<string>;
-  suggestedUsers: {id:string; full_name:string|null; current_job_role:string|null}[];
-  followingIds: Set<string>; onFollow: (uid:string) => void;
 }) {
   const myComms = communities.filter(c=>myCommIds.has(c.id)).slice(0,4);
   const suggestedComms = communities.filter(c=>!myCommIds.has(c.id)).slice(0,3);
@@ -520,32 +511,6 @@ function RightSidebar({ communities, myCommIds, suggestedUsers, followingIds, on
 
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-      {/* People to connect */}
-      {suggestedUsers.length > 0 && (
-        <div style={{ backgroundColor:"#fff", border:"1px solid #e8e4ce", borderRadius:14, padding:16 }}>
-          <p style={{ fontSize:10, fontWeight:700, color:"#839958", textTransform:"uppercase", letterSpacing:"0.5px", margin:"0 0 12px" }}>People to connect</p>
-          {suggestedUsers.slice(0,4).map(u => {
-            const name = u.full_name ?? "Member";
-            const bg = avatarBg(u.id);
-            const isFollowing = followingIds.has(u.id);
-            return (
-              <div key={u.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"7px 0", borderBottom:"1px solid #f5f0e8" }}>
-                <Link href={`/profile/${u.id}`}>
-                  <div style={{ width:32, height:32, borderRadius:"50%", backgroundColor:bg, display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, fontWeight:800, flexShrink:0 }}>{initials(name)}</div>
-                </Link>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <p style={{ fontSize:12, fontWeight:700, color:"#0A3323", margin:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{name}</p>
-                  {u.current_job_role && <p style={{ fontSize:10, color:"#839958", margin:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{u.current_job_role}</p>}
-                </div>
-                <button onClick={()=>!isFollowing&&onFollow(u.id)} style={{ fontSize:10, fontWeight:700, border:`1px solid ${isFollowing?"#e8e4ce":"#0A3323"}`, borderRadius:99, padding:"3px 10px", cursor:isFollowing?"default":"pointer", backgroundColor:"transparent", color:isFollowing?"#839958":"#0A3323", fontFamily:"inherit", flexShrink:0 }}>
-                  {isFollowing?"Following":"+ Connect"}
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
       {/* My circles */}
       {myComms.length > 0 && (
         <div style={{ backgroundColor:"#fff", border:"1px solid #e8e4ce", borderRadius:14, padding:16 }}>
@@ -602,8 +567,6 @@ export default function FeedPage() {
   const [myCommIds, setMyCommIds] = useState<Set<string>>(new Set());
   const [likedPostIds, setLikedPostIds] = useState<Set<string>>(new Set());
   const [savedPostIds, setSavedPostIds] = useState<Set<string>>(new Set());
-  const [followingIds, setFollowingIds] = useState<Set<string>>(new Set());
-  const [suggestedUsers, setSuggestedUsers] = useState<{id:string; full_name:string|null; current_job_role:string|null}[]>([]);
   const [circlesCount, setCirclesCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all"|"discussions"|"upskilling"|"referrals"|"job_board"|"saved">("all");
@@ -622,14 +585,12 @@ export default function FeedPage() {
     if (!userId) return;
     setLoading(true);
 
-    const [commsRes, memRes, likedRes, savedRes, followingRes, usersRes] = await Promise.all([
+    const [commsRes, memRes, likedRes, savedRes] = await Promise.all([
       supabase.from("communities").select("id,slug,name,member_count,posts_this_week,icon_color").order("member_count", { ascending: false }),
       // Only approved memberships feed the timeline
       supabase.from("community_members").select("community_id, status").eq("user_id", userId),
       supabase.from("post_likes").select("post_id").eq("user_id", userId),
       supabase.from("saved_posts").select("post_id").eq("user_id", userId),
-      supabase.from("follows").select("following_id").eq("follower_id", userId),
-      supabase.from("profiles").select("id,full_name,current_job_role").neq("id", userId).limit(8),
     ]);
 
     const allComms = (commsRes.data as Community[]) ?? [];
@@ -645,8 +606,6 @@ export default function FeedPage() {
 
     setLikedPostIds(new Set((likedRes.data ?? []).map((l: LikedPost) => l.post_id)));
     setSavedPostIds(new Set((savedRes.data ?? []).map((s: SavedPost) => s.post_id)));
-    setFollowingIds(new Set((followingRes.data ?? []).map((f: { following_id: string }) => f.following_id)));
-    setSuggestedUsers((usersRes.data ?? []) as {id:string; full_name:string|null; current_job_role:string|null}[]);
 
     // Load posts only from approved groups
     const myCommList = Array.from(memberSet);
@@ -708,12 +667,6 @@ export default function FeedPage() {
       type: "Repost", content: "", repost_of: originalPost.id,
     });
     load();
-  };
-
-  const handleFollow = async (targetUserId: string) => {
-    if (!userId) return;
-    setFollowingIds(prev => { const s = new Set(prev); s.add(targetUserId); return s; });
-    await supabase.from("follows").insert({ follower_id: userId, following_id: targetUserId });
   };
 
   const displayName = profile?.full_name ?? (session?.user?.email ?? "").split("@")[0] ?? "You";
@@ -848,10 +801,8 @@ export default function FeedPage() {
                 key={post.id} post={post} currentUserId={userId}
                 isLiked={likedPostIds.has(post.id)}
                 isSaved={savedPostIds.has(post.id)}
-                isFollowing={followingIds.has(post.user_id)}
                 onLike={handleLike} onSave={handleSave}
                 onRepost={handleRepost} onShare={setSharePost}
-                onFollow={handleFollow}
               />
             ))
           )}
@@ -861,8 +812,6 @@ export default function FeedPage() {
         <div className="feed-right-col">
           <RightSidebar
             communities={communities} myCommIds={myCommIds}
-            suggestedUsers={suggestedUsers} followingIds={followingIds}
-            onFollow={handleFollow}
           />
         </div>
       </div>
