@@ -97,6 +97,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Failed to create invite" }, { status: 500 });
     }
 
+    // Record career event for invite sent (best-effort, non-blocking)
+    try {
+      await supabase.from("career_events").insert({
+        user_id: user.id,
+        event_type: "invite_sent",
+        community_id: community_id,
+        metadata: { invitee_email: invitee_email.toLowerCase().trim() },
+      });
+    } catch { /* ignore */ }
+
     const invitesRemaining = 3 - inviteCount - 1;
 
     return NextResponse.json({

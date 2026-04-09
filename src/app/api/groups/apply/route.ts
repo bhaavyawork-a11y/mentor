@@ -218,6 +218,15 @@ export async function POST(req: NextRequest) {
         .from("community_members")
         .upsert({ community_id, user_id: user.id, status: "approved" });
 
+      // Record career event (best-effort, non-blocking)
+      try {
+        await supabase.from("career_events").insert({
+          user_id: user.id,
+          event_type: "group_joined",
+          community_id: community_id,
+        });
+      } catch { /* ignore */ }
+
       // Bump member_count (best-effort, no crash if RPC missing)
       try {
         await supabase.rpc("increment_member_count", { community_id_arg: community_id });

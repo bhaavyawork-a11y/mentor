@@ -26,7 +26,7 @@ interface Community {
   screening_questions?: ScreeningQuestion[];
 }
 
-interface MemberRecord { community_id: string; status: string; }
+interface MemberRecord { community_id: string; status: string; created_at?: string; }
 interface AppRecord    { community_id: string; status: string; ai_score: number | null; ai_feedback: string | null; created_at?: string; }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -302,9 +302,10 @@ function ApplyPanel({ community, onDone }: {
 }
 
 // ─── Discover Card ────────────────────────────────────────────────────────────
-function DiscoverCard({ community, onApplied }: {
+function DiscoverCard({ community, onApplied, atGroupCap }: {
   community: Community;
   onApplied: (communityId: string, status: "approved" | "rejected") => void;
+  atGroupCap: boolean;
 }) {
   const [applying, setApplying] = useState(false);
 
@@ -353,7 +354,7 @@ function DiscoverCard({ community, onApplied }: {
 
       {/* Channels preview */}
       <div style={{ display: "flex", gap: 6, padding: "0 18px 14px", flexWrap: "wrap" }}>
-        {["💬 Discussions", "📚 Upskilling", "🤝 Referrals", "💼 Job Board"].map(ch => (
+        {["💬 Discussions", "📚 Library", "🤝 Warm Intros", "💼 Open Roles"].map(ch => (
           <span key={ch} style={{
             fontSize: 10, padding: "3px 8px", borderRadius: 6,
             backgroundColor: "#f5f3ea", color: "#839958", fontWeight: 500,
@@ -363,19 +364,29 @@ function DiscoverCard({ community, onApplied }: {
         ))}
       </div>
 
-      {/* Apply button */}
+      {/* Apply button / group cap notice */}
       {!applying && (
         <div style={{ padding: "0 18px 18px" }}>
-          <button
-            onClick={() => setApplying(true)}
-            style={{
-              width: "100%", padding: "11px", borderRadius: 10, border: "1.5px solid #0A3323",
-              backgroundColor: "transparent", color: "#0A3323",
-              fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
-            }}
-          >
-            Apply to join →
-          </button>
+          {atGroupCap ? (
+            <div style={{
+              padding: "10px 14px", borderRadius: 10,
+              backgroundColor: "#fff8ee", border: "1px solid #e8c87a",
+              fontSize: 12, color: "#9a7020", lineHeight: 1.5,
+            }}>
+              You&apos;re already in 2 groups. Leave a group before joining another — Mentor limits membership to keep each community focused.
+            </div>
+          ) : (
+            <button
+              onClick={() => setApplying(true)}
+              style={{
+                width: "100%", padding: "11px", borderRadius: 10, border: "1.5px solid #0A3323",
+                backgroundColor: "transparent", color: "#0A3323",
+                fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
+              }}
+            >
+              Apply to join →
+            </button>
+          )}
         </div>
       )}
 
@@ -397,10 +408,12 @@ export default function CommunitiesPage() {
   const supabase = createClient();
   const { session } = useSession();
 
-  const [communities, setCommunities]   = useState<Community[]>([]);
-  const [memberMap, setMemberMap]       = useState<Map<string, MemberRecord>>(new Map());
-  const [appMap, setAppMap]             = useState<Map<string, AppRecord>>(new Map());
-  const [loading, setLoading]           = useState(true);
+  const [communities, setCommunities]     = useState<Community[]>([]);
+  const [memberMap, setMemberMap]         = useState<Map<string, MemberRecord>>(new Map());
+  const [appMap, setAppMap]               = useState<Map<string, AppRecord>>(new Map());
+  const [loading, setLoading]             = useState(true);
+  const [needsReverification, setNeedsReverification] = useState(false);
+  const [approvedCount, setApprovedCount] = useState(0);
 
   const load = useCallback(async () => {
     // Select only stable columns — new columns (requires_verification, screening_questions)
@@ -414,13 +427,24 @@ export default function CommunitiesPage() {
 
     if (session?.user.id) {
       const [{ data: members }, { data: apps }] = await Promise.all([
-        supabase.from("community_members").select("community_id, status").eq("user_id", session.user.id),
+        supabase.from("community_members").select("community_id, status, created_at").eq("user_id", session.user.id),
         supabase.from("community_applications").select("community_id, status, ai_score, ai_feedback, created_at").eq("user_id", session.user.id),
       ]);
 
       const mm = new Map<string, MemberRecord>();
       (members ?? []).forEach((m: MemberRecord) => mm.set(m.community_id, m));
       setMemberMap(mm);
+
+      // Count approved memberships
+      const approved = (members ?? []).filter((m: MemberRecord) => m.status === "approved");
+      setApprovedCount(approved.length);
+
+      // Re-verification: oldest approved membership > 11 months old
+      const elevenMonthsAgo = Date.now() - 11 * 30 * 24 * 60 * 60 * 1000;
+      const needsReverif = approved.some((m: MemberRecord & { created_at?: string }) =>
+        m.created_at && new Date(m.created_at).getTime() < elevenMonthsAgo
+      );
+      setNeedsReverification(needsReverif);
 
       const am = new Map<string, AppRecord>();
       (apps ?? []).forEach((a: AppRecord) => am.set(a.community_id, a));
@@ -480,11 +504,31 @@ export default function CommunitiesPage() {
         </p>
       </div>
 
+      {/* Re-verification nudge */}
+      {needsReverification && (
+        <div style={{
+          marginBottom: 20, backgroundColor: "#fff8ee",
+          border: "1px solid #e8c87a", borderRadius: 14,
+          padding: "14px 16px", display: "flex", alignItems: "flex-start", gap: 12,
+        }}>
+          <span style={{ fontSize: 18, flexShrink: 0 }}>⚡</span>
+          <div>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "#9a7020", margin: "0 0 3px" }}>Keep your profile current</p>
+            <p style={{ fontSize: 12, color: "#b08030", margin: "0 0 6px", lineHeight: 1.5 }}>
+              It&apos;s been almost a year since you joined Mentor. Update your role and company so your peers know where you are today.
+            </p>
+            <Link href="/profile" style={{ fontSize: 12, color: "#9a7020", fontWeight: 700, textDecoration: "underline" }}>
+              Update my profile →
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* My groups */}
       {myGroups.length > 0 && (
         <section style={{ marginBottom: 36 }}>
           <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 12px" }}>
-            My Groups ({myGroups.length})
+            My Groups ({myGroups.length}/2)
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {myGroups.map(c => <MyGroupCard key={c.id} community={c} />)}
@@ -529,7 +573,7 @@ export default function CommunitiesPage() {
           </p>
           <div className="communities-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16 }}>
             {discoverGroups.map(c => (
-              <DiscoverCard key={c.id} community={c} onApplied={handleApplied} />
+              <DiscoverCard key={c.id} community={c} onApplied={handleApplied} atGroupCap={approvedCount >= 2} />
             ))}
           </div>
         </section>

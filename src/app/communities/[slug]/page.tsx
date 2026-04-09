@@ -833,8 +833,13 @@ function OnboardingModal({
                       }}
                     >
                       <Avatar userId={m.user_id} name={p?.full_name} size={40} />
-                      <div style={{ fontSize: 11, fontWeight: 700, color: "#1a1a1a", marginTop: 8, marginBottom: 2 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "#1a1a1a", marginTop: 8, marginBottom: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: 4, flexWrap: "wrap" }}>
                         {p?.full_name ?? "Member"}
+                        {p?.headline && /founder|vp|director|head of|partner|principal|chief|cto|cpo|cmo|coo|ceo/i.test(p.headline) && (
+                          <span style={{ fontSize: "9px", fontWeight: 600, backgroundColor: "#a0822040", color: "#9a7d00", borderRadius: "3px", padding: "1px 5px", border: "0.5px solid #c0a08080" }}>
+                            Expert
+                          </span>
+                        )}
                       </div>
                       <div style={{ fontSize: 10, color: "#839958" }}>
                         {p?.current_job_role ? p.current_job_role.substring(0, 12) + (p.current_job_role.length > 12 ? "…" : "") : ""}
@@ -1216,6 +1221,48 @@ export default function CommunityPage() {
               onPosted={loadPosts}
               userId={userId}
             />
+          )}
+
+          {/* Job posting CTA (for job_board channel) */}
+          {activeTab === "job_board" && (
+            <div style={{
+              backgroundColor: "#0a4d2a",
+              border: "1.5px solid #0A3323",
+              borderRadius: 12,
+              padding: "14px 16px",
+              marginBottom: 16,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}>
+              <div>
+                <p style={{ fontSize: 13, fontWeight: 600, color: "#d4ff99", margin: "0 0 4px" }}>
+                  Hiring in this space?
+                </p>
+                <p style={{ fontSize: 12, color: "#a8d66e", margin: 0 }}>
+                  Post directly to {community.member_count.toLocaleString()} verified {community.role_type || "professionals"}.
+                </p>
+              </div>
+              <Link
+                href={`/post-job?group=${community.id}`}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  fontSize: 12,
+                  backgroundColor: "#d4ff99",
+                  color: "#0A3323",
+                  padding: "8px 14px",
+                  borderRadius: 8,
+                  fontWeight: 600,
+                  textDecoration: "none",
+                  whiteSpace: "nowrap",
+                  flexShrink: 0,
+                }}
+              >
+                Post a Job →
+              </Link>
+            </div>
           )}
 
           {/* Posts */}

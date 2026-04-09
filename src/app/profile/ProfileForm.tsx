@@ -8,7 +8,7 @@ import type { Profile } from "@/types";
 
 const INDUSTRIES = ["Technology","Finance","Healthcare","Education","Consulting","Media","Retail","Manufacturing","Legal","Government","Other"];
 
-export default function ProfileForm({ profile, userId }: { profile: Profile | null; userId: string }) {
+export default function ProfileForm({ profile, userId, memberSince, groupCount, postCount }: { profile: Profile | null; userId: string; memberSince?: string; groupCount?: number; postCount?: number }) {
   const router   = useRouter();
   const supabase = createClient();
   const [saving, setSaving] = useState(false);
@@ -81,6 +81,26 @@ export default function ProfileForm({ profile, userId }: { profile: Profile | nu
           <Field label="Target salary (USD / yr)"><input type="number" className="input" value={form.target_salary} placeholder="160000" onChange={(e) => setForm((f) => ({ ...f, target_salary: e.target.value }))} /></Field>
         </div>
       </Section>
+
+      {(memberSince || groupCount !== undefined || postCount !== undefined) && (
+        <div style={{ backgroundColor: "#18181b", border: "1px solid #27272a", borderRadius: "16px", padding: "20px 24px", marginBottom: 0 }}>
+          <h3 style={{ fontSize: "11px", fontWeight: 700, color: "#a1a1aa", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 16px" }}>Your Mentor Activity</h3>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px" }}>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: "20px", fontWeight: 700, color: "#10b981", marginBottom: "4px" }}>{memberSince || "—"}</div>
+              <div style={{ fontSize: "11px", color: "#71717a", marginTop: "2px" }}>Member since</div>
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: "20px", fontWeight: 700, color: "#10b981", marginBottom: "4px" }}>{groupCount ?? "—"}</div>
+              <div style={{ fontSize: "11px", color: "#71717a", marginTop: "2px" }}>Groups joined</div>
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontSize: "20px", fontWeight: 700, color: "#10b981", marginBottom: "4px" }}>{postCount ?? "—"}</div>
+              <div style={{ fontSize: "11px", color: "#71717a", marginTop: "2px" }}>Contributions</div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Section title="Skills" style={card}>
         <div style={{ display: "flex", gap: "8px" }}>
