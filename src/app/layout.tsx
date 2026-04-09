@@ -54,7 +54,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={sora.variable}>
+    <html lang="en" className={`dark ${sora.variable}`}>
       <head>
         {/* MS Tile for Windows */}
         <meta name="msapplication-TileColor" content="#0A3323" />

@@ -815,13 +815,14 @@ export default function FeedPage() {
           ) : !userId ? null : myCommIds.size === 0 ? (
             // No approved group memberships — prompt to join
             <div style={{ backgroundColor:"#fff", border:"1.5px dashed #e8e4ce", borderRadius:16, padding:"40px 28px", textAlign:"center" }}>
-              <p style={{ fontSize:36, margin:"0 0 12px" }}>🔒</p>
-              <p style={{ fontSize:16, fontWeight:800, color:"#0A3323", margin:"0 0 8px" }}>Your feed lives inside your groups</p>
+              <p style={{ fontSize:14, fontWeight:700, color:"#1a1a1a", margin:"0 0 12px", lineHeight:1.6 }}>
+                Your feed is quiet because it only shows posts from groups you're a member of. That's by design — no noise, just signal from verified peers.
+              </p>
               <p style={{ fontSize:13, color:"#839958", margin:"0 0 24px", lineHeight:1.6 }}>
-                Mentor is community-first. Apply to a verified group to start seeing<br />posts, referrals, job listings, and upskilling content.
+                Apply to a group to start seeing relevant posts.
               </p>
               <Link href="/communities" style={{ display:"inline-block", fontSize:13, fontWeight:700, backgroundColor:"#0A3323", color:"#F7F4D5", borderRadius:10, padding:"12px 28px", textDecoration:"none" }}>
-                Apply to a group →
+                Browse Groups →
               </Link>
             </div>
           ) : filteredPosts.length === 0 ? (

@@ -485,19 +485,20 @@ export default function CommunitiesPage() {
       {myGroups.length === 0 && pendingGroups.length === 0 && (
         <div style={{
           backgroundColor: "#fff", border: "1.5px dashed #e8e4ce", borderRadius: 16,
-          padding: "28px 24px", textAlign: "center", marginBottom: 32,
+          padding: "40px 28px", textAlign: "center", marginBottom: 32,
         }}>
-          <p style={{ fontSize: 24, margin: "0 0 8px" }}>🔒</p>
-          <p style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a", margin: "0 0 6px" }}>Discover your community</p>
-          <p style={{ fontSize: 13, color: "#839958", margin: 0, lineHeight: 1.5 }}>
-            Apply to a group below. Each group is verified — so everyone you meet belongs there.
+          <p style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a", margin: "0 0 12px", lineHeight: 1.5 }}>
+            You haven't joined a group yet. Apply to a verified group to access discussions, job postings, and peers in your role.
           </p>
+          <a href="#discover-section" style={{ fontSize: 13, fontWeight: 700, color: "#0A3323", textDecoration: "none", cursor: "pointer" }}>
+            Apply to a group →
+          </a>
         </div>
       )}
 
       {/* Discover */}
       {discoverGroups.length > 0 && (
-        <section>
+        <section id="discover-section">
           <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 12px" }}>
             Discover Groups — Apply to Join
           </p>

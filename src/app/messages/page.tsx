@@ -170,9 +170,8 @@ export default function MessagesPage() {
           <div style={{ padding:40, textAlign:"center" }}><p style={{ color:"#839958", fontSize:13 }}>Loading…</p></div>
         ) : conversations.length === 0 ? (
           <div style={{ padding:"48px 32px", textAlign:"center" }}>
-            <div style={{ fontSize:48, marginBottom:12 }}>💬</div>
-            <p style={{ fontSize:15, fontWeight:700, color:"#1a1a1a", margin:"0 0 8px" }}>No messages yet</p>
-            <p style={{ fontSize:13, color:"#839958", margin:0 }}>Start a conversation by clicking <strong>+ New message</strong> above, or share a post directly to someone.</p>
+            <p style={{ fontSize:14, fontWeight:700, color:"#1a1a1a", margin:"0 0 12px", lineHeight:1.6 }}>No messages yet. Start a conversation to connect with peers in your network.</p>
+            <p style={{ fontSize:13, color:"#839958", margin:0 }}>Click <strong>+ New message</strong> above or share a post directly to someone.</p>
           </div>
         ) : (
           conversations.map((conv, i) => {

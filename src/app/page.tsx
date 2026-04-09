@@ -58,7 +58,7 @@ function initials(name: string) {
 export default async function HomePage() {
   const supabase = await createServerSupabaseClient();
   const { data: { session } } = await supabase.auth.getSession();
-  if (session) redirect("/feed");
+  if (session) redirect("/communities");
 
   return (
     <div style={{ backgroundColor: "#F9F7EC", minHeight: "100vh" }}>

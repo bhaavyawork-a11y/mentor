@@ -48,10 +48,6 @@ type NavItem = { label: string; href: string; icon: string; matchPrefixes: strin
 
 const NAV: NavItem[] = [
   { label: "Groups",    href: "/communities",  icon: "👥", matchPrefixes: ["/communities"]                              },
-  { label: "Feed",      href: "/feed",         icon: "🏠", matchPrefixes: ["/feed", "/dashboard"]                       },
-  { label: "Experts",   href: "/experts",      icon: "📅", matchPrefixes: ["/experts", "/sessions", "/bookings"]         },
-  { label: "Jobs",      href: "/jobs",         icon: "💼", matchPrefixes: ["/jobs", "/tracker", "/companies"]           },
-  { label: "Assistant", href: "/assistant",    icon: "✨", matchPrefixes: ["/assistant"]                                },
   { label: "Messages",  href: "/messages",     icon: "💬", matchPrefixes: ["/messages"]                                 },
   { label: "Profile",   href: "/profile",      icon: "👤", matchPrefixes: ["/profile", "/settings"]                    },
 ];
@@ -110,7 +106,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       {/* ── Logo ── */}
       <div style={{ padding: "18px 16px 14px", borderBottom: "1px solid #e8e4ce", flexShrink: 0 }}>
         <Link
-          href="/feed"
+          href="/communities"
           onClick={onNavigate}
           style={{ fontSize: 18, fontWeight: 800, color: "#0A3323", textDecoration: "none", display: "block" }}
         >
