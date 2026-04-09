@@ -27,7 +27,7 @@ interface Community {
 }
 
 interface MemberRecord { community_id: string; status: string; }
-interface AppRecord    { community_id: string; status: string; ai_score: number | null; ai_feedback: string | null; }
+interface AppRecord    { community_id: string; status: string; ai_score: number | null; ai_feedback: string | null; created_at?: string; }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function groupEmoji(slug: string): string {
@@ -91,6 +91,13 @@ function MyGroupCard({ community }: { community: Community }) {
 // ─── Pending Card ─────────────────────────────────────────────────────────────
 function PendingCard({ community, app }: { community: Community; app: AppRecord }) {
   const rejected = app.status === "rejected";
+  const canReapply = rejected && (
+    !app.created_at || (Date.now() - new Date(app.created_at).getTime()) >= 7 * 24 * 60 * 60 * 1000
+  );
+  const daysUntilReapply = rejected && app.created_at
+    ? Math.max(0, 7 - Math.floor((Date.now() - new Date(app.created_at).getTime()) / (24 * 60 * 60 * 1000)))
+    : 0;
+
   return (
     <div style={{
       backgroundColor: rejected ? "#fff8f5" : "#fffdf0",
@@ -128,6 +135,24 @@ function PendingCard({ community, app }: { community: Community; app: AppRecord 
           </p>
         )}
       </div>
+      {rejected && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end" }}>
+          {canReapply ? (
+            <Link href={`/communities/${community.slug}/reapply`} style={{
+              padding: "7px 14px", borderRadius: 8, border: "none",
+              backgroundColor: "#0A3323", color: "#F7F4D5",
+              fontSize: 12, fontWeight: 700, textDecoration: "none",
+              cursor: "pointer", display: "block",
+            }}>
+              Reapply
+            </Link>
+          ) : (
+            <span style={{ fontSize: 11, color: "#c0714a", fontWeight: 600 }}>
+              Reapply in {daysUntilReapply} {daysUntilReapply === 1 ? "day" : "days"}
+            </span>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -390,7 +415,7 @@ export default function CommunitiesPage() {
     if (session?.user.id) {
       const [{ data: members }, { data: apps }] = await Promise.all([
         supabase.from("community_members").select("community_id, status").eq("user_id", session.user.id),
-        supabase.from("community_applications").select("community_id, status, ai_score, ai_feedback").eq("user_id", session.user.id),
+        supabase.from("community_applications").select("community_id, status, ai_score, ai_feedback, created_at").eq("user_id", session.user.id),
       ]);
 
       const mm = new Map<string, MemberRecord>();

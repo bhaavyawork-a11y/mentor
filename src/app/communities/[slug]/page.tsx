@@ -57,6 +57,14 @@ interface Member {
   profile?: MemberProfile | MemberProfile[] | null;
 }
 
+interface OnboardingState {
+  active: boolean;
+  step: 1 | 2 | 3;
+  intro: string;
+  question: string;
+  selectedMembers: Set<string>;
+}
+
 // ─── Channel config ───────────────────────────────────────────────────────────
 const CHANNELS = [
   { type: "discussions", label: "Discussions", emoji: "💬", desc: "Ask questions, share thoughts, start conversations", postTypes: ["Discussion", "Poll"] },
@@ -418,6 +426,497 @@ function RulesPanel({ rules }: { rules: string[] }) {
   );
 }
 
+// ─── Invite Panel ─────────────────────────────────────────────────────────────
+function InvitePanel({ communityId, userId }: { communityId: string; userId: string }) {
+  const supabase = createClient();
+  const [email, setEmail] = useState("");
+  const [invites, setInvites] = useState<any[]>([]);
+  const [invitesRemaining, setInvitesRemaining] = useState(3);
+  const [sending, setSending] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Load existing invites
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch(`/api/groups/invite?communityId=${communityId}`);
+        const data = await res.json();
+        if (data.invites) {
+          setInvites(data.invites);
+          setInvitesRemaining(data.invites_remaining ?? 3);
+        }
+      } catch (e) {
+        console.error("Failed to load invites:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [communityId]);
+
+  const handleSendInvite = async () => {
+    if (!email.trim()) return;
+    setSending(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/groups/invite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ community_id: communityId, invitee_email: email }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Failed to send invite");
+        return;
+      }
+
+      setEmail("");
+      setInvitesRemaining(data.invites_remaining);
+      // Reload invites
+      const getRes = await fetch(`/api/groups/invite?communityId=${communityId}`);
+      const getData = await getRes.json();
+      if (getData.invites) {
+        setInvites(getData.invites);
+      }
+    } catch (e) {
+      console.error("Error sending invite:", e);
+      setError("Something went wrong");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: "16px 18px", marginTop: 16 }}>
+        <p style={{ fontSize: 12, color: "#839958", margin: 0 }}>Loading invites…</p>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: "16px 18px", marginTop: 16 }}>
+      <h4 style={{ fontSize: 12, fontWeight: 800, color: "#0A3323", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 12px" }}>
+        Invite a Peer
+      </h4>
+
+      <div style={{ marginBottom: 14 }}>
+        <p style={{ fontSize: 11, color: "#839958", margin: "0 0 10px" }}>
+          {invitesRemaining > 0
+            ? `You have ${invitesRemaining} invite${invitesRemaining === 1 ? "" : "s"} remaining`
+            : "You've used all 3 invites for this group"}
+        </p>
+
+        {invitesRemaining > 0 && (
+          <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+            <input
+              type="email"
+              value={email}
+              onChange={e => { setEmail(e.target.value); setError(""); }}
+              placeholder="peer@example.com"
+              disabled={sending}
+              style={{
+                flex: 1,
+                padding: "8px 12px",
+                fontSize: 12,
+                border: "1px solid #e8e4ce",
+                borderRadius: 8,
+                fontFamily: "inherit",
+                outline: "none",
+              }}
+            />
+            <button
+              onClick={handleSendInvite}
+              disabled={!email.trim() || sending}
+              style={{
+                padding: "8px 14px",
+                borderRadius: 8,
+                border: "none",
+                backgroundColor: email.trim() && !sending ? "#0A3323" : "#c8c4ae",
+                color: "#F7F4D5",
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: email.trim() && !sending ? "pointer" : "default",
+                fontFamily: "inherit",
+              }}
+            >
+              {sending ? "Sending…" : "Send"}
+            </button>
+          </div>
+        )}
+
+        {error && (
+          <p style={{ fontSize: 11, color: "#c0714a", margin: "8px 0 0" }}>{error}</p>
+        )}
+      </div>
+
+      {invites.length > 0 && (
+        <div style={{ borderTop: "1px solid #f0ede0", paddingTop: 12 }}>
+          <p style={{ fontSize: 10, fontWeight: 700, color: "#b0ab8c", margin: "0 0 8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+            Sent Invites
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {invites.map(inv => (
+              <div key={inv.id} style={{
+                padding: "8px",
+                backgroundColor: "#f9f7ec",
+                borderRadius: 8,
+                fontSize: 11,
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                  <span style={{ fontWeight: 600, color: "#1a1a1a" }}>{inv.email}</span>
+                  <span style={{
+                    fontSize: 9,
+                    fontWeight: 700,
+                    backgroundColor:
+                      inv.status === "pending" ? "#fffbea" :
+                      inv.status === "used" ? "#e6f4ea" : "#fff8f5",
+                    color:
+                      inv.status === "pending" ? "#9a7d00" :
+                      inv.status === "used" ? "#0A3323" : "#c0714a",
+                    padding: "2px 6px",
+                    borderRadius: 4,
+                    textTransform: "capitalize",
+                  }}>
+                    {inv.status}
+                  </span>
+                </div>
+                {inv.status === "pending" && (
+                  <div style={{
+                    padding: "6px",
+                    backgroundColor: "#fff",
+                    borderRadius: 6,
+                    border: "1px solid #e8e4ce",
+                    fontSize: 10,
+                    color: "#555",
+                    wordBreak: "break-all" as const,
+                    marginBottom: 6,
+                  }}>
+                    Share: <span style={{ fontFamily: "monospace", fontWeight: 600 }}>{inv.link}</span>
+                  </div>
+                )}
+                <span style={{ fontSize: 10, color: "#b0ab8c" }}>
+                  {new Date(inv.created_at).toLocaleDateString("en-IN", { month: "short", day: "numeric" })}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Onboarding Modal ─────────────────────────────────────────────────────────
+function OnboardingModal({
+  communityId,
+  communityName,
+  members,
+  onboarding,
+  setOnboarding,
+  userId,
+  onComplete,
+}: {
+  communityId: string;
+  communityName: string;
+  members: Member[];
+  onboarding: OnboardingState;
+  setOnboarding: (state: OnboardingState) => void;
+  userId: string;
+  onComplete: () => void;
+}) {
+  const supabase = createClient();
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleNext = async () => {
+    if (onboarding.step === 1) {
+      if (!onboarding.intro.trim()) return;
+      // Create intro post
+      setSubmitting(true);
+      try {
+        await supabase.from("community_posts").insert({
+          community_id: communityId,
+          user_id: userId,
+          type: "Discussion",
+          content: onboarding.intro.trim(),
+          channel_type: "discussions",
+          title: "Introduction",
+        });
+      } catch (e) {
+        console.error("Failed to post intro:", e);
+      }
+      setSubmitting(false);
+      setOnboarding({ ...onboarding, step: 2, intro: "" });
+    } else if (onboarding.step === 2) {
+      if (onboarding.selectedMembers.size === 0) return;
+      setOnboarding({ ...onboarding, step: 3, selectedMembers: new Set() });
+    } else if (onboarding.step === 3) {
+      // Final step: create question post and mark onboarding complete
+      setSubmitting(true);
+      try {
+        if (onboarding.question.trim()) {
+          await supabase.from("community_posts").insert({
+            community_id: communityId,
+            user_id: userId,
+            type: "Discussion",
+            content: onboarding.question.trim(),
+            channel_type: "discussions",
+          });
+        }
+        // Mark onboarding complete
+        await supabase.from("profiles").update({ onboarding_completed: true }).eq("id", userId);
+      } catch (e) {
+        console.error("Failed to complete onboarding:", e);
+      }
+      setSubmitting(false);
+      setOnboarding({ ...onboarding, active: false });
+      onComplete();
+    }
+  };
+
+  const handleSkip = async () => {
+    if (onboarding.step === 3) {
+      // Skip on step 3 still marks complete
+      try {
+        await supabase.from("profiles").update({ onboarding_completed: true }).eq("id", userId);
+      } catch (e) {
+        console.error("Failed to mark onboarding complete:", e);
+      }
+      setOnboarding({ ...onboarding, active: false });
+      onComplete();
+    } else {
+      setOnboarding({ ...onboarding, step: (onboarding.step + 1) as 1 | 2 | 3, intro: "", question: "" });
+    }
+  };
+
+  const approvedMembers = members.filter(m => m.status === "approved" || !m.status);
+  const recentMembers = approvedMembers.slice(0, 9);
+  const canProceed =
+    onboarding.step === 1 ? onboarding.intro.trim().length > 0 :
+    onboarding.step === 2 ? onboarding.selectedMembers.size > 0 :
+    true;
+
+  const progressPct = ((onboarding.step) / 3) * 100;
+
+  return (
+    <div style={{
+      position: "fixed",
+      inset: 0,
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 100,
+      padding: "20px",
+    }} onClick={() => {}} >
+      <div style={{
+        backgroundColor: "#fff",
+        borderRadius: 16,
+        boxShadow: "0 20px 60px rgba(0, 0, 0, 0.15)",
+        maxWidth: 500,
+        width: "100%",
+        maxHeight: "90vh",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}>
+        {/* Header with progress */}
+        <div style={{
+          backgroundColor: "#0A3323",
+          color: "#F7F4D5",
+          padding: "24px 24px 16px",
+          textAlign: "center",
+        }}>
+          <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 12, opacity: 0.9 }}>
+            STEP {onboarding.step} OF 3
+          </div>
+          <div style={{
+            height: 4,
+            backgroundColor: "rgba(247, 244, 213, 0.2)",
+            borderRadius: 2,
+            overflow: "hidden",
+            marginBottom: 16,
+          }}>
+            <div style={{
+              height: "100%",
+              backgroundColor: "#F7F4D5",
+              width: `${progressPct}%`,
+              transition: "width 0.3s ease",
+            }} />
+          </div>
+          <h2 style={{
+            fontSize: 20,
+            fontWeight: 800,
+            margin: 0,
+          }}>
+            {onboarding.step === 1 ? "Welcome! Introduce yourself" :
+             onboarding.step === 2 ? "Find 3 peers" :
+             "Post your first question"}
+          </h2>
+        </div>
+
+        {/* Content */}
+        <div style={{
+          flex: 1,
+          overflowY: "auto",
+          padding: "24px",
+        }}>
+          {onboarding.step === 1 && (
+            <div>
+              <p style={{ fontSize: 13, color: "#555", marginBottom: 16, lineHeight: 1.6 }}>
+                Tell the community about yourself. What's your role, company, and what are you looking for?
+              </p>
+              <textarea
+                value={onboarding.intro}
+                onChange={e => setOnboarding({ ...onboarding, intro: e.target.value })}
+                placeholder="E.g., I'm a product manager at Acme, focused on payments infrastructure. Looking to connect with others in fintech..."
+                style={{
+                  width: "100%",
+                  boxSizing: "border-box",
+                  padding: "12px",
+                  fontSize: 13,
+                  border: "1.5px solid #e8e4ce",
+                  borderRadius: 10,
+                  fontFamily: "inherit",
+                  outline: "none",
+                  backgroundColor: "#fff",
+                  color: "#1a1a1a",
+                  minHeight: 100,
+                  resize: "vertical",
+                  lineHeight: 1.6,
+                }}
+              />
+            </div>
+          )}
+
+          {onboarding.step === 2 && (
+            <div>
+              <p style={{ fontSize: 13, color: "#555", marginBottom: 16, lineHeight: 1.6 }}>
+                Click on members you'd like to note. Select at least 1 to continue.
+              </p>
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: 12,
+              }}>
+                {recentMembers.map(m => {
+                  const p = Array.isArray(m.profile) ? m.profile[0] : m.profile;
+                  const isSelected = onboarding.selectedMembers.has(m.user_id);
+                  return (
+                    <button
+                      key={m.user_id}
+                      onClick={() => {
+                        const next = new Set(onboarding.selectedMembers);
+                        if (isSelected) next.delete(m.user_id);
+                        else next.add(m.user_id);
+                        setOnboarding({ ...onboarding, selectedMembers: next });
+                      }}
+                      style={{
+                        padding: "12px",
+                        borderRadius: 12,
+                        border: isSelected ? "2px solid #0A3323" : "1.5px solid #e8e4ce",
+                        backgroundColor: isSelected ? "#F0EFD8" : "#fff",
+                        cursor: "pointer",
+                        fontFamily: "inherit",
+                        textAlign: "center",
+                        transition: "all 0.15s",
+                      }}
+                    >
+                      <Avatar userId={m.user_id} name={p?.full_name} size={40} />
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "#1a1a1a", marginTop: 8, marginBottom: 2 }}>
+                        {p?.full_name ?? "Member"}
+                      </div>
+                      <div style={{ fontSize: 10, color: "#839958" }}>
+                        {p?.current_job_role ? p.current_job_role.substring(0, 12) + (p.current_job_role.length > 12 ? "…" : "") : ""}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {onboarding.step === 3 && (
+            <div>
+              <p style={{ fontSize: 13, color: "#555", marginBottom: 16, lineHeight: 1.6 }}>
+                Ask a question or start a discussion to kick things off. (Optional)
+              </p>
+              <textarea
+                value={onboarding.question}
+                onChange={e => setOnboarding({ ...onboarding, question: e.target.value })}
+                placeholder="E.g., What's the biggest challenge you're facing in your role right now?"
+                style={{
+                  width: "100%",
+                  boxSizing: "border-box",
+                  padding: "12px",
+                  fontSize: 13,
+                  border: "1.5px solid #e8e4ce",
+                  borderRadius: 10,
+                  fontFamily: "inherit",
+                  outline: "none",
+                  backgroundColor: "#fff",
+                  color: "#1a1a1a",
+                  minHeight: 100,
+                  resize: "vertical",
+                  lineHeight: 1.6,
+                }}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div style={{
+          borderTop: "1px solid #e8e4ce",
+          padding: "16px 24px",
+          display: "flex",
+          gap: 10,
+          justifyContent: "flex-end",
+        }}>
+          <button
+            onClick={handleSkip}
+            style={{
+              padding: "9px 16px",
+              borderRadius: 8,
+              border: "none",
+              backgroundColor: "transparent",
+              color: "#839958",
+              fontSize: 13,
+              fontWeight: 600,
+              cursor: "pointer",
+              fontFamily: "inherit",
+              textDecoration: "underline",
+            }}
+          >
+            Skip
+          </button>
+          <button
+            onClick={handleNext}
+            disabled={!canProceed || submitting}
+            style={{
+              padding: "9px 20px",
+              borderRadius: 8,
+              border: "none",
+              backgroundColor: canProceed && !submitting ? "#0A3323" : "#c8c4ae",
+              color: "#F7F4D5",
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: canProceed && !submitting ? "pointer" : "default",
+              fontFamily: "inherit",
+            }}
+          >
+            {submitting ? "Saving…" : onboarding.step === 3 ? "Get started →" : "Continue →"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function CommunityPage() {
   const params  = useParams();
@@ -436,6 +935,13 @@ export default function CommunityPage() {
   const [showMembers, setShowMembers] = useState(false);
   const [showMobileNav, setShowMobileNav] = useState(false);
   const [loading, setLoading]         = useState(true);
+  const [onboarding, setOnboarding]   = useState<OnboardingState>({
+    active: false,
+    step: 1,
+    intro: "",
+    question: "",
+    selectedMembers: new Set(),
+  });
 
   // ─── Load community ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -451,18 +957,40 @@ export default function CommunityPage() {
       });
   }, [slug, supabase, router]);
 
-  // ─── Check membership ─────────────────────────────────────────────────────
+  // ─── Check membership & onboarding status ─────────────────────────────────
   useEffect(() => {
     if (!community?.id || !userId) return;
-    supabase
-      .from("community_members")
-      .select("status")
-      .eq("community_id", community.id)
-      .eq("user_id", userId)
-      .single()
-      .then(({ data }) => {
-        setIsMember(data?.status === "approved" || !!data);
-      });
+    (async () => {
+      const { data: memberData } = await supabase
+        .from("community_members")
+        .select("status, created_at")
+        .eq("community_id", community.id)
+        .eq("user_id", userId)
+        .single();
+
+      const isApproved = memberData?.status === "approved" || !!memberData;
+      setIsMember(isApproved);
+
+      // Check if onboarding needed (member is new — joined < 5 mins ago)
+      if (isApproved && memberData?.created_at) {
+        const createdAt = new Date(memberData.created_at).getTime();
+        const now = Date.now();
+        const fiveMinutes = 5 * 60 * 1000;
+
+        if (now - createdAt < fiveMinutes) {
+          // Check if onboarding_completed is false
+          const { data: profileData } = await supabase
+            .from("profiles")
+            .select("onboarding_completed")
+            .eq("id", userId)
+            .single();
+
+          if (!profileData?.onboarding_completed) {
+            setOnboarding(prev => ({ ...prev, active: true }));
+          }
+        }
+      }
+    })();
   }, [community?.id, userId, supabase]);
 
   // ─── Load members ──────────────────────────────────────────────────────────
@@ -577,6 +1105,12 @@ export default function CommunityPage() {
         </div>
 
         <RulesPanel rules={community.rules} />
+
+        {/* Invite panel (members only) */}
+        {isMember && userId && (
+          <InvitePanel communityId={community.id} userId={userId} />
+        )}
+
         <div style={{ height: 16 }} />
       </div>
 
@@ -702,6 +1236,22 @@ export default function CommunityPage() {
       {/* Member directory modal */}
       {showMembers && (
         <MemberDirectory members={members} onClose={() => setShowMembers(false)} />
+      )}
+
+      {/* Onboarding modal */}
+      {onboarding.active && community && userId && (
+        <OnboardingModal
+          communityId={community.id}
+          communityName={community.name}
+          members={members}
+          onboarding={onboarding}
+          setOnboarding={setOnboarding}
+          userId={userId}
+          onComplete={() => {
+            setOnboarding(prev => ({ ...prev, active: false }));
+            loadPosts();
+          }}
+        />
       )}
 
       <style>{`
