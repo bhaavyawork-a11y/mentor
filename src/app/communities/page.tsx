@@ -21,8 +21,9 @@ interface Community {
   icon_color: string;
   member_count: number;
   posts_this_week: number;
-  requires_verification: boolean;
-  screening_questions: ScreeningQuestion[];
+  // Fetched on-demand in ApplyPanel (not in list query — safe before migration 014)
+  requires_verification?: boolean;
+  screening_questions?: ScreeningQuestion[];
 }
 
 interface MemberRecord { community_id: string; status: string; }
@@ -136,14 +137,37 @@ function ApplyPanel({ community, onDone }: {
   community: Community;
   onDone: (result: { status: "approved" | "rejected"; score: number; feedback: string }) => void;
 }) {
-  const [answers, setAnswers]     = useState<Record<string, string>>({});
-  const [submitting, setSubmitting] = useState(false);
-  const [result, setResult]       = useState<{
+  const supabase = createClient();
+  const [answers, setAnswers]       = useState<Record<string, string>>({});
+  const [submitting, setSubmitting]   = useState(false);
+  const [loadingQs, setLoadingQs]     = useState(true);
+  const [questions, setQuestions]     = useState<ScreeningQuestion[]>([]);
+  const [result, setResult]           = useState<{
     status: "approved" | "rejected"; score: number; feedback: string;
   } | null>(null);
 
-  const questions = community.screening_questions ?? [];
-  const canSubmit = questions.every(q => (answers[q.id] || "").trim().length >= 20);
+  // Fetch screening questions on-demand (avoids breaking the list query
+  // before migration 014 is applied)
+  useEffect(() => {
+    const fetchQs = async () => {
+      try {
+        const { data } = await supabase
+          .from("communities")
+          .select("screening_questions, requires_verification")
+          .eq("id", community.id)
+          .single();
+        const qs = (data as { screening_questions?: ScreeningQuestion[] } | null)?.screening_questions ?? [];
+        setQuestions(qs);
+      } catch {
+        // columns may not exist yet — no-op
+      } finally {
+        setLoadingQs(false);
+      }
+    };
+    fetchQs();
+  }, [community.id, supabase]);
+
+  const canSubmit = !loadingQs && questions.every(q => (answers[q.id] || "").trim().length >= 20);
 
   const handleSubmit = async () => {
     setSubmitting(true);
@@ -192,10 +216,20 @@ function ApplyPanel({ community, onDone }: {
     );
   }
 
+  if (loadingQs) {
+    return (
+      <div style={{ padding: "20px 16px", borderTop: "1px solid #e8e4ce", textAlign: "center" }}>
+        <p style={{ fontSize: 12, color: "#839958", margin: 0 }}>Loading screening questions…</p>
+      </div>
+    );
+  }
+
   return (
     <div style={{ padding: "16px", borderTop: "1px solid #e8e4ce", backgroundColor: "#fafaf4" }}>
       <p style={{ fontSize: 12, color: "#839958", margin: "0 0 14px", lineHeight: 1.5 }}>
-        Answer {questions.length} short questions. AI evaluates your fit — be specific with real examples.
+        {questions.length > 0
+          ? `Answer ${questions.length} short questions. AI evaluates your fit — be specific with real examples.`
+          : "Click submit to apply — no screening questions for this group."}
       </p>
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
         {questions.map((q, i) => {
@@ -344,9 +378,11 @@ export default function CommunitiesPage() {
   const [loading, setLoading]           = useState(true);
 
   const load = useCallback(async () => {
+    // Select only stable columns — new columns (requires_verification, screening_questions)
+    // are fetched on-demand in the ApplyPanel to avoid breaking before migration 014 runs
     const { data: comms } = await supabase
       .from("communities")
-      .select("id, slug, name, description, role_type, icon_color, member_count, posts_this_week, requires_verification, screening_questions")
+      .select("id, slug, name, description, role_type, icon_color, member_count, posts_this_week")
       .order("member_count", { ascending: false });
 
     setCommunities((comms as Community[]) ?? []);
