@@ -18,18 +18,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#F9F7EC", display: "flex", flexDirection: "column" }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "#0F1117", display: "flex", flexDirection: "column" }}>
 
       {/* ── Minimal nav ── */}
       <header style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "0 24px", height: 52, borderBottom: "1px solid #e8e4ce",
-        backgroundColor: "#ffffff",
+        padding: "0 24px", height: 52, borderBottom: "1px solid #1F2937",
+        backgroundColor: "#181C24",
       }}>
-        <Link href="/" style={{ fontSize: 17, fontWeight: 800, color: "#0A3323", textDecoration: "none" }}>
-          mentor<span style={{ color: "#D3968C" }}>.</span>
+        <Link href="/" style={{ fontSize: 17, fontWeight: 800, color: "#F9FAFB", textDecoration: "none" }}>
+          mentor<span style={{ color: "#B45309" }}>.</span>
         </Link>
-        <Link href="/" style={{ fontSize: 12, color: "#839958", textDecoration: "none" }}>
+        <Link href="/" style={{ fontSize: 12, color: "#6B7280", textDecoration: "none" }}>
           ← Back
         </Link>
       </header>
@@ -41,7 +41,7 @@ export default function LoginPage() {
       }}>
         <div style={{
           width: "100%", maxWidth: 380,
-          backgroundColor: "#ffffff", border: "1px solid #e8e4ce",
+          backgroundColor: "#181C24", border: "1px solid #1F2937",
           borderRadius: 20, padding: "36px 28px",
         }}>
           {/* Logo + headline */}
@@ -49,14 +49,14 @@ export default function LoginPage() {
             <div style={{
               display: "inline-flex", alignItems: "center", justifyContent: "center",
               width: 52, height: 52, borderRadius: 14,
-              backgroundColor: "#0A3323", marginBottom: 14,
+              backgroundColor: "#064E3B", marginBottom: 14,
             }}>
-              <span style={{ fontSize: 22, fontWeight: 800, color: "#F7F4D5" }}>m</span>
+              <span style={{ fontSize: 22, fontWeight: 800, color: "#F9FAFB" }}>m</span>
             </div>
-            <h1 style={{ fontSize: 20, fontWeight: 800, color: "#0A3323", margin: "0 0 6px" }}>
+            <h1 style={{ fontSize: 20, fontWeight: 800, color: "#F9FAFB", margin: "0 0 6px" }}>
               Get in through the side door
             </h1>
-            <p style={{ fontSize: 13, color: "#839958", margin: 0 }}>
+            <p style={{ fontSize: 13, color: "#6B7280", margin: 0 }}>
               Join thousands of professionals landing roles via referrals.
             </p>
           </div>
@@ -82,27 +82,27 @@ export default function LoginPage() {
 
           {/* Divider */}
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-            <div style={{ flex: 1, height: 1, backgroundColor: "#e8e4ce" }} />
-            <span style={{ fontSize: 11, color: "#b0ab8c" }}>or use email</span>
-            <div style={{ flex: 1, height: 1, backgroundColor: "#e8e4ce" }} />
+            <div style={{ flex: 1, height: 1, backgroundColor: "#1F2937" }} />
+            <span style={{ fontSize: 11, color: "#6B7280" }}>or use email</span>
+            <div style={{ flex: 1, height: 1, backgroundColor: "#1F2937" }} />
           </div>
 
           {/* Email magic link */}
           <EmailForm />
 
           {/* Fine print */}
-          <p style={{ textAlign: "center", fontSize: 11, color: "#b0ab8c", margin: "20px 0 0", lineHeight: 1.6 }}>
+          <p style={{ textAlign: "center", fontSize: 11, color: "#6B7280", margin: "20px 0 0", lineHeight: 1.6 }}>
             By signing up you agree to our{" "}
-            <Link href="/terms" style={{ color: "#839958", textDecoration: "underline" }}>Terms</Link>
+            <Link href="/terms" style={{ color: "#6B7280", textDecoration: "underline" }}>Terms</Link>
             {" "}and{" "}
-            <Link href="/privacy" style={{ color: "#839958", textDecoration: "underline" }}>Privacy Policy</Link>.
+            <Link href="/privacy" style={{ color: "#6B7280", textDecoration: "underline" }}>Privacy Policy</Link>.
           </p>
         </div>
 
         {/* Social proof under card */}
         <div style={{ position: "absolute", bottom: 28, left: 0, right: 0, textAlign: "center" }}>
-          <p style={{ fontSize: 12, color: "#839958", margin: 0 }}>
-            Trusted by <span style={{ fontWeight: 700, color: "#0A3323" }}>2,400+</span> early-career professionals in India
+          <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>
+            Trusted by <span style={{ fontWeight: 700, color: "#F9FAFB" }}>2,400+</span> early-career professionals in India
           </p>
         </div>
       </div>
@@ -130,12 +130,12 @@ function EmailForm() {
   if (sent) return (
     <div style={{
       textAlign: "center", padding: "16px 12px",
-      backgroundColor: "#F9F7EC", borderRadius: 10,
-      border: "1px solid #e8e4ce",
+      backgroundColor: "#0F1117", borderRadius: 10,
+      border: "1px solid #1F2937",
     }}>
-      <p style={{ fontSize: 13, color: "#0A3323", fontWeight: 700, margin: "0 0 4px" }}>Check your inbox ✉️</p>
-      <p style={{ fontSize: 12, color: "#839958", margin: 0 }}>
-        Magic link sent to <strong style={{ color: "#1a1a1a" }}>{email}</strong>
+      <p style={{ fontSize: 13, color: "#F9FAFB", fontWeight: 700, margin: "0 0 4px" }}>Check your inbox ✉️</p>
+      <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>
+        Magic link sent to <strong style={{ color: "#F9FAFB" }}>{email}</strong>
       </p>
     </div>
   );

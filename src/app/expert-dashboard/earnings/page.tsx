@@ -145,13 +145,13 @@ export default function ExpertEarningsPage() {
     monthly[key] = (monthly[key] ?? 0) + b.amount_cents;
   });
 
-  if (loading) return <div style={{ padding: 40 }}><p style={{ color: "#839958" }}>Loading…</p></div>;
+  if (loading) return <div style={{ padding: 40 }}><p style={{ color: "#6B7280" }}>Loading…</p></div>;
 
   return (
     <div style={{ padding: 32, maxWidth: 760 }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 800, color: "#0A3323", margin: "0 0 4px" }}>Earnings & Payouts</h1>
-        <p style={{ fontSize: 13, color: "#839958", margin: 0 }}>Track your income and request withdrawals.</p>
+        <h1 style={{ fontSize: 22, fontWeight: 800, color: "#F9FAFB", margin: "0 0 4px" }}>Earnings & Payouts</h1>
+        <p style={{ fontSize: 13, color: "#6B7280", margin: 0 }}>Track your income and request withdrawals.</p>
       </div>
 
       {/* Summary cards */}
@@ -161,11 +161,11 @@ export default function ExpertEarningsPage() {
           { label: "Available Balance",value: formatINR(availablePayout), icon: "🏦", note: "Ready to withdraw" },
           { label: "Total Paid Out",   value: formatINR(totalPaidOut),   icon: "✅", note: "Withdrawn so far" },
         ].map(card => (
-          <div key={card.label} style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: "18px 20px" }}>
+          <div key={card.label} style={{ backgroundColor: "#181C24", border: "1px solid #1F2937", borderRadius: 14, padding: "18px 20px" }}>
             <div style={{ fontSize: 22, marginBottom: 8 }}>{card.icon}</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: "#0A3323", marginBottom: 2 }}>{card.value}</div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: "#0A3323", marginBottom: 2 }}>{card.label}</div>
-            <div style={{ fontSize: 10, color: "#839958" }}>{card.note}</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#F9FAFB", marginBottom: 2 }}>{card.value}</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#F9FAFB", marginBottom: 2 }}>{card.label}</div>
+            <div style={{ fontSize: 10, color: "#6B7280" }}>{card.note}</div>
           </div>
         ))}
       </div>
@@ -188,9 +188,9 @@ export default function ExpertEarningsPage() {
         <>
           {/* Monthly breakdown */}
           {Object.keys(monthly).length > 0 && (
-            <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, overflow: "hidden", marginBottom: 20 }}>
-              <div style={{ padding: "14px 20px", borderBottom: "1px solid #e8e4ce" }}>
-                <p style={{ fontSize: 13, fontWeight: 800, color: "#0A3323", margin: 0 }}>Monthly breakdown</p>
+            <div style={{ backgroundColor: "#181C24", border: "1px solid #1F2937", borderRadius: 16, overflow: "hidden", marginBottom: 20 }}>
+              <div style={{ padding: "14px 20px", borderBottom: "1px solid #1F2937" }}>
+                <p style={{ fontSize: 13, fontWeight: 800, color: "#F9FAFB", margin: 0 }}>Monthly breakdown</p>
               </div>
               <div style={{ padding: "0 20px" }}>
                 {Object.entries(monthly).map(([month, cents], i, arr) => (
@@ -198,8 +198,8 @@ export default function ExpertEarningsPage() {
                     display: "flex", alignItems: "center", justifyContent: "space-between",
                     padding: "12px 0", borderBottom: i < arr.length - 1 ? "1px solid #f5f5f0" : "none",
                   }}>
-                    <span style={{ fontSize: 13, color: "#1a1a1a" }}>{month}</span>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: "#0A3323" }}>{formatINR(cents)}</span>
+                    <span style={{ fontSize: 13, color: "#F9FAFB" }}>{month}</span>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: "#F9FAFB" }}>{formatINR(cents)}</span>
                   </div>
                 ))}
               </div>
@@ -207,13 +207,13 @@ export default function ExpertEarningsPage() {
           )}
 
           {/* Session log */}
-          <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, overflow: "hidden" }}>
-            <div style={{ padding: "14px 20px", borderBottom: "1px solid #e8e4ce" }}>
-              <p style={{ fontSize: 13, fontWeight: 800, color: "#0A3323", margin: 0 }}>Completed sessions</p>
+          <div style={{ backgroundColor: "#181C24", border: "1px solid #1F2937", borderRadius: 16, overflow: "hidden" }}>
+            <div style={{ padding: "14px 20px", borderBottom: "1px solid #1F2937" }}>
+              <p style={{ fontSize: 13, fontWeight: 800, color: "#F9FAFB", margin: 0 }}>Completed sessions</p>
             </div>
             {completedBookings.length === 0 ? (
               <div style={{ padding: "28px 20px", textAlign: "center" }}>
-                <p style={{ fontSize: 13, color: "#839958" }}>No completed sessions yet.</p>
+                <p style={{ fontSize: 13, color: "#6B7280" }}>No completed sessions yet.</p>
               </div>
             ) : (
               completedBookings.map((b, i) => (
@@ -222,12 +222,12 @@ export default function ExpertEarningsPage() {
                   padding: "12px 20px", borderBottom: i < completedBookings.length - 1 ? "1px solid #f5f5f0" : "none",
                 }}>
                   <div>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: "#1a1a1a", margin: "0 0 2px" }}>{b.service?.title ?? "Session"}</p>
-                    <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: "#F9FAFB", margin: "0 0 2px" }}>{b.service?.title ?? "Session"}</p>
+                    <p style={{ fontSize: 11, color: "#6B7280", margin: 0 }}>
                       {b.scheduled_at ? new Date(b.scheduled_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : ""}
                     </p>
                   </div>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: "#0A3323" }}>{formatINR(b.amount_cents)}</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: "#F9FAFB" }}>{formatINR(b.amount_cents)}</span>
                 </div>
               ))
             )}
@@ -236,10 +236,10 @@ export default function ExpertEarningsPage() {
       )}
 
       {tab === "payout" && (
-        <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: 28 }}>
-          <p style={{ fontSize: 14, fontWeight: 800, color: "#0A3323", marginBottom: 4 }}>Request a withdrawal</p>
-          <p style={{ fontSize: 12, color: "#839958", marginBottom: 24 }}>
-            Available balance: <strong style={{ color: "#0A3323" }}>{formatINR(availablePayout)}</strong> · Payouts processed within 3–5 business days
+        <div style={{ backgroundColor: "#181C24", border: "1px solid #1F2937", borderRadius: 16, padding: 28 }}>
+          <p style={{ fontSize: 14, fontWeight: 800, color: "#F9FAFB", marginBottom: 4 }}>Request a withdrawal</p>
+          <p style={{ fontSize: 12, color: "#6B7280", marginBottom: 24 }}>
+            Available balance: <strong style={{ color: "#F9FAFB" }}>{formatINR(availablePayout)}</strong> · Payouts processed within 3–5 business days
           </p>
 
           {/* Method toggle */}
@@ -258,9 +258,9 @@ export default function ExpertEarningsPage() {
 
           {method === "upi" ? (
             <div style={{ marginBottom: 20 }}>
-              <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#0A3323", marginBottom: 6 }}>UPI ID</label>
+              <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#F9FAFB", marginBottom: 6 }}>UPI ID</label>
               <input value={upiId} onChange={e => setUpiId(e.target.value)} placeholder="yourname@upi"
-                style={{ width: "100%", boxSizing: "border-box", border: "1px solid #e8e4ce", borderRadius: 10, padding: "10px 14px", fontSize: 13, fontFamily: "inherit", outline: "none", color: "#1a1a1a" }} />
+                style={{ width: "100%", boxSizing: "border-box", border: "1px solid #1F2937", borderRadius: 10, padding: "10px 14px", fontSize: 13, fontFamily: "inherit", outline: "none", color: "#F9FAFB" }} />
             </div>
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 20 }}>
@@ -270,26 +270,26 @@ export default function ExpertEarningsPage() {
                 { label: "IFSC code",           value: bankIfsc, set: setBankIfsc, ph: "SBIN0001234" },
               ].map(f => (
                 <div key={f.label}>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#0A3323", marginBottom: 6 }}>{f.label}</label>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#F9FAFB", marginBottom: 6 }}>{f.label}</label>
                   <input value={f.value} onChange={e => f.set(e.target.value)} placeholder={f.ph}
-                    style={{ width: "100%", boxSizing: "border-box", border: "1px solid #e8e4ce", borderRadius: 10, padding: "10px 14px", fontSize: 13, fontFamily: "inherit", outline: "none", color: "#1a1a1a" }} />
+                    style={{ width: "100%", boxSizing: "border-box", border: "1px solid #1F2937", borderRadius: 10, padding: "10px 14px", fontSize: 13, fontFamily: "inherit", outline: "none", color: "#F9FAFB" }} />
                 </div>
               ))}
             </div>
           )}
 
           <div style={{ marginBottom: 24 }}>
-            <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#0A3323", marginBottom: 6 }}>Amount (₹)</label>
+            <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#F9FAFB", marginBottom: 6 }}>Amount (₹)</label>
             <input type="number" min={1} value={payoutAmt} onChange={e => setPayoutAmt(e.target.value)}
               placeholder={`Max ₹${(availablePayout / 100).toLocaleString("en-IN")}`}
-              style={{ width: "100%", boxSizing: "border-box", border: "1px solid #e8e4ce", borderRadius: 10, padding: "10px 14px", fontSize: 13, fontFamily: "inherit", outline: "none", color: "#1a1a1a" }} />
+              style={{ width: "100%", boxSizing: "border-box", border: "1px solid #1F2937", borderRadius: 10, padding: "10px 14px", fontSize: 13, fontFamily: "inherit", outline: "none", color: "#F9FAFB" }} />
           </div>
 
           {reqError   && <p style={{ fontSize: 12, color: "#dc2626", marginBottom: 14, backgroundColor: "#fee2e2", padding: "8px 12px", borderRadius: 8 }}>{reqError}</p>}
           {reqSuccess && <p style={{ fontSize: 12, color: "#1b5e20", marginBottom: 14, backgroundColor: "#e8f5e9", padding: "8px 12px", borderRadius: 8 }}>✓ Payout request submitted! We'll process it within 3–5 business days.</p>}
 
           <button onClick={requestPayout} disabled={requesting || !payoutAmt || availablePayout === 0} style={{
-            backgroundColor: "#0A3323", color: "#F7F4D5", border: "none",
+            backgroundColor: "#064E3B", color: "#F9FAFB", border: "none",
             borderRadius: 12, padding: "12px 24px", fontSize: 13, fontWeight: 800,
             cursor: requesting || !payoutAmt || availablePayout === 0 ? "default" : "pointer",
             opacity: !payoutAmt || availablePayout === 0 ? 0.6 : 1,
@@ -300,7 +300,7 @@ export default function ExpertEarningsPage() {
           {/* Payout history */}
           {payouts.length > 0 && (
             <div style={{ marginTop: 32 }}>
-              <p style={{ fontSize: 13, fontWeight: 800, color: "#0A3323", marginBottom: 12 }}>Payout history</p>
+              <p style={{ fontSize: 13, fontWeight: 800, color: "#F9FAFB", marginBottom: 12 }}>Payout history</p>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {payouts.map(p => {
                   const chip = PAYOUT_STATUS[p.status] ?? PAYOUT_STATUS.pending;
@@ -311,8 +311,8 @@ export default function ExpertEarningsPage() {
                       borderRadius: 10, padding: "12px 14px",
                     }}>
                       <div>
-                        <p style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a", margin: "0 0 2px" }}>{formatINR(p.amount_cents)}</p>
-                        <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>
+                        <p style={{ fontSize: 13, fontWeight: 700, color: "#F9FAFB", margin: "0 0 2px" }}>{formatINR(p.amount_cents)}</p>
+                        <p style={{ fontSize: 11, color: "#6B7280", margin: 0 }}>
                           {p.method === "upi" ? `UPI · ${p.upi_id}` : "Bank transfer"} · {new Date(p.requested_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                         </p>
                       </div>

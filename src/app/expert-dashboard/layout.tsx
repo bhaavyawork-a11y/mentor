@@ -38,14 +38,14 @@ function ExpertSidebar() {
 
   return (
     <div style={{
-      width: 220, minHeight: "100vh", backgroundColor: "#0A3323",
+      width: 220, minHeight: "100vh", backgroundColor: "#064E3B",
       display: "flex", flexDirection: "column", flexShrink: 0,
     }}>
       {/* Logo */}
       <div style={{ padding: "20px 18px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-        <div style={{ fontSize: 17, fontWeight: 800, color: "#F7F4D5" }}>
-          mentor<span style={{ color: "#D3968C" }}>.</span>
-          <span style={{ fontSize: 10, color: "#839958", fontWeight: 600, marginLeft: 8, letterSpacing: "0.4px" }}>
+        <div style={{ fontSize: 17, fontWeight: 800, color: "#F9FAFB" }}>
+          mentor<span style={{ color: "#B45309" }}>.</span>
+          <span style={{ fontSize: 10, color: "#6B7280", fontWeight: 600, marginLeft: 8, letterSpacing: "0.4px" }}>
             Expert Portal
           </span>
         </div>

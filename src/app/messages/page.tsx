@@ -137,13 +137,13 @@ export default function MessagesPage() {
 
       {/* New message search */}
       {showSearch && (
-        <div style={{ backgroundColor:"#fff", border:"1px solid #e8e4ce", borderRadius:14, padding:16, marginBottom:16 }}>
+        <div style={{ backgroundColor:"#fff", border:"1px solid #1F2937", borderRadius:14, padding:16, marginBottom:16 }}>
           <p style={{ fontSize:12, fontWeight:700, color:"#839958", margin:"0 0 10px" }}>Search people</p>
           <input
             value={newSearch} onChange={e=>setNewSearch(e.target.value)}
             placeholder="Type a name..."
             autoFocus
-            style={{ width:"100%", boxSizing:"border-box", fontSize:13, border:"1px solid #e8e4ce", borderRadius:10, padding:"9px 12px", fontFamily:"inherit", outline:"none" }}
+            style={{ width:"100%", boxSizing:"border-box", fontSize:13, border:"1px solid #1F2937", borderRadius:10, padding:"9px 12px", fontFamily:"inherit", outline:"none" }}
           />
           {searchResults.length > 0 && (
             <div style={{ marginTop:10, display:"flex", flexDirection:"column", gap:4 }}>
@@ -165,7 +165,7 @@ export default function MessagesPage() {
       )}
 
       {/* Conversations list */}
-      <div style={{ backgroundColor:"#fff", border:"1px solid #e8e4ce", borderRadius:14, overflow:"hidden" }}>
+      <div style={{ backgroundColor:"#fff", border:"1px solid #1F2937", borderRadius:14, overflow:"hidden" }}>
         {loading ? (
           <div style={{ padding:40, textAlign:"center" }}><p style={{ color:"#839958", fontSize:13 }}>Loading…</p></div>
         ) : conversations.length === 0 ? (
@@ -179,7 +179,7 @@ export default function MessagesPage() {
             const name = user?.full_name ?? "Member";
             const bg = user ? avatarBg(user.id) : "#e8e4ce";
             return (
-              <Link key={conv.id} href={`/messages/${conv.id}`} style={{ display:"flex", alignItems:"center", gap:12, padding:"14px 18px", textDecoration:"none", borderBottom: i < conversations.length-1 ? "1px solid #f5f0e8" : "none", backgroundColor: conv.unread_count > 0 ? "#F9F7EC" : "#fff", transition:"background 0.1s" }}>
+              <Link key={conv.id} href={`/messages/${conv.id}`} style={{ display:"flex", alignItems:"center", gap:12, padding:"14px 18px", textDecoration:"none", borderBottom: i < conversations.length-1 ? "1px solid #f5f0e8" : "none", backgroundColor: conv.unread_count > 0 ? "#0F1117" : "#fff", transition:"background 0.1s" }}>
                 <div style={{ width:42, height:42, borderRadius:"50%", backgroundColor:bg, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:800, flexShrink:0, position:"relative" }}>
                   {initials(name)}
                   {conv.unread_count > 0 && (

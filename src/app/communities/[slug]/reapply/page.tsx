@@ -27,8 +27,8 @@ interface ApplicationData {
 
 const textareaStyle: React.CSSProperties = {
   width: "100%", boxSizing: "border-box", padding: "10px 12px",
-  fontSize: 13, border: "1px solid #e8e4ce", borderRadius: 8,
-  fontFamily: "inherit", outline: "none", backgroundColor: "#fff", color: "#1a1a1a",
+  fontSize: 13, border: "1px solid #1F2937", borderRadius: 8,
+  fontFamily: "inherit", outline: "none", backgroundColor: "#181C24", color: "#F9FAFB",
   minHeight: 80, resize: "vertical" as const, lineHeight: 1.5,
 };
 
@@ -132,7 +132,7 @@ export default function ReapplyPage() {
   if (loading) {
     return (
       <div style={{ maxWidth: 600, margin: "0 auto", padding: "40px 20px" }}>
-        <p style={{ fontSize: 14, color: "#839958" }}>Loading…</p>
+        <p style={{ fontSize: 14, color: "#6B7280" }}>Loading…</p>
       </div>
     );
   }
@@ -140,8 +140,8 @@ export default function ReapplyPage() {
   if (!community) {
     return (
       <div style={{ maxWidth: 600, margin: "0 auto", padding: "40px 20px" }}>
-        <p style={{ fontSize: 14, color: "#c0714a" }}>Community not found</p>
-        <Link href="/communities" style={{ color: "#0A3323", textDecoration: "none", fontWeight: 600 }}>
+        <p style={{ fontSize: 14, color: "#FCA5A5" }}>Community not found</p>
+        <Link href="/communities" style={{ color: "#F9FAFB", textDecoration: "none", fontWeight: 600 }}>
           ← Back to Groups
         </Link>
       </div>
@@ -152,25 +152,25 @@ export default function ReapplyPage() {
     const ok = result.status === "approved";
     return (
       <div style={{ maxWidth: 600, margin: "0 auto", padding: "40px 20px" }}>
-        <div style={{ backgroundColor: "#fff", border: "1.5px solid #e8e4ce", borderRadius: 14, padding: "32px 24px" }}>
+        <div style={{ backgroundColor: "#181C24", border: "1.5px solid #1F2937", borderRadius: 14, padding: "32px 24px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
             <span style={{ fontSize: 32 }}>{ok ? "🎉" : "😔"}</span>
             <div>
               <h2 style={{ fontSize: 18, fontWeight: 800, color: ok ? "#0A3323" : "#c0714a", margin: 0 }}>
                 {ok ? `Welcome to ${community.name}!` : "Application not approved"}
               </h2>
-              <p style={{ fontSize: 13, color: "#839958", margin: "4px 0 0" }}>AI score: {result.score}/100</p>
+              <p style={{ fontSize: 13, color: "#6B7280", margin: "4px 0 0" }}>AI score: {result.score}/100</p>
             </div>
           </div>
 
-          <p style={{ fontSize: 13, color: "#555", lineHeight: 1.6, margin: "0 0 20px" }}>
+          <p style={{ fontSize: 13, color: "#9CA3AF", lineHeight: 1.6, margin: "0 0 20px" }}>
             {result.feedback}
           </p>
 
           {ok ? (
             <Link href={`/communities/${community.slug}`} style={{
-              display: "inline-block", padding: "11px 22px", backgroundColor: "#0A3323",
-              color: "#F7F4D5", borderRadius: 10, fontSize: 13, fontWeight: 700,
+              display: "inline-block", padding: "11px 22px", backgroundColor: "#064E3B",
+              color: "#F9FAFB", borderRadius: 10, fontSize: 13, fontWeight: 700,
               textDecoration: "none",
             }}>
               Enter group →
@@ -178,15 +178,15 @@ export default function ReapplyPage() {
           ) : (
             <div style={{ display: "flex", gap: 10 }}>
               <button onClick={() => setResult(null)} style={{
-                padding: "11px 22px", borderRadius: 10, border: "1.5px solid #e8e4ce",
-                backgroundColor: "#fff", color: "#555", fontSize: 13, fontWeight: 700,
+                padding: "11px 22px", borderRadius: 10, border: "1.5px solid #1F2937",
+                backgroundColor: "#181C24", color: "#9CA3AF", fontSize: 13, fontWeight: 700,
                 cursor: "pointer", fontFamily: "inherit",
               }}>
                 Try again
               </button>
               <Link href="/communities" style={{
-                padding: "11px 22px", borderRadius: 10, border: "1.5px solid #e8e4ce",
-                backgroundColor: "#fff", color: "#555", fontSize: 13, fontWeight: 700,
+                padding: "11px 22px", borderRadius: 10, border: "1.5px solid #1F2937",
+                backgroundColor: "#181C24", color: "#9CA3AF", fontSize: 13, fontWeight: 700,
                 textDecoration: "none", display: "inline-block",
               }}>
                 Try a different group
@@ -201,15 +201,15 @@ export default function ReapplyPage() {
   return (
     <div style={{ maxWidth: 600, margin: "0 auto", padding: "40px 20px 80px" }}>
       {/* Header */}
-      <Link href="/communities" style={{ fontSize: 12, color: "#839958", textDecoration: "none", fontWeight: 600, display: "block", marginBottom: 24 }}>
+      <Link href="/communities" style={{ fontSize: 12, color: "#6B7280", textDecoration: "none", fontWeight: 600, display: "block", marginBottom: 24 }}>
         ← Back to Groups
       </Link>
 
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>
+        <h1 style={{ fontSize: 22, fontWeight: 800, color: "#F9FAFB", margin: "0 0 6px" }}>
           Reapply to {community.name}
         </h1>
-        <p style={{ fontSize: 13, color: "#839958", margin: 0, lineHeight: 1.6 }}>
+        <p style={{ fontSize: 13, color: "#6B7280", margin: 0, lineHeight: 1.6 }}>
           Your previous application was reviewed by AI. Below is the feedback and your original answers. Improve your responses based on the feedback.
         </p>
       </div>
@@ -223,7 +223,7 @@ export default function ReapplyPage() {
           padding: "18px",
           marginBottom: 28,
         }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: "#0A3323", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 8px" }}>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "#F9FAFB", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 8px" }}>
             Previous Feedback
           </p>
           <div style={{ display: "flex", gap: 12, alignItems: "flex-start", marginBottom: 12 }}>
@@ -238,15 +238,15 @@ export default function ReapplyPage() {
               </span>
             </div>
           </div>
-          <p style={{ fontSize: 13, color: "#555", margin: 0, lineHeight: 1.6 }}>
+          <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0, lineHeight: 1.6 }}>
             {prevApp.ai_feedback}
           </p>
         </div>
       )}
 
       {/* Form */}
-      <div style={{ backgroundColor: "#fff", border: "1.5px solid #e8e4ce", borderRadius: 14, padding: "24px" }}>
-        <p style={{ fontSize: 12, color: "#839958", margin: "0 0 20px", lineHeight: 1.5 }}>
+      <div style={{ backgroundColor: "#181C24", border: "1.5px solid #1F2937", borderRadius: 14, padding: "24px" }}>
+        <p style={{ fontSize: 12, color: "#6B7280", margin: "0 0 20px", lineHeight: 1.5 }}>
           Answer {community.screening_questions.length} short questions. Minimum 50 characters per answer. Be specific with real examples.
         </p>
 
@@ -263,7 +263,7 @@ export default function ReapplyPage() {
                   display: "block",
                   fontSize: 12,
                   fontWeight: 700,
-                  color: "#0A3323",
+                  color: "#F9FAFB",
                   marginBottom: 8,
                   lineHeight: 1.4,
                 }}>
@@ -293,8 +293,8 @@ export default function ReapplyPage() {
 
         <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 24, gap: 10 }}>
           <Link href="/communities" style={{
-            padding: "11px 22px", borderRadius: 10, border: "1.5px solid #e8e4ce",
-            backgroundColor: "#fff", color: "#555", fontSize: 13, fontWeight: 700,
+            padding: "11px 22px", borderRadius: 10, border: "1.5px solid #1F2937",
+            backgroundColor: "#181C24", color: "#9CA3AF", fontSize: 13, fontWeight: 700,
             textDecoration: "none", cursor: "pointer",
           }}>
             Cancel
@@ -305,7 +305,7 @@ export default function ReapplyPage() {
             style={{
               padding: "11px 22px", borderRadius: 10, border: "none",
               backgroundColor: canSubmit && !submitting ? "#0A3323" : "#c8c4ae",
-              color: "#F7F4D5", fontSize: 13, fontWeight: 700,
+              color: "#F9FAFB", fontSize: 13, fontWeight: 700,
               cursor: canSubmit && !submitting ? "pointer" : "default",
               fontFamily: "inherit",
             }}

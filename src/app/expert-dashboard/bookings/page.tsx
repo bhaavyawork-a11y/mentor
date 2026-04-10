@@ -16,7 +16,7 @@ function formatDate(iso: string) {
 const STATUS_CHIP: Record<string, { bg: string; color: string; label: string }> = {
   pending:   { bg: "#FFF3CC", color: "#8a6200", label: "Pending" },
   confirmed: { bg: "#e8f5e9", color: "#1b5e20", label: "Confirmed" },
-  completed: { bg: "#f0f0f0", color: "#555",    label: "Completed" },
+  completed: { bg: "#f0f0f0", color: "#9CA3AF",    label: "Completed" },
   cancelled: { bg: "#fee2e2", color: "#dc2626", label: "Cancelled" },
   refunded:  { bg: "#f5f0ff", color: "#6b21a8", label: "Refunded" },
 };
@@ -91,13 +91,13 @@ export default function ExpertBookingsPage() {
     return true;
   });
 
-  if (loading) return <div style={{ padding: 40 }}><p style={{ color: "#839958" }}>Loading…</p></div>;
+  if (loading) return <div style={{ padding: 40 }}><p style={{ color: "#6B7280" }}>Loading…</p></div>;
 
   return (
     <div style={{ padding: 32, maxWidth: 800 }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 800, color: "#0A3323", margin: "0 0 4px" }}>Bookings</h1>
-        <p style={{ fontSize: 13, color: "#839958", margin: 0 }}>{bookings.length} total booking{bookings.length !== 1 ? "s" : ""}</p>
+        <h1 style={{ fontSize: 22, fontWeight: 800, color: "#F9FAFB", margin: "0 0 4px" }}>Bookings</h1>
+        <p style={{ fontSize: 13, color: "#6B7280", margin: 0 }}>{bookings.length} total booking{bookings.length !== 1 ? "s" : ""}</p>
       </div>
 
       {/* Filter tabs */}
@@ -117,7 +117,7 @@ export default function ExpertBookingsPage() {
       {displayed.length === 0 ? (
         <div style={{ textAlign: "center", padding: "48px 0" }}>
           <p style={{ fontSize: 28, marginBottom: 8 }}>📭</p>
-          <p style={{ fontSize: 13, color: "#839958" }}>
+          <p style={{ fontSize: 13, color: "#6B7280" }}>
             {filter === "upcoming" ? "No upcoming bookings." : "No bookings here yet."}
           </p>
         </div>
@@ -128,7 +128,7 @@ export default function ExpertBookingsPage() {
             const isNext = b.scheduled_at && new Date(b.scheduled_at) > now && b.status === "confirmed";
             return (
               <div key={b.id} style={{
-                backgroundColor: "#fff",
+                backgroundColor: "#181C24",
                 border: `1px solid ${isNext ? "#839958" : "#e8e4ce"}`,
                 borderRadius: 16, padding: "18px 20px",
                 boxShadow: isNext ? "0 2px 12px rgba(131,153,88,0.12)" : "none",
@@ -136,9 +136,9 @@ export default function ExpertBookingsPage() {
                 <div style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
                   {/* Avatar */}
                   <div style={{
-                    width: 42, height: 42, borderRadius: 12, backgroundColor: "#F7F4D5",
+                    width: 42, height: 42, borderRadius: 12, backgroundColor: "rgba(6,78,59,0.2)",
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: 15, fontWeight: 800, color: "#0A3323", flexShrink: 0,
+                    fontSize: 15, fontWeight: 800, color: "#F9FAFB", flexShrink: 0,
                   }}>
                     {b.user?.full_name?.[0] ?? "?"}
                   </div>
@@ -146,7 +146,7 @@ export default function ExpertBookingsPage() {
                   {/* Info */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
-                      <p style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a", margin: 0 }}>
+                      <p style={{ fontSize: 14, fontWeight: 700, color: "#F9FAFB", margin: 0 }}>
                         {b.user?.full_name ?? "User"}
                       </p>
                       <span style={{ fontSize: 10, fontWeight: 700, borderRadius: 99, padding: "3px 9px", ...chip }}>
@@ -154,9 +154,9 @@ export default function ExpertBookingsPage() {
                       </span>
                       {isNext && <span style={{ fontSize: 10, fontWeight: 700, borderRadius: 99, padding: "3px 9px", backgroundColor: "#e8f5e9", color: "#1b5e20" }}>Next up</span>}
                     </div>
-                    <p style={{ fontSize: 12, color: "#839958", margin: "0 0 2px" }}>{b.service?.title}</p>
+                    <p style={{ fontSize: 12, color: "#6B7280", margin: "0 0 2px" }}>{b.service?.title}</p>
                     {b.scheduled_at && (
-                      <p style={{ fontSize: 12, color: "#b0ab8c", margin: 0 }}>🗓 {formatDate(b.scheduled_at)}</p>
+                      <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>🗓 {formatDate(b.scheduled_at)}</p>
                     )}
                     {b.notes && (
                       <p style={{ fontSize: 11, color: "#888", margin: "6px 0 0", fontStyle: "italic" }}>"{b.notes}"</p>
@@ -165,7 +165,7 @@ export default function ExpertBookingsPage() {
 
                   {/* Amount */}
                   {b.amount_cents && (
-                    <div style={{ fontSize: 15, fontWeight: 800, color: "#0A3323", flexShrink: 0 }}>
+                    <div style={{ fontSize: 15, fontWeight: 800, color: "#F9FAFB", flexShrink: 0 }}>
                       {formatINR(b.amount_cents)}
                     </div>
                   )}
@@ -178,7 +178,7 @@ export default function ExpertBookingsPage() {
                       onClick={() => updateBooking(b.id, { status: "confirmed" })}
                       disabled={actionLoading === b.id}
                       style={{
-                        fontSize: 12, fontWeight: 700, backgroundColor: "#0A3323", color: "#839958",
+                        fontSize: 12, fontWeight: 700, backgroundColor: "#064E3B", color: "#6B7280",
                         border: "none", borderRadius: 8, padding: "7px 14px", cursor: "pointer", fontFamily: "inherit",
                       }}>
                       {actionLoading === b.id ? "…" : "✓ Confirm booking"}
@@ -189,7 +189,7 @@ export default function ExpertBookingsPage() {
                       onClick={() => updateBooking(b.id, { status: "completed" })}
                       disabled={actionLoading === b.id}
                       style={{
-                        fontSize: 12, fontWeight: 700, backgroundColor: "#f0f0f0", color: "#555",
+                        fontSize: 12, fontWeight: 700, backgroundColor: "#f0f0f0", color: "#9CA3AF",
                         border: "none", borderRadius: 8, padding: "7px 14px", cursor: "pointer", fontFamily: "inherit",
                       }}>
                       {actionLoading === b.id ? "…" : "Mark complete"}

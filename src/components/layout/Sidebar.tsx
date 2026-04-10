@@ -98,19 +98,19 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     <div style={{
       width: 225,
       height: "100vh",
-      backgroundColor: "#ffffff",
-      borderRight: "1px solid #e8e4ce",
+      backgroundColor: "#181C24",
+      borderRight: "1px solid #1F2937",
       display: "flex",
       flexDirection: "column",
     }}>
       {/* ── Logo ── */}
-      <div style={{ padding: "18px 16px 14px", borderBottom: "1px solid #e8e4ce", flexShrink: 0 }}>
+      <div style={{ padding: "18px 16px 14px", borderBottom: "1px solid #1F2937", flexShrink: 0 }}>
         <Link
           href="/communities"
           onClick={onNavigate}
-          style={{ fontSize: 18, fontWeight: 800, color: "#0A3323", textDecoration: "none", display: "block" }}
+          style={{ fontSize: 18, fontWeight: 800, color: "#F9FAFB", textDecoration: "none", display: "block" }}
         >
-          mentor<span style={{ color: "#D3968C" }}>.</span>
+          mentor<span style={{ color: "#B45309" }}>.</span>
         </Link>
       </div>
 
@@ -131,8 +131,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                 borderRadius: 10,
                 textDecoration: "none",
                 marginBottom: 2,
-                backgroundColor: active ? "#F7F4D5" : "transparent",
-                color: active ? "#0A3323" : "#555",
+                backgroundColor: active ? "rgba(6,78,59,0.35)" : "transparent",
+                color: active ? "#F9FAFB" : "#9CA3AF",
                 fontWeight: active ? 700 : 500,
                 fontSize: 14,
                 transition: "background 0.15s",
@@ -144,7 +144,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                 <span style={{
                   marginLeft: "auto",
                   width: 6, height: 6, borderRadius: "50%",
-                  backgroundColor: "#0A3323",
+                  backgroundColor: "#064E3B",
                   flexShrink: 0,
                 }} />
               )}
@@ -153,7 +153,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         })}
 
         {/* ── Divider + quick links ── */}
-        <div style={{ borderTop: "1px solid #e8e4ce", margin: "12px 4px", paddingTop: 12 }}>
+        <div style={{ borderTop: "1px solid #1F2937", margin: "12px 4px", paddingTop: 12 }}>
           {[
             { href: "/refer", label: "Invite friends" },
           ].map(({ href, label }) => (
@@ -164,7 +164,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               style={{
                 display: "block",
                 fontSize: 12,
-                color: "#839958",
+                color: "#6B7280",
                 textDecoration: "none",
                 padding: "6px 12px",
                 borderRadius: 8,
@@ -178,19 +178,19 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
       </div>
 
       {/* ── XP footer + avatar ── */}
-      <div style={{ padding: "12px 10px", borderTop: "1px solid #e8e4ce", flexShrink: 0 }}>
+      <div style={{ padding: "12px 10px", borderTop: "1px solid #1F2937", flexShrink: 0 }}>
         {/* XP bar */}
-        <div style={{ backgroundColor: "#0A3323", borderRadius: 10, padding: "10px 12px", marginBottom: 10 }}>
+        <div style={{ backgroundColor: "#064E3B", borderRadius: 10, padding: "10px 12px", marginBottom: 10 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-            <span style={{ fontSize: 10, color: "#F7F4D5", textTransform: "uppercase", letterSpacing: "0.6px", fontWeight: 700 }}>
+            <span style={{ fontSize: 10, color: "#D1FAE5", textTransform: "uppercase", letterSpacing: "0.6px", fontWeight: 700 }}>
               Lv {currentLevel.level} · {currentLevel.name}
             </span>
-            <span style={{ fontSize: 11, color: "#D3968C", fontWeight: 800 }}>{xp} XP</span>
+            <span style={{ fontSize: 11, color: "#B45309", fontWeight: 800 }}>{xp} XP</span>
           </div>
           <div style={{ height: 4, backgroundColor: "rgba(255,255,255,0.1)", borderRadius: 99, overflow: "hidden", marginBottom: 4 }}>
-            <div style={{ height: "100%", width: `${Math.min(progress * 100, 100)}%`, backgroundColor: "#D3968C", borderRadius: 99 }} />
+            <div style={{ height: "100%", width: `${Math.min(progress * 100, 100)}%`, backgroundColor: "#B45309", borderRadius: 99 }} />
           </div>
-          <div style={{ fontSize: 9, color: "rgba(247,244,213,0.4)" }}>
+          <div style={{ fontSize: 9, color: "rgba(209,250,229,0.5)" }}>
             {nextLevel ? `${toNext} XP to Lv ${nextLevel.level}` : "Max level · Master"}
           </div>
         </div>
@@ -200,37 +200,37 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           <div
             onClick={() => setDropdownOpen((o) => !o)}
             style={{
-              backgroundColor: "#F9F7EC", borderRadius: 10, padding: "9px 12px",
+              backgroundColor: "#1F2937", borderRadius: 10, padding: "9px 12px",
               display: "flex", alignItems: "center", gap: 10, cursor: "pointer", userSelect: "none",
             }}
           >
             <div style={{
               width: 32, height: 32, borderRadius: "50%",
-              backgroundColor: "#D3968C", color: "#ffffff",
+              backgroundColor: "#B45309", color: "#ffffff",
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 11, fontWeight: 800, flexShrink: 0,
             }}>
               {initials || "?"}
             </div>
             <div style={{ minWidth: 0, flex: 1 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "#0A3323", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#F9FAFB", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {displayName}
               </div>
-              <div style={{ fontSize: 10, color: "#839958" }}>{firstName}</div>
+              <div style={{ fontSize: 10, color: "#6B7280" }}>{firstName}</div>
             </div>
-            <span style={{ fontSize: 9, color: "#839958", flexShrink: 0 }}>{dropdownOpen ? "▲" : "▼"}</span>
+            <span style={{ fontSize: 9, color: "#6B7280", flexShrink: 0 }}>{dropdownOpen ? "▲" : "▼"}</span>
           </div>
 
           {dropdownOpen && (
             <div style={{
               position: "absolute", bottom: "calc(100% + 6px)", left: 0, right: 0,
-              backgroundColor: "#ffffff", border: "1px solid #e8e4ce",
+              backgroundColor: "#1F2937", border: "1px solid #374151",
               borderRadius: 10, padding: 6, zIndex: 100,
-              boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+              boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
             }}>
               <Link href="/profile"  onClick={() => { setDropdownOpen(false); onNavigate?.(); }} className="sidebar-dropdown-item">Edit profile</Link>
               <Link href="/settings" onClick={() => { setDropdownOpen(false); onNavigate?.(); }} className="sidebar-dropdown-item">Settings</Link>
-              <div style={{ height: 1, backgroundColor: "#e8e4ce", margin: "4px 0" }} />
+              <div style={{ height: 1, backgroundColor: "#374151", margin: "4px 0" }} />
               <button onClick={handleSignOut} className="sidebar-dropdown-item" style={{ width: "100%", background: "none", border: "none", textAlign: "left", cursor: "pointer", fontFamily: "inherit" }}>
                 Sign out
               </button>

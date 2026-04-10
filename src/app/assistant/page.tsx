@@ -44,14 +44,14 @@ function renderMarkdown(text: string) {
     if (isBullet) {
       elements.push(
         <div key={key++} style={{ display: "flex", gap: 8, marginBottom: 4, paddingLeft: 4 }}>
-          <span style={{ color: "#839958", flexShrink: 0, marginTop: 1 }}>•</span>
+          <span style={{ color: "#6B7280", flexShrink: 0, marginTop: 1 }}>•</span>
           <span style={{ lineHeight: 1.6 }}>{rendered}</span>
         </div>
       );
     } else if (/^###? /.test(line)) {
       const headingText = line.replace(/^###? /, "");
       elements.push(
-        <p key={key++} style={{ fontSize: 13, fontWeight: 800, color: "#0A3323", margin: "10px 0 4px", textTransform: "uppercase", letterSpacing: "0.4px" }}>
+        <p key={key++} style={{ fontSize: 13, fontWeight: 800, color: "#F9FAFB", margin: "10px 0 4px", textTransform: "uppercase", letterSpacing: "0.4px" }}>
           {headingText}
         </p>
       );
@@ -85,7 +85,7 @@ function MessageBubble({ message, isStreaming }: { message: Message; isStreaming
         maxWidth: "78%",
         backgroundColor: isUser ? "#0A3323" : "#fff",
         color: isUser ? "#F7F4D5" : "#1a1a1a",
-        border: isUser ? "none" : "1px solid #e8e4ce",
+        border: isUser ? "none" : "1px solid #1F2937",
         borderRadius: isUser ? "14px 14px 4px 14px" : "4px 14px 14px 14px",
         padding: "12px 16px",
         fontSize: 14,
@@ -124,7 +124,7 @@ function TypingIndicator() {
         ✨
       </div>
       <div style={{
-        backgroundColor: "#fff", border: "1px solid #e8e4ce",
+        backgroundColor: "#181C24", border: "1px solid #1F2937",
         borderRadius: "4px 14px 14px 14px", padding: "14px 18px",
       }}>
         <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
@@ -253,7 +253,7 @@ export default function AssistantPage() {
     <div className="page-chat">
 
       {/* ── Header ── */}
-      <div style={{ padding: "20px 0 16px", borderBottom: "1px solid #e8e4ce", flexShrink: 0 }}>
+      <div style={{ padding: "20px 0 16px", borderBottom: "1px solid #1F2937", flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div style={{
             width: 40, height: 40, borderRadius: 12,
@@ -264,19 +264,19 @@ export default function AssistantPage() {
             ✨
           </div>
           <div>
-            <h1 style={{ fontSize: 18, fontWeight: 800, color: "#0A3323", margin: 0 }}>Career Assistant</h1>
-            <p style={{ fontSize: 12, color: "#839958", margin: 0 }}>
+            <h1 style={{ fontSize: 18, fontWeight: 800, color: "#F9FAFB", margin: 0 }}>Career Assistant</h1>
+            <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>
               Powered by Llama 3.3 70B · Salary · Interviews · Offers · Referrals
             </p>
           </div>
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
             {isStreaming && (
-              <span style={{ fontSize: 11, color: "#839958", backgroundColor: "#F7F4D5", border: "1px solid #e8e4ce", borderRadius: 99, padding: "3px 10px", animation: "pulse 1.5s infinite" }}>
+              <span style={{ fontSize: 11, color: "#6B7280", backgroundColor: "rgba(6,78,59,0.2)", border: "1px solid #1F2937", borderRadius: 99, padding: "3px 10px", animation: "pulse 1.5s infinite" }}>
                 ● Thinking…
               </span>
             )}
             {profileContext && !isStreaming && (
-              <span style={{ fontSize: 10, color: "#839958", backgroundColor: "#F7F4D5", border: "1px solid #e8e4ce", borderRadius: 8, padding: "4px 10px" }}>
+              <span style={{ fontSize: 10, color: "#6B7280", backgroundColor: "rgba(6,78,59,0.2)", border: "1px solid #1F2937", borderRadius: 8, padding: "4px 10px" }}>
                 Profile loaded ✓
               </span>
             )}
@@ -290,7 +290,7 @@ export default function AssistantPage() {
         {/* Welcome screen */}
         {isFirstMessage && (
           <div style={{ marginBottom: 24 }}>
-            <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: 20, marginBottom: 20 }}>
+            <div style={{ backgroundColor: "#181C24", border: "1px solid #1F2937", borderRadius: 14, padding: 20, marginBottom: 20 }}>
               <div style={{ display: "flex", gap: 12 }}>
                 <div style={{
                   width: 32, height: 32, borderRadius: "50%", flexShrink: 0,
@@ -300,10 +300,10 @@ export default function AssistantPage() {
                   ✨
                 </div>
                 <div>
-                  <p style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a", margin: "0 0 6px" }}>
+                  <p style={{ fontSize: 14, fontWeight: 700, color: "#F9FAFB", margin: "0 0 6px" }}>
                     Hi{profile?.full_name ? `, ${profile.full_name.split(" ")[0]}` : ""}! I know the Indian job market inside-out.
                   </p>
-                  <p style={{ fontSize: 13, color: "#555", margin: 0, lineHeight: 1.7 }}>
+                  <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0, lineHeight: 1.7 }}>
                     Ask me about real salary numbers, how to crack interviews at specific companies, whether a job offer is fair, or how to reach out for a referral without being awkward.
                     {profileContext && " I've got your profile — so I'll tailor everything to your exact situation."}
                   </p>
@@ -311,7 +311,7 @@ export default function AssistantPage() {
               </div>
             </div>
 
-            <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 10px" }}>
+            <p style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 10px" }}>
               Try asking
             </p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
@@ -321,9 +321,9 @@ export default function AssistantPage() {
                   onClick={() => sendMessage(prompt)}
                   style={{
                     display: "flex", alignItems: "center", gap: 10,
-                    backgroundColor: "#fff", border: "1px solid #e8e4ce",
+                    backgroundColor: "#181C24", border: "1px solid #1F2937",
                     borderRadius: 10, padding: "11px 14px",
-                    fontSize: 13, fontWeight: 600, color: "#1a1a1a",
+                    fontSize: 13, fontWeight: 600, color: "#F9FAFB",
                     cursor: "pointer", textAlign: "left", fontFamily: "inherit",
                     transition: "all 0.15s",
                   }}
@@ -354,7 +354,7 @@ export default function AssistantPage() {
       </div>
 
       {/* ── Input area ── */}
-      <div style={{ borderTop: "1px solid #e8e4ce", padding: "14px 0 4px", flexShrink: 0 }}>
+      <div style={{ borderTop: "1px solid #1F2937", padding: "14px 0 4px", flexShrink: 0 }}>
         {/* Follow-up chips */}
         {!isFirstMessage && !busy && (
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 10 }}>
@@ -369,8 +369,8 @@ export default function AssistantPage() {
                 key={chip}
                 onClick={() => sendMessage(chip)}
                 style={{
-                  fontSize: 11, color: "#839958", backgroundColor: "#F9F7EC",
-                  border: "1px solid #e8e4ce", borderRadius: 99, padding: "4px 12px",
+                  fontSize: 11, color: "#6B7280", backgroundColor: "#0F1117",
+                  border: "1px solid #1F2937", borderRadius: 99, padding: "4px 12px",
                   cursor: "pointer", fontFamily: "inherit", transition: "all 0.12s",
                 }}
               >
@@ -395,11 +395,11 @@ export default function AssistantPage() {
             rows={2}
             style={{
               flex: 1, fontSize: 14,
-              border: "1px solid #e8e4ce", borderRadius: 12,
+              border: "1px solid #1F2937", borderRadius: 12,
               padding: "10px 14px", resize: "none", fontFamily: "inherit",
               lineHeight: 1.6, outline: "none", minHeight: 44, maxHeight: 140,
               backgroundColor: busy ? "#f9f9f7" : "#fff",
-              color: "#1a1a1a", transition: "border-color 0.15s",
+              color: "#F9FAFB", transition: "border-color 0.15s",
             }}
             onFocus={(e) => { e.target.style.borderColor = "#0A3323"; }}
             onBlur={(e) => { e.target.style.borderColor = "#e8e4ce"; }}
@@ -419,7 +419,7 @@ export default function AssistantPage() {
             ↑
           </button>
         </div>
-        <p style={{ fontSize: 10, color: "#b0ab8c", margin: "6px 0 0", textAlign: "center" }}>
+        <p style={{ fontSize: 10, color: "#6B7280", margin: "6px 0 0", textAlign: "center" }}>
           Enter to send · Shift+Enter for new line
         </p>
       </div>

@@ -40,7 +40,7 @@ const INDUSTRIES = ["All", "Fintech / Payments", "Fintech / Consumer", "Fintech 
 
 function Stars({ rating }: { rating: number }) {
   return (
-    <span style={{ fontSize: 12, color: "#1a1a1a", fontWeight: 700 }}>
+    <span style={{ fontSize: 12, color: "#F9FAFB", fontWeight: 700 }}>
       {rating.toFixed(1)} ★
     </span>
   );
@@ -65,12 +65,12 @@ export default function CompaniesPage() {
     <div style={{ maxWidth: 1000, margin: "0 auto", padding: "32px 0" }}>
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>Know before you join</h1>
-        <p style={{ fontSize: 14, color: "#839958", margin: 0 }}>Interview intel, salary data, and culture reviews — community-powered.</p>
+        <h1 style={{ fontSize: 24, fontWeight: 800, color: "#F9FAFB", margin: "0 0 6px" }}>Know before you join</h1>
+        <p style={{ fontSize: 14, color: "#6B7280", margin: 0 }}>Interview intel, salary data, and culture reviews — community-powered.</p>
       </div>
 
       {/* Filters */}
-      <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: "18px 20px", marginBottom: 28, display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ backgroundColor: "#181C24", border: "1px solid #1F2937", borderRadius: 16, padding: "18px 20px", marginBottom: 28, display: "flex", flexDirection: "column", gap: 14 }}>
         <input className="input" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search companies…" style={{ width: "100%", boxSizing: "border-box" }} />
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
           {["All","Series A","Series B","Series C","Growth","Pre-IPO","Listed"].map((s) => (
@@ -91,18 +91,18 @@ export default function CompaniesPage() {
           const avgRating = ((company.culture + company.wlb + company.growth + company.compensation) / 4);
           return (
             <Link key={company.slug} href={`/companies/${company.slug}`} style={{ textDecoration: "none" }}>
-              <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: 20, display: "flex", flexDirection: "column", gap: 14, cursor: "pointer", transition: "box-shadow 0.15s" }}>
+              <div style={{ backgroundColor: "#181C24", border: "1px solid #1F2937", borderRadius: 14, padding: 20, display: "flex", flexDirection: "column", gap: 14, cursor: "pointer", transition: "box-shadow 0.15s" }}>
                 {/* Top */}
                 <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                  <div style={{ width: 48, height: 48, borderRadius: 12, backgroundColor: bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, fontWeight: 800, color: "#1a1a1a", flexShrink: 0 }}>
+                  <div style={{ width: 48, height: 48, borderRadius: 12, backgroundColor: bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, fontWeight: 800, color: "#F9FAFB", flexShrink: 0 }}>
                     {company.name[0]}
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <p style={{ fontSize: 15, fontWeight: 800, color: "#1a1a1a", margin: 0 }}>{company.name}</p>
-                      <span style={{ fontSize: 10, fontWeight: 700, backgroundColor: "#e8e4ce", color: "#839958", borderRadius: 99, padding: "2px 8px" }}>{company.stage}</span>
+                      <p style={{ fontSize: 15, fontWeight: 800, color: "#F9FAFB", margin: 0 }}>{company.name}</p>
+                      <span style={{ fontSize: 10, fontWeight: 700, backgroundColor: "#1F2937", color: "#6B7280", borderRadius: 99, padding: "2px 8px" }}>{company.stage}</span>
                     </div>
-                    <p style={{ fontSize: 12, color: "#839958", margin: "2px 0 0" }}>{company.industry}</p>
+                    <p style={{ fontSize: 12, color: "#6B7280", margin: "2px 0 0" }}>{company.industry}</p>
                   </div>
                   <div style={{ textAlign: "right" }}>
                     <Stars rating={avgRating} />
@@ -111,8 +111,8 @@ export default function CompaniesPage() {
 
                 {/* Stats */}
                 <div style={{ display: "flex", gap: 16 }}>
-                  <span style={{ fontSize: 12, color: "#839958" }}>{company.interviewExperiences} interview exp.</span>
-                  <span style={{ fontSize: 12, color: "#839958" }}>{company.salaryDataPoints} salary pts</span>
+                  <span style={{ fontSize: 12, color: "#6B7280" }}>{company.interviewExperiences} interview exp.</span>
+                  <span style={{ fontSize: 12, color: "#6B7280" }}>{company.salaryDataPoints} salary pts</span>
                 </div>
 
                 {/* Quick stats */}
@@ -122,9 +122,9 @@ export default function CompaniesPage() {
                     { label: "Offer rate", value: `${company.offerRate}%` },
                     { label: "Interview", value: company.interviewDifficulty },
                   ].map(({ label, value }) => (
-                    <div key={label} style={{ backgroundColor: "#fafafa", borderRadius: 8, padding: "8px 10px", textAlign: "center" }}>
-                      <p style={{ fontSize: 13, fontWeight: 800, color: "#1a1a1a", margin: "0 0 2px" }}>{value}</p>
-                      <p style={{ fontSize: 10, color: "#839958", margin: 0 }}>{label}</p>
+                    <div key={label} style={{ backgroundColor: "#1F2937", borderRadius: 8, padding: "8px 10px", textAlign: "center" }}>
+                      <p style={{ fontSize: 13, fontWeight: 800, color: "#F9FAFB", margin: "0 0 2px" }}>{value}</p>
+                      <p style={{ fontSize: 10, color: "#6B7280", margin: 0 }}>{label}</p>
                     </div>
                   ))}
                 </div>

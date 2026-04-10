@@ -125,7 +125,7 @@ function Avatar({ userId, name, size = 32 }: { userId: string; name?: string | n
       width: size, height: size, borderRadius: size / 3, flexShrink: 0,
       backgroundColor: avatarBg(userId),
       display: "flex", alignItems: "center", justifyContent: "center",
-      fontSize: size * 0.33, fontWeight: 800, color: "#1a1a1a",
+      fontSize: size * 0.33, fontWeight: 800, color: "#F9FAFB",
     }}>
       {initials(name)}
     </div>
@@ -137,38 +137,38 @@ function PostCard({ post, onHelpful }: { post: Post; onHelpful: (id: string) => 
   const typeColor = POST_TYPE_COLORS[post.type] ?? "#e8e4ce";
   return (
     <div style={{
-      backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14,
+      backgroundColor: "#181C24", border: "1px solid #1F2937", borderRadius: 14,
       padding: "16px 18px", marginBottom: 12,
     }}>
       {/* Author row */}
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
         <Avatar userId={post.user_id} name={post.author?.full_name} size={36} />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a" }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#F9FAFB" }}>
             {post.author?.full_name ?? "Member"}
           </div>
-          <div style={{ fontSize: 11, color: "#839958" }}>
+          <div style={{ fontSize: 11, color: "#6B7280" }}>
             {post.author?.current_job_role ?? ""}
             {post.author?.current_job_role ? " · " : ""}{relativeTime(post.created_at)}
           </div>
         </div>
         <span style={{
           fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 99,
-          backgroundColor: typeColor, color: "#1a1a1a",
+          backgroundColor: typeColor, color: "#F9FAFB",
         }}>
           {post.type}
         </span>
       </div>
 
       {/* Content */}
-      <p style={{ fontSize: 14, color: "#1a1a1a", margin: "0 0 12px", lineHeight: 1.65, whiteSpace: "pre-wrap" }}>
+      <p style={{ fontSize: 14, color: "#F9FAFB", margin: "0 0 12px", lineHeight: 1.65, whiteSpace: "pre-wrap" }}>
         {post.content}
       </p>
 
       {/* Link */}
       {post.link_url && (
         <a href={post.link_url} target="_blank" rel="noopener noreferrer" style={{
-          display: "inline-block", fontSize: 12, color: "#0A3323", fontWeight: 600,
+          display: "inline-block", fontSize: 12, color: "#F9FAFB", fontWeight: 600,
           marginBottom: 10, textDecoration: "underline",
         }}>
           {post.link_url.replace(/^https?:\/\//, "").split("/")[0]} ↗
@@ -179,13 +179,13 @@ function PostCard({ post, onHelpful }: { post: Post; onHelpful: (id: string) => 
       {(post.referral_company || post.referral_role) && (
         <div style={{
           display: "inline-flex", gap: 12, padding: "8px 12px", borderRadius: 8,
-          backgroundColor: "#f5f3ea", marginBottom: 10,
+          backgroundColor: "#1F2937", marginBottom: 10,
         }}>
           {post.referral_company && (
-            <span style={{ fontSize: 12, fontWeight: 600, color: "#1a1a1a" }}>🏢 {post.referral_company}</span>
+            <span style={{ fontSize: 12, fontWeight: 600, color: "#F9FAFB" }}>🏢 {post.referral_company}</span>
           )}
           {post.referral_role && (
-            <span style={{ fontSize: 12, color: "#555" }}>{post.referral_role}</span>
+            <span style={{ fontSize: 12, color: "#9CA3AF" }}>{post.referral_role}</span>
           )}
         </div>
       )}
@@ -194,11 +194,11 @@ function PostCard({ post, onHelpful }: { post: Post; onHelpful: (id: string) => 
       <div style={{ display: "flex", gap: 16, marginTop: 4 }}>
         <button onClick={() => onHelpful(post.id)} style={{
           background: "none", border: "none", cursor: "pointer", fontSize: 12,
-          color: "#839958", fontFamily: "inherit", padding: 0, display: "flex", alignItems: "center", gap: 4,
+          color: "#6B7280", fontFamily: "inherit", padding: 0, display: "flex", alignItems: "center", gap: 4,
         }}>
           👍 {post.helpful_count > 0 ? post.helpful_count : ""} Helpful
         </button>
-        <span style={{ fontSize: 12, color: "#b0ab8c" }}>
+        <span style={{ fontSize: 12, color: "#6B7280" }}>
           💬 {post.reply_count} replies
         </span>
       </div>
@@ -251,8 +251,8 @@ function PostComposer({ communityId, channelType, postTypes, onPosted, userId }:
         style={{
           display: "flex", alignItems: "center", gap: 10, width: "100%",
           padding: "12px 16px", borderRadius: 12, marginBottom: 16,
-          border: "1.5px dashed #c8c4ae", backgroundColor: "#fff",
-          cursor: "pointer", fontFamily: "inherit", color: "#b0ab8c", fontSize: 13,
+          border: "1.5px dashed #c8c4ae", backgroundColor: "#181C24",
+          cursor: "pointer", fontFamily: "inherit", color: "#6B7280", fontSize: 13,
         }}
       >
         <Avatar userId={userId} size={28} />
@@ -263,7 +263,7 @@ function PostComposer({ communityId, channelType, postTypes, onPosted, userId }:
 
   return (
     <div style={{
-      backgroundColor: "#fff", border: "1.5px solid #0A3323", borderRadius: 14,
+      backgroundColor: "#181C24", border: "1.5px solid #064E3B", borderRadius: 14,
       padding: "16px 18px", marginBottom: 16,
     }}>
       {/* Type selector */}
@@ -293,9 +293,9 @@ function PostComposer({ communityId, channelType, postTypes, onPosted, userId }:
         }
         style={{
           width: "100%", boxSizing: "border-box", padding: "10px 0",
-          fontSize: 14, border: "none", borderBottom: "1px solid #e8e4ce",
+          fontSize: 14, border: "none", borderBottom: "1px solid #1F2937",
           fontFamily: "inherit", outline: "none", backgroundColor: "transparent",
-          color: "#1a1a1a", minHeight: 80, resize: "vertical" as const, lineHeight: 1.6,
+          color: "#F9FAFB", minHeight: 80, resize: "vertical" as const, lineHeight: 1.6,
         }}
       />
 
@@ -307,7 +307,7 @@ function PostComposer({ communityId, channelType, postTypes, onPosted, userId }:
           style={{
             width: "100%", boxSizing: "border-box", padding: "8px 0",
             fontSize: 13, border: "none", borderBottom: "1px solid #f0ede0",
-            fontFamily: "inherit", outline: "none", color: "#555",
+            fontFamily: "inherit", outline: "none", color: "#9CA3AF",
             backgroundColor: "transparent", marginTop: 8,
           }}
         />
@@ -316,19 +316,19 @@ function PostComposer({ communityId, channelType, postTypes, onPosted, userId }:
         <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
           <input value={company} onChange={e => setCompany(e.target.value)} placeholder="Company name" style={{
             flex: 1, boxSizing: "border-box", padding: "8px 10px", fontSize: 12,
-            border: "1px solid #e8e4ce", borderRadius: 8, fontFamily: "inherit", outline: "none",
+            border: "1px solid #1F2937", borderRadius: 8, fontFamily: "inherit", outline: "none",
           }} />
           <input value={roleTitle} onChange={e => setRole(e.target.value)} placeholder="Role title" style={{
             flex: 1, boxSizing: "border-box", padding: "8px 10px", fontSize: 12,
-            border: "1px solid #e8e4ce", borderRadius: 8, fontFamily: "inherit", outline: "none",
+            border: "1px solid #1F2937", borderRadius: 8, fontFamily: "inherit", outline: "none",
           }} />
         </div>
       )}
 
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 12 }}>
         <button onClick={() => { setOpen(false); setContent(""); }} style={{
-          padding: "8px 16px", borderRadius: 8, border: "1px solid #e8e4ce",
-          backgroundColor: "transparent", fontSize: 13, color: "#839958",
+          padding: "8px 16px", borderRadius: 8, border: "1px solid #1F2937",
+          backgroundColor: "transparent", fontSize: 13, color: "#6B7280",
           cursor: "pointer", fontFamily: "inherit",
         }}>
           Cancel
@@ -336,7 +336,7 @@ function PostComposer({ communityId, channelType, postTypes, onPosted, userId }:
         <button onClick={handlePost} disabled={!content.trim() || posting} style={{
           padding: "8px 20px", borderRadius: 8, border: "none",
           backgroundColor: content.trim() ? "#0A3323" : "#c8c4ae",
-          color: "#F7F4D5", fontSize: 13, fontWeight: 700,
+          color: "#F9FAFB", fontSize: 13, fontWeight: 700,
           cursor: content.trim() && !posting ? "pointer" : "default",
           fontFamily: "inherit",
         }}>
@@ -357,17 +357,17 @@ function MemberDirectory({ members, onClose }: { members: Member[]; onClose: () 
       zIndex: 50, padding: "0 0 0 0",
     }} onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{
-        backgroundColor: "#fff", borderRadius: "20px 20px 0 0",
+        backgroundColor: "#181C24", borderRadius: "20px 20px 0 0",
         width: "100%", maxWidth: 520, maxHeight: "80vh",
         display: "flex", flexDirection: "column", overflow: "hidden",
       }}>
         {/* Handle */}
-        <div style={{ padding: "12px 20px", borderBottom: "1px solid #e8e4ce", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ padding: "12px 20px", borderBottom: "1px solid #1F2937", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
-            <h3 style={{ fontSize: 16, fontWeight: 800, color: "#1a1a1a", margin: 0 }}>Members</h3>
-            <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>{approvedMembers.length} verified members</p>
+            <h3 style={{ fontSize: 16, fontWeight: 800, color: "#F9FAFB", margin: 0 }}>Members</h3>
+            <p style={{ fontSize: 11, color: "#6B7280", margin: 0 }}>{approvedMembers.length} verified members</p>
           </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 18, cursor: "pointer", color: "#839958" }}>×</button>
+          <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 18, cursor: "pointer", color: "#6B7280" }}>×</button>
         </div>
         <div style={{ overflowY: "auto", padding: "16px 20px", flex: 1 }}>
           {approvedMembers.map(m => {
@@ -379,15 +379,15 @@ function MemberDirectory({ members, onClose }: { members: Member[]; onClose: () 
             }}>
               <Avatar userId={m.user_id} name={p?.full_name} size={40} />
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a", marginBottom: 1, display: "flex", alignItems: "center", gap: 6 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#F9FAFB", marginBottom: 1, display: "flex", alignItems: "center", gap: 6 }}>
                   {p?.full_name ?? "Member"}
                   {p?.headline && /founder|vp|director|head of|partner|principal|chief|cto|cpo|cmo|coo|ceo/i.test(p.headline) && (
-                    <span style={{ marginLeft: "6px", display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "10px", fontWeight: 600, backgroundColor: "#a0822040", color: "#9a7d00", borderRadius: "4px", padding: "2px 8px", border: "0.5px solid #c0a08080" }}>
+                    <span style={{ marginLeft: "6px", display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "10px", fontWeight: 600, backgroundColor: "#a0822040", color: "#FCD34D", borderRadius: "4px", padding: "2px 8px", border: "0.5px solid #c0a08080" }}>
                       Expert
                     </span>
                   )}
                 </div>
-                <div style={{ fontSize: 11, color: "#839958" }}>
+                <div style={{ fontSize: 11, color: "#6B7280" }}>
                   {p?.current_job_role ?? m.role ?? ""}
                   {m.employer ? ` · ${m.employer}` : ""}
                   {p?.location ? ` · ${p.location}` : ""}
@@ -402,7 +402,7 @@ function MemberDirectory({ members, onClose }: { members: Member[]; onClose: () 
                 </span>
               )}
               {p?.linkedin_url && (
-                <a href={p.linkedin_url} target="_blank" rel="noopener noreferrer" style={{ color: "#0A3323", fontSize: 14 }}>
+                <a href={p.linkedin_url} target="_blank" rel="noopener noreferrer" style={{ color: "#F9FAFB", fontSize: 14 }}>
                   in
                 </a>
               )}
@@ -419,13 +419,13 @@ function MemberDirectory({ members, onClose }: { members: Member[]; onClose: () 
 function RulesPanel({ rules }: { rules: string[] }) {
   if (!rules?.length) return null;
   return (
-    <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: "16px 18px", marginTop: 16 }}>
-      <h4 style={{ fontSize: 12, fontWeight: 800, color: "#0A3323", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 12px" }}>
+    <div style={{ backgroundColor: "#181C24", border: "1px solid #1F2937", borderRadius: 14, padding: "16px 18px", marginTop: 16 }}>
+      <h4 style={{ fontSize: 12, fontWeight: 800, color: "#F9FAFB", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 12px" }}>
         Community Rules
       </h4>
       <ol style={{ margin: 0, paddingLeft: 16, display: "flex", flexDirection: "column", gap: 8 }}>
         {rules.map((rule, i) => (
-          <li key={i} style={{ fontSize: 12, color: "#555", lineHeight: 1.5 }}>{rule}</li>
+          <li key={i} style={{ fontSize: 12, color: "#9CA3AF", lineHeight: 1.5 }}>{rule}</li>
         ))}
       </ol>
     </div>
@@ -498,20 +498,20 @@ function InvitePanel({ communityId, userId }: { communityId: string; userId: str
 
   if (loading) {
     return (
-      <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: "16px 18px", marginTop: 16 }}>
-        <p style={{ fontSize: 12, color: "#839958", margin: 0 }}>Loading invites…</p>
+      <div style={{ backgroundColor: "#181C24", border: "1px solid #1F2937", borderRadius: 14, padding: "16px 18px", marginTop: 16 }}>
+        <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>Loading invites…</p>
       </div>
     );
   }
 
   return (
-    <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: "16px 18px", marginTop: 16 }}>
-      <h4 style={{ fontSize: 12, fontWeight: 800, color: "#0A3323", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 12px" }}>
+    <div style={{ backgroundColor: "#181C24", border: "1px solid #1F2937", borderRadius: 14, padding: "16px 18px", marginTop: 16 }}>
+      <h4 style={{ fontSize: 12, fontWeight: 800, color: "#F9FAFB", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 12px" }}>
         Invite a Peer
       </h4>
 
       <div style={{ marginBottom: 14 }}>
-        <p style={{ fontSize: 11, color: "#839958", margin: "0 0 10px" }}>
+        <p style={{ fontSize: 11, color: "#6B7280", margin: "0 0 10px" }}>
           {invitesRemaining > 0
             ? `You have ${invitesRemaining} invite${invitesRemaining === 1 ? "" : "s"} remaining`
             : "You've used all 3 invites for this group"}
@@ -529,7 +529,7 @@ function InvitePanel({ communityId, userId }: { communityId: string; userId: str
                 flex: 1,
                 padding: "8px 12px",
                 fontSize: 12,
-                border: "1px solid #e8e4ce",
+                border: "1px solid #1F2937",
                 borderRadius: 8,
                 fontFamily: "inherit",
                 outline: "none",
@@ -543,7 +543,7 @@ function InvitePanel({ communityId, userId }: { communityId: string; userId: str
                 borderRadius: 8,
                 border: "none",
                 backgroundColor: email.trim() && !sending ? "#0A3323" : "#c8c4ae",
-                color: "#F7F4D5",
+                color: "#F9FAFB",
                 fontSize: 12,
                 fontWeight: 700,
                 cursor: email.trim() && !sending ? "pointer" : "default",
@@ -556,13 +556,13 @@ function InvitePanel({ communityId, userId }: { communityId: string; userId: str
         )}
 
         {error && (
-          <p style={{ fontSize: 11, color: "#c0714a", margin: "8px 0 0" }}>{error}</p>
+          <p style={{ fontSize: 11, color: "#FCA5A5", margin: "8px 0 0" }}>{error}</p>
         )}
       </div>
 
       {invites.length > 0 && (
         <div style={{ borderTop: "1px solid #f0ede0", paddingTop: 12 }}>
-          <p style={{ fontSize: 10, fontWeight: 700, color: "#b0ab8c", margin: "0 0 8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+          <p style={{ fontSize: 10, fontWeight: 700, color: "#6B7280", margin: "0 0 8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
             Sent Invites
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -574,7 +574,7 @@ function InvitePanel({ communityId, userId }: { communityId: string; userId: str
                 fontSize: 11,
               }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                  <span style={{ fontWeight: 600, color: "#1a1a1a" }}>{inv.email}</span>
+                  <span style={{ fontWeight: 600, color: "#F9FAFB" }}>{inv.email}</span>
                   <span style={{
                     fontSize: 9,
                     fontWeight: 700,
@@ -594,18 +594,18 @@ function InvitePanel({ communityId, userId }: { communityId: string; userId: str
                 {inv.status === "pending" && (
                   <div style={{
                     padding: "6px",
-                    backgroundColor: "#fff",
+                    backgroundColor: "#181C24",
                     borderRadius: 6,
-                    border: "1px solid #e8e4ce",
+                    border: "1px solid #1F2937",
                     fontSize: 10,
-                    color: "#555",
+                    color: "#9CA3AF",
                     wordBreak: "break-all" as const,
                     marginBottom: 6,
                   }}>
                     Share: <span style={{ fontFamily: "monospace", fontWeight: 600 }}>{inv.link}</span>
                   </div>
                 )}
-                <span style={{ fontSize: 10, color: "#b0ab8c" }}>
+                <span style={{ fontSize: 10, color: "#6B7280" }}>
                   {new Date(inv.created_at).toLocaleDateString("en-IN", { month: "short", day: "numeric" })}
                 </span>
               </div>
@@ -720,7 +720,7 @@ function OnboardingModal({
       padding: "20px",
     }} onClick={() => {}} >
       <div style={{
-        backgroundColor: "#fff",
+        backgroundColor: "#181C24",
         borderRadius: 16,
         boxShadow: "0 20px 60px rgba(0, 0, 0, 0.15)",
         maxWidth: 500,
@@ -732,8 +732,8 @@ function OnboardingModal({
       }}>
         {/* Header with progress */}
         <div style={{
-          backgroundColor: "#0A3323",
-          color: "#F7F4D5",
+          backgroundColor: "#064E3B",
+          color: "#F9FAFB",
           padding: "24px 24px 16px",
           textAlign: "center",
         }}>
@@ -749,7 +749,7 @@ function OnboardingModal({
           }}>
             <div style={{
               height: "100%",
-              backgroundColor: "#F7F4D5",
+              backgroundColor: "rgba(6,78,59,0.2)",
               width: `${progressPct}%`,
               transition: "width 0.3s ease",
             }} />
@@ -773,7 +773,7 @@ function OnboardingModal({
         }}>
           {onboarding.step === 1 && (
             <div>
-              <p style={{ fontSize: 13, color: "#555", marginBottom: 16, lineHeight: 1.6 }}>
+              <p style={{ fontSize: 13, color: "#9CA3AF", marginBottom: 16, lineHeight: 1.6 }}>
                 Tell the community about yourself. What's your role, company, and what are you looking for?
               </p>
               <textarea
@@ -785,12 +785,12 @@ function OnboardingModal({
                   boxSizing: "border-box",
                   padding: "12px",
                   fontSize: 13,
-                  border: "1.5px solid #e8e4ce",
+                  border: "1.5px solid #1F2937",
                   borderRadius: 10,
                   fontFamily: "inherit",
                   outline: "none",
-                  backgroundColor: "#fff",
-                  color: "#1a1a1a",
+                  backgroundColor: "#181C24",
+                  color: "#F9FAFB",
                   minHeight: 100,
                   resize: "vertical",
                   lineHeight: 1.6,
@@ -801,7 +801,7 @@ function OnboardingModal({
 
           {onboarding.step === 2 && (
             <div>
-              <p style={{ fontSize: 13, color: "#555", marginBottom: 16, lineHeight: 1.6 }}>
+              <p style={{ fontSize: 13, color: "#9CA3AF", marginBottom: 16, lineHeight: 1.6 }}>
                 Click on members you'd like to note. Select at least 1 to continue.
               </p>
               <div style={{
@@ -824,7 +824,7 @@ function OnboardingModal({
                       style={{
                         padding: "12px",
                         borderRadius: 12,
-                        border: isSelected ? "2px solid #0A3323" : "1.5px solid #e8e4ce",
+                        border: isSelected ? "2px solid #064E3B" : "1.5px solid #1F2937",
                         backgroundColor: isSelected ? "#F0EFD8" : "#fff",
                         cursor: "pointer",
                         fontFamily: "inherit",
@@ -833,15 +833,15 @@ function OnboardingModal({
                       }}
                     >
                       <Avatar userId={m.user_id} name={p?.full_name} size={40} />
-                      <div style={{ fontSize: 11, fontWeight: 700, color: "#1a1a1a", marginTop: 8, marginBottom: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: 4, flexWrap: "wrap" }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "#F9FAFB", marginTop: 8, marginBottom: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: 4, flexWrap: "wrap" }}>
                         {p?.full_name ?? "Member"}
                         {p?.headline && /founder|vp|director|head of|partner|principal|chief|cto|cpo|cmo|coo|ceo/i.test(p.headline) && (
-                          <span style={{ fontSize: "9px", fontWeight: 600, backgroundColor: "#a0822040", color: "#9a7d00", borderRadius: "3px", padding: "1px 5px", border: "0.5px solid #c0a08080" }}>
+                          <span style={{ fontSize: "9px", fontWeight: 600, backgroundColor: "#a0822040", color: "#FCD34D", borderRadius: "3px", padding: "1px 5px", border: "0.5px solid #c0a08080" }}>
                             Expert
                           </span>
                         )}
                       </div>
-                      <div style={{ fontSize: 10, color: "#839958" }}>
+                      <div style={{ fontSize: 10, color: "#6B7280" }}>
                         {p?.current_job_role ? p.current_job_role.substring(0, 12) + (p.current_job_role.length > 12 ? "…" : "") : ""}
                       </div>
                     </button>
@@ -853,7 +853,7 @@ function OnboardingModal({
 
           {onboarding.step === 3 && (
             <div>
-              <p style={{ fontSize: 13, color: "#555", marginBottom: 16, lineHeight: 1.6 }}>
+              <p style={{ fontSize: 13, color: "#9CA3AF", marginBottom: 16, lineHeight: 1.6 }}>
                 Ask a question or start a discussion to kick things off. (Optional)
               </p>
               <textarea
@@ -865,12 +865,12 @@ function OnboardingModal({
                   boxSizing: "border-box",
                   padding: "12px",
                   fontSize: 13,
-                  border: "1.5px solid #e8e4ce",
+                  border: "1.5px solid #1F2937",
                   borderRadius: 10,
                   fontFamily: "inherit",
                   outline: "none",
-                  backgroundColor: "#fff",
-                  color: "#1a1a1a",
+                  backgroundColor: "#181C24",
+                  color: "#F9FAFB",
                   minHeight: 100,
                   resize: "vertical",
                   lineHeight: 1.6,
@@ -882,7 +882,7 @@ function OnboardingModal({
 
         {/* Footer */}
         <div style={{
-          borderTop: "1px solid #e8e4ce",
+          borderTop: "1px solid #1F2937",
           padding: "16px 24px",
           display: "flex",
           gap: 10,
@@ -895,7 +895,7 @@ function OnboardingModal({
               borderRadius: 8,
               border: "none",
               backgroundColor: "transparent",
-              color: "#839958",
+              color: "#6B7280",
               fontSize: 13,
               fontWeight: 600,
               cursor: "pointer",
@@ -913,7 +913,7 @@ function OnboardingModal({
               borderRadius: 8,
               border: "none",
               backgroundColor: canProceed && !submitting ? "#0A3323" : "#c8c4ae",
-              color: "#F7F4D5",
+              color: "#F9FAFB",
               fontSize: 13,
               fontWeight: 700,
               cursor: canProceed && !submitting ? "pointer" : "default",
@@ -1049,7 +1049,7 @@ export default function CommunityPage() {
   if (loading || !community) {
     return (
       <div style={{ display: "flex", height: "100%", alignItems: "center", justifyContent: "center" }}>
-        <p style={{ fontSize: 14, color: "#839958" }}>Loading…</p>
+        <p style={{ fontSize: 14, color: "#6B7280" }}>Loading…</p>
       </div>
     );
   }
@@ -1060,12 +1060,12 @@ export default function CommunityPage() {
     <div style={{ display: "flex", height: "100%", overflow: "hidden" }}>
       {/* ─── Left sidebar (desktop only) ───────────────────────────────────── */}
       <div className="community-channels-panel" style={{
-        backgroundColor: "#fff", borderRight: "1px solid #e8e4ce",
+        backgroundColor: "#181C24", borderRight: "1px solid #1F2937",
         display: "flex", flexDirection: "column", overflowY: "auto",
       }}>
         {/* Community header */}
-        <div style={{ padding: "18px 16px 14px", borderBottom: "1px solid #e8e4ce" }}>
-          <Link href="/communities" style={{ fontSize: 11, color: "#839958", textDecoration: "none", display: "block", marginBottom: 12 }}>
+        <div style={{ padding: "18px 16px 14px", borderBottom: "1px solid #1F2937" }}>
+          <Link href="/communities" style={{ fontSize: 11, color: "#6B7280", textDecoration: "none", display: "block", marginBottom: 12 }}>
             ← All Groups
           </Link>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -1077,15 +1077,15 @@ export default function CommunityPage() {
               {groupEmoji(community.slug)}
             </div>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 800, color: "#1a1a1a" }}>{community.name}</div>
-              <div style={{ fontSize: 10, color: "#839958" }}>{community.member_count.toLocaleString()} members</div>
+              <div style={{ fontSize: 13, fontWeight: 800, color: "#F9FAFB" }}>{community.name}</div>
+              <div style={{ fontSize: 10, color: "#6B7280" }}>{community.member_count.toLocaleString()} members</div>
             </div>
           </div>
         </div>
 
         {/* Channel nav */}
         <div style={{ padding: "12px 10px", flex: 1 }}>
-          <p style={{ fontSize: 10, fontWeight: 700, color: "#b0ab8c", textTransform: "uppercase", letterSpacing: "0.5px", padding: "0 6px", margin: "0 0 6px" }}>
+          <p style={{ fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", padding: "0 6px", margin: "0 0 6px" }}>
             Channels
           </p>
           {CHANNELS.map(ch => (
@@ -1109,7 +1109,7 @@ export default function CommunityPage() {
             display: "flex", alignItems: "center", gap: 8, width: "100%",
             padding: "9px 10px", borderRadius: 9, border: "none",
             backgroundColor: "transparent", cursor: "pointer", fontFamily: "inherit",
-            color: "#555", fontSize: 13,
+            color: "#9CA3AF", fontSize: 13,
           }}>
             👥 Members ({members.filter(m => !m.status || m.status === "approved").length})
           </button>
@@ -1126,40 +1126,40 @@ export default function CommunityPage() {
       </div>
 
       {/* ─── Main content ───────────────────────────────────────────────────── */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflowY: "auto", backgroundColor: "#F9F7EC" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflowY: "auto", backgroundColor: "#0F1117" }}>
         {/* Channel header */}
         <div style={{
-          backgroundColor: "#fff", borderBottom: "1px solid #e8e4ce",
+          backgroundColor: "#181C24", borderBottom: "1px solid #1F2937",
           padding: "14px 20px",
           display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
           flexShrink: 0,
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             {/* Mobile: back to communities link */}
-            <Link href="/communities" className="mobile-only" style={{ color: "#839958", fontSize: 18, textDecoration: "none" }}>←</Link>
+            <Link href="/communities" className="mobile-only" style={{ color: "#6B7280", fontSize: 18, textDecoration: "none" }}>←</Link>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <span style={{ fontSize: 18 }}>{activeChannel.emoji}</span>
-                <h2 style={{ fontSize: 15, fontWeight: 800, color: "#1a1a1a", margin: 0 }}>
+                <h2 style={{ fontSize: 15, fontWeight: 800, color: "#F9FAFB", margin: 0 }}>
                   {activeChannel.label}
                 </h2>
               </div>
-              <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>{activeChannel.desc}</p>
+              <p style={{ fontSize: 11, color: "#6B7280", margin: 0 }}>{activeChannel.desc}</p>
             </div>
           </div>
 
           <div style={{ display: "flex", gap: 8 }}>
             <button onClick={() => setShowMembers(true)} style={{
-              padding: "7px 14px", borderRadius: 8, border: "1px solid #e8e4ce",
-              backgroundColor: "#fff", cursor: "pointer", fontSize: 12, color: "#555",
+              padding: "7px 14px", borderRadius: 8, border: "1px solid #1F2937",
+              backgroundColor: "#181C24", cursor: "pointer", fontSize: 12, color: "#9CA3AF",
               fontFamily: "inherit",
             }}>
               👥 {members.filter(m => !m.status || m.status === "approved").length}
             </button>
             {/* Mobile: channel tab switcher */}
             <button className="mobile-only" onClick={() => setShowMobileNav(!showMobileNav)} style={{
-              padding: "7px 12px", borderRadius: 8, border: "1px solid #e8e4ce",
-              backgroundColor: "#fff", cursor: "pointer", fontSize: 12, color: "#555",
+              padding: "7px 12px", borderRadius: 8, border: "1px solid #1F2937",
+              backgroundColor: "#181C24", cursor: "pointer", fontSize: 12, color: "#9CA3AF",
               fontFamily: "inherit",
             }}>
               # Channels
@@ -1170,7 +1170,7 @@ export default function CommunityPage() {
         {/* Mobile channel nav (drawer) */}
         {showMobileNav && (
           <div style={{
-            backgroundColor: "#fff", borderBottom: "1px solid #e8e4ce",
+            backgroundColor: "#181C24", borderBottom: "1px solid #1F2937",
             padding: "8px 16px", display: "flex", gap: 8, overflowX: "auto", flexShrink: 0,
           }}>
             {CHANNELS.map(ch => (
@@ -1194,18 +1194,18 @@ export default function CommunityPage() {
           {/* Gate: must be member to post */}
           {!isMember && (
             <div style={{
-              backgroundColor: "#fff", border: "1.5px solid #e8e4ce", borderRadius: 14,
+              backgroundColor: "#181C24", border: "1.5px solid #1F2937", borderRadius: 14,
               padding: "20px 20px", marginBottom: 16, textAlign: "center",
             }}>
-              <p style={{ fontSize: 14, fontWeight: 700, color: "#0A3323", margin: "0 0 6px" }}>
+              <p style={{ fontSize: 14, fontWeight: 700, color: "#F9FAFB", margin: "0 0 6px" }}>
                 🔒 This is a verified-members-only group
               </p>
-              <p style={{ fontSize: 13, color: "#839958", margin: "0 0 14px" }}>
+              <p style={{ fontSize: 13, color: "#6B7280", margin: "0 0 14px" }}>
                 Apply to join {community.name} to read and post in channels.
               </p>
               <Link href="/communities" style={{
-                display: "inline-block", padding: "10px 20px", backgroundColor: "#0A3323",
-                color: "#F7F4D5", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none",
+                display: "inline-block", padding: "10px 20px", backgroundColor: "#064E3B",
+                color: "#F9FAFB", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none",
               }}>
                 Apply to join →
               </Link>
@@ -1227,7 +1227,7 @@ export default function CommunityPage() {
           {activeTab === "job_board" && (
             <div style={{
               backgroundColor: "#0a4d2a",
-              border: "1.5px solid #0A3323",
+              border: "1.5px solid #064E3B",
               borderRadius: 12,
               padding: "14px 16px",
               marginBottom: 16,
@@ -1251,7 +1251,7 @@ export default function CommunityPage() {
                   gap: 6,
                   fontSize: 12,
                   backgroundColor: "#d4ff99",
-                  color: "#0A3323",
+                  color: "#F9FAFB",
                   padding: "8px 14px",
                   borderRadius: 8,
                   fontWeight: 600,
@@ -1267,15 +1267,15 @@ export default function CommunityPage() {
 
           {/* Posts */}
           {loadingPosts ? (
-            <p style={{ fontSize: 13, color: "#839958", textAlign: "center", marginTop: 40 }}>Loading posts…</p>
+            <p style={{ fontSize: 13, color: "#6B7280", textAlign: "center", marginTop: 40 }}>Loading posts…</p>
           ) : posts.length === 0 ? (
             <div style={{ textAlign: "center", padding: "48px 0" }}>
               <p style={{ fontSize: 32, margin: "0 0 8px" }}>{activeChannel.emoji}</p>
-              <p style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a", margin: "0 0 6px" }}>
+              <p style={{ fontSize: 14, fontWeight: 700, color: "#F9FAFB", margin: "0 0 6px" }}>
                 No posts in {activeChannel.label} yet
               </p>
               {isMember && (
-                <p style={{ fontSize: 13, color: "#839958", margin: 0 }}>Be the first to post here!</p>
+                <p style={{ fontSize: 13, color: "#6B7280", margin: 0 }}>Be the first to post here!</p>
               )}
             </div>
           ) : (

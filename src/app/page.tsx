@@ -23,7 +23,7 @@ const COMMUNITIES = [
 
 const HOW_IT_WORKS = [
   {
-    step: "01", bg: "#F7F4D5", color: "#1a1a1a",
+    step: "01", bg: "#F7F4D5", color: "#F9FAFB",
     title: "Prep with free AI tools",
     desc:  "Score your resume, run mock interviews, study company questions. Get application-ready without spending a rupee.",
     tag: "Free · Always",
@@ -35,7 +35,7 @@ const HOW_IT_WORKS = [
     tag: "The USP",
   },
   {
-    step: "03", bg: "#0A3323", color: "#F7F4D5",
+    step: "03", bg: "#0A3323", color: "#F9FAFB",
     title: "Book an expert for the final push",
     desc:  "Once you have the referral, a human expert helps you nail the interview.",
     tag: "Paid · When ready",
@@ -61,12 +61,12 @@ export default async function HomePage() {
   if (session) redirect("/communities");
 
   return (
-    <div style={{ backgroundColor: "#F9F7EC", minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "#0F1117", minHeight: "100vh" }}>
 
       {/* ── Nav ── */}
       <header className="landing-nav">
         <Link href="/" className="landing-logo">
-          mentor<span style={{ color: "#D3968C" }}>.</span>
+          mentor<span style={{ color: "#B45309" }}>.</span>
         </Link>
         <nav className="landing-nav-links">
           {[
@@ -74,7 +74,7 @@ export default async function HomePage() {
             { href: "/auth/login", label: "Jobs"        },
             { href: "/auth/login", label: "Experts"     },
           ].map(({ href, label }) => (
-            <Link key={label} href={href} style={{ fontSize: 13, fontWeight: 500, color: "#839958", textDecoration: "none", padding: "6px 12px", borderRadius: 8 }}>
+            <Link key={label} href={href} style={{ fontSize: 13, fontWeight: 500, color: "#6B7280", textDecoration: "none", padding: "6px 12px", borderRadius: 8 }}>
               {label}
             </Link>
           ))}
@@ -90,17 +90,17 @@ export default async function HomePage() {
         {/* Tag pill */}
         <div style={{
           display: "inline-block",
-          backgroundColor: "#F7F4D5", color: "#0A3323",
+          backgroundColor: "rgba(6,78,59,0.2)", color: "#F9FAFB",
           fontSize: 12, fontWeight: 700, borderRadius: 99,
           padding: "6px 18px", marginBottom: 24, letterSpacing: "0.3px",
-          border: "1px solid #e8e4ce",
+          border: "1px solid #1F2937",
         }}>
           The referral is the shortcut. We make it systematic.
         </div>
 
         <h1 className="landing-h1">
           Get in through the{" "}
-          <span style={{ color: "#D3968C" }}>side door.</span>
+          <span style={{ color: "#B45309" }}>side door.</span>
         </h1>
 
         <p className="landing-hero-sub">
@@ -134,8 +134,8 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-          <p style={{ fontSize: 12, color: "#839958", margin: 0 }}>
-            <span style={{ fontWeight: 800, color: "#0A3323" }}>2,400+</span>{" "}
+          <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>
+            <span style={{ fontWeight: 800, color: "#F9FAFB" }}>2,400+</span>{" "}
             professionals got referrals through Mentor
           </p>
         </div>
@@ -144,10 +144,10 @@ export default async function HomePage() {
       {/* ── Referral preview ── */}
       <section className="landing-section">
         <div style={{
-          backgroundColor: "#ffffff", border: "1px solid #e8e4ce",
+          backgroundColor: "#181C24", border: "1px solid #1F2937",
           borderRadius: 20, padding: 24,
         }}>
-          <p style={{ fontSize: 11, textTransform: "uppercase", color: "#839958", letterSpacing: "0.5px", margin: "0 0 14px", fontWeight: 600 }}>
+          <p style={{ fontSize: 11, textTransform: "uppercase", color: "#6B7280", letterSpacing: "0.5px", margin: "0 0 14px", fontWeight: 600 }}>
             People in your target companies, active this week
           </p>
 
@@ -155,7 +155,7 @@ export default async function HomePage() {
             {REFERRAL_ROWS.map(({ name, role, company, circle, blurred }, idx) => (
               <div key={name} style={{
                 display: "flex", alignItems: "center", gap: 10,
-                padding: "10px 12px", borderRadius: 12, backgroundColor: "#F9F7EC",
+                padding: "10px 12px", borderRadius: 12, backgroundColor: "#0F1117",
                 ...(blurred ? { filter: "blur(4px)", pointerEvents: "none" as const, userSelect: "none" as const } : {}),
               }}>
                 <div style={{
@@ -167,8 +167,8 @@ export default async function HomePage() {
                   {initials(name)}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 13, fontWeight: 700, color: "#0A3323", margin: 0 }}>{name}</p>
-                  <p style={{ fontSize: 11, color: "#839958", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <p style={{ fontSize: 13, fontWeight: 700, color: "#F9FAFB", margin: 0 }}>{name}</p>
+                  <p style={{ fontSize: 11, color: "#6B7280", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {role} · {company} · {circle}
                   </p>
                 </div>
@@ -181,16 +181,16 @@ export default async function HomePage() {
 
           <div style={{
             marginTop: 14,
-            backgroundColor: "#F9F7EC", border: "1px dashed #e8e4ce",
+            backgroundColor: "#0F1117", border: "1px dashed #e8e4ce",
             borderRadius: 10, padding: "12px 16px",
             display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap",
           }}>
-            <p style={{ fontSize: 12, color: "#839958", margin: 0 }}>
+            <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>
               Sign up free to see all referral connections
             </p>
             <Link href="/auth/login" style={{
               fontSize: 12, fontWeight: 700,
-              backgroundColor: "#D3968C", color: "#ffffff",
+              backgroundColor: "#B45309", color: "#ffffff",
               borderRadius: 8, padding: "8px 14px", textDecoration: "none",
               whiteSpace: "nowrap",
             }}>
@@ -201,7 +201,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Stats bar ── */}
-      <section style={{ backgroundColor: "#0A3323", padding: "40px 24px" }}>
+      <section style={{ backgroundColor: "#064E3B", padding: "40px 24px" }}>
         <div className="landing-stats-grid">
           {[
             { num: "2,400+", label: "Referrals given"            },
@@ -210,7 +210,7 @@ export default async function HomePage() {
             { num: "92%",    label: "Interview rate via referral" },
           ].map(({ num, label }) => (
             <div key={label} style={{ textAlign: "center" }}>
-              <p style={{ fontSize: 30, fontWeight: 800, color: "#D3968C", margin: "0 0 4px", lineHeight: 1 }}>{num}</p>
+              <p style={{ fontSize: 30, fontWeight: 800, color: "#B45309", margin: "0 0 4px", lineHeight: 1 }}>{num}</p>
               <p style={{ fontSize: 10, fontWeight: 600, color: "rgba(247,244,213,0.45)", textTransform: "uppercase", letterSpacing: "0.7px", margin: 0 }}>{label}</p>
             </div>
           ))}
@@ -219,17 +219,17 @@ export default async function HomePage() {
 
       {/* ── Features ── */}
       <section className="landing-section">
-        <p className="landing-eyebrow" style={{ color: "#D3968C" }}>EVERYTHING YOU NEED</p>
+        <p className="landing-eyebrow" style={{ color: "#B45309" }}>EVERYTHING YOU NEED</p>
         <h2 className="landing-h2">One platform, the full journey</h2>
         <div className="landing-features-grid">
           {FEATURES.map(({ icon, title, desc }) => (
             <div key={title} style={{
-              backgroundColor: "#ffffff", border: "1px solid #e8e4ce",
+              backgroundColor: "#181C24", border: "1px solid #1F2937",
               borderRadius: 16, padding: "20px 18px",
             }}>
               <div style={{ fontSize: 28, marginBottom: 12 }}>{icon}</div>
-              <p style={{ fontSize: 14, fontWeight: 700, color: "#0A3323", margin: "0 0 6px" }}>{title}</p>
-              <p style={{ fontSize: 12, color: "#839958", margin: 0, lineHeight: 1.6 }}>{desc}</p>
+              <p style={{ fontSize: 14, fontWeight: 700, color: "#F9FAFB", margin: "0 0 6px" }}>{title}</p>
+              <p style={{ fontSize: 12, color: "#6B7280", margin: 0, lineHeight: 1.6 }}>{desc}</p>
             </div>
           ))}
         </div>
@@ -237,31 +237,31 @@ export default async function HomePage() {
 
       {/* ── Communities ── */}
       <section className="landing-section">
-        <p className="landing-eyebrow" style={{ color: "#D3968C" }}>COMMUNITIES</p>
+        <p className="landing-eyebrow" style={{ color: "#B45309" }}>COMMUNITIES</p>
         <h2 className="landing-h2">Find your people. Get inside.</h2>
-        <p style={{ fontSize: 15, color: "#839958", margin: "0 0 28px" }}>
+        <p style={{ fontSize: 15, color: "#6B7280", margin: "0 0 28px" }}>
           Gated circles for people in the same role, at the same stage.
         </p>
         <div className="landing-communities-grid">
           {COMMUNITIES.map(({ icon, name, members, canRefer }) => (
             <Link key={name} href="/auth/login" style={{
-              backgroundColor: "#ffffff", border: "1px solid #e8e4ce",
+              backgroundColor: "#181C24", border: "1px solid #1F2937",
               borderRadius: 14, padding: "18px 16px",
               textDecoration: "none",
               display: "flex", flexDirection: "column", gap: 10,
             }}>
               <div style={{
                 width: 48, height: 48, borderRadius: 12,
-                backgroundColor: "#F7F4D5",
+                backgroundColor: "rgba(6,78,59,0.2)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontSize: 24,
               }}>
                 {icon}
               </div>
               <div>
-                <p style={{ fontSize: 13, fontWeight: 700, color: "#0A3323", margin: "0 0 3px" }}>{name}</p>
-                <p style={{ fontSize: 11, color: "#839958", margin: "0 0 2px" }}>{members.toLocaleString("en-IN")} members</p>
-                <p style={{ fontSize: 10, fontWeight: 700, color: "#D3968C", margin: 0 }}>{canRefer} can refer</p>
+                <p style={{ fontSize: 13, fontWeight: 700, color: "#F9FAFB", margin: "0 0 3px" }}>{name}</p>
+                <p style={{ fontSize: 11, color: "#6B7280", margin: "0 0 2px" }}>{members.toLocaleString("en-IN")} members</p>
+                <p style={{ fontSize: 10, fontWeight: 700, color: "#B45309", margin: 0 }}>{canRefer} can refer</p>
               </div>
             </Link>
           ))}
@@ -297,17 +297,17 @@ export default async function HomePage() {
       <section className="landing-section">
         <div className="landing-testimonial">
           <div style={{ flex: 1 }}>
-            <p style={{ fontSize: 18, fontWeight: 700, color: "#F7F4D5", lineHeight: 1.7, margin: "0 0 16px" }}>
+            <p style={{ fontSize: 18, fontWeight: 700, color: "#F9FAFB", lineHeight: 1.7, margin: "0 0 16px" }}>
               &ldquo;I applied cold to Zepto 3 times. No response. Joined the Founders Office circle, connected with someone inside, got a referral.{" "}
-              <span style={{ color: "#D3968C" }}>Interview in 4 days.</span>&rdquo;
+              <span style={{ color: "#B45309" }}>Interview in 4 days.</span>&rdquo;
             </p>
             <p style={{ fontSize: 12, color: "rgba(247,244,213,0.45)", margin: 0 }}>
               — Rohan Verma, Chief of Staff at Zepto
             </p>
           </div>
           <div style={{ textAlign: "center", flexShrink: 0 }}>
-            <div style={{ backgroundColor: "#F7F4D5", borderRadius: 14, padding: "20px 28px" }}>
-              <p style={{ fontSize: 36, fontWeight: 800, color: "#0A3323", margin: "0 0 4px", lineHeight: 1 }}>4 days</p>
+            <div style={{ backgroundColor: "rgba(6,78,59,0.2)", borderRadius: 14, padding: "20px 28px" }}>
+              <p style={{ fontSize: 36, fontWeight: 800, color: "#F9FAFB", margin: "0 0 4px", lineHeight: 1 }}>4 days</p>
               <p style={{ fontSize: 11, color: "rgba(10,51,35,0.55)", margin: 0 }}>cold apply → interview</p>
             </div>
           </div>
@@ -317,7 +317,7 @@ export default async function HomePage() {
       {/* ── Final CTA ── */}
       <section className="landing-final-cta">
         <h2 className="landing-h2" style={{ margin: "0 0 12px" }}>The side door is open.</h2>
-        <p style={{ fontSize: 15, color: "#839958", margin: "0 0 28px" }}>
+        <p style={{ fontSize: 15, color: "#6B7280", margin: "0 0 28px" }}>
           Find your circle. Get the referral. Land the role.
         </p>
         <Link href="/auth/login" className="landing-cta-primary" style={{ fontSize: 15, padding: "14px 32px" }}>
@@ -327,8 +327,8 @@ export default async function HomePage() {
 
       {/* ── Footer ── */}
       <footer className="landing-footer">
-        <Link href="/" className="landing-logo" style={{ color: "#F7F4D5" }}>
-          mentor<span style={{ color: "#D3968C" }}>.</span>
+        <Link href="/" className="landing-logo" style={{ color: "#F9FAFB" }}>
+          mentor<span style={{ color: "#B45309" }}>.</span>
         </Link>
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
           {["About", "Privacy", "Terms"].map((label) => (

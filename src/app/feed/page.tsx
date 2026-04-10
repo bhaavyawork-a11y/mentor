@@ -140,7 +140,7 @@ function ShareModal({ post, currentUserId, onClose }: { post: Post; currentUserI
         <input
           value={search} onChange={e=>setSearch(e.target.value)}
           placeholder="Search people..."
-          style={{ fontSize:13, border:"1px solid #e8e4ce", borderRadius:10, padding:"9px 12px", fontFamily:"inherit", outline:"none" }}
+          style={{ fontSize:13, border:"1px solid #1F2937", borderRadius:10, padding:"9px 12px", fontFamily:"inherit", outline:"none" }}
         />
         <div style={{ overflowY:"auto", display:"flex", flexDirection:"column", gap:6 }}>
           {users.map(u => {
@@ -168,10 +168,10 @@ function ShareModal({ post, currentUserId, onClose }: { post: Post; currentUserI
             );
           })}
         </div>
-        <div style={{ borderTop:"1px solid #e8e4ce", paddingTop:12 }}>
+        <div style={{ borderTop:"1px solid #1F2937", paddingTop:12 }}>
           <button
             onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/communities/${post.community?.slug ?? ""}`); }}
-            style={{ width:"100%", fontSize:12, fontWeight:700, color:"#839958", background:"#F9F7EC", border:"1px solid #e8e4ce", borderRadius:10, padding:"9px 0", cursor:"pointer", fontFamily:"inherit" }}
+            style={{ width:"100%", fontSize:12, fontWeight:700, color:"#839958", background:"#0F1117", border:"1px solid #1F2937", borderRadius:10, padding:"9px 0", cursor:"pointer", fontFamily:"inherit" }}
           >
             📋 Copy link
           </button>
@@ -229,7 +229,7 @@ function PostCard({
   const isOwnPost = currentUserId === post.user_id;
 
   return (
-    <div style={{ backgroundColor:"#fff", border:"1px solid #e8e4ce", borderRadius:14, padding:18, marginBottom:10 }}>
+    <div style={{ backgroundColor:"#fff", border:"1px solid #1F2937", borderRadius:14, padding:18, marginBottom:10 }}>
       {/* Header */}
       <div style={{ display:"flex", gap:10, marginBottom:12 }}>
         <Link href={`/profile/${post.user_id}`}>
@@ -268,7 +268,7 @@ function PostCard({
 
       {/* Repost: show original */}
       {post.type === "Repost" && post.original && (
-        <div style={{ border:"1px solid #e8e4ce", borderRadius:10, padding:12, marginBottom:10, backgroundColor:"#F9F7EC" }}>
+        <div style={{ border:"1px solid #1F2937", borderRadius:10, padding:12, marginBottom:10, backgroundColor:"#0F1117" }}>
           <p style={{ fontSize:12, fontWeight:700, color:"#555", margin:"0 0 6px" }}>{post.original.author?.full_name ?? "Member"}</p>
           <p style={{ fontSize:13, color:"#333", margin:0, lineHeight:1.6 }}>{post.original.content.slice(0,160)}{post.original.content.length>160?"…":""}</p>
         </div>
@@ -321,7 +321,7 @@ function PostCard({
       {/* Request referral CTA */}
       {post.type === "Job referral" && !isOwnPost && (
         <div style={{ marginTop:10 }}>
-          <button onClick={()=>onShare(post)} style={{ width:"100%", fontSize:12, fontWeight:700, color:"#0A3323", backgroundColor:"#F7F4D5", border:"1px solid #e8e4ce", borderRadius:8, padding:"9px 0", cursor:"pointer", fontFamily:"inherit" }}>
+          <button onClick={()=>onShare(post)} style={{ width:"100%", fontSize:12, fontWeight:700, color:"#0A3323", backgroundColor:"#F7F4D5", border:"1px solid #1F2937", borderRadius:8, padding:"9px 0", cursor:"pointer", fontFamily:"inherit" }}>
             Request referral via DM →
           </button>
         </div>
@@ -393,11 +393,11 @@ function PostComposer({ userId, userInitials, userAvatarBg, communities, onPoste
   };
 
   return (
-    <div style={{ backgroundColor:"#fff", border:"1px solid #e8e4ce", borderRadius:14, padding:16, marginBottom:12 }}>
+    <div style={{ backgroundColor:"#fff", border:"1px solid #1F2937", borderRadius:14, padding:16, marginBottom:12 }}>
       {!open ? (
         <div style={{ display:"flex", gap:10, alignItems:"center" }}>
           <div style={{ width:36, height:36, borderRadius:"50%", backgroundColor:userAvatarBg, display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:800, flexShrink:0 }}>{userInitials}</div>
-          <button onClick={()=>setOpen(true)} style={{ flex:1, textAlign:"left", background:"#F9F7EC", border:"1px solid #e8e4ce", borderRadius:20, padding:"10px 16px", fontSize:13, color:"#839958", cursor:"pointer", fontFamily:"inherit" }}>
+          <button onClick={()=>setOpen(true)} style={{ flex:1, textAlign:"left", background:"#0F1117", border:"1px solid #1F2937", borderRadius:20, padding:"10px 16px", fontSize:13, color:"#839958", cursor:"pointer", fontFamily:"inherit" }}>
             Share a win, question, or referral offer...
           </button>
           <button onClick={()=>setOpen(true)} style={{ fontSize:20, background:"none", border:"none", cursor:"pointer" }} title="Add photo/video">📷</button>
@@ -415,24 +415,24 @@ function PostComposer({ userId, userInitials, userAvatarBg, communities, onPoste
 
             {/* Community picker */}
             {communities.length > 0 && (
-              <select value={communityId} onChange={e=>setCommunityId(e.target.value)} style={{ fontSize:12, color:"#555", border:"1px solid #e8e4ce", borderRadius:8, padding:"6px 10px", backgroundColor:"#fff", fontFamily:"inherit" }}>
+              <select value={communityId} onChange={e=>setCommunityId(e.target.value)} style={{ fontSize:12, color:"#555", border:"1px solid #1F2937", borderRadius:8, padding:"6px 10px", backgroundColor:"#fff", fontFamily:"inherit" }}>
                 {communities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             )}
 
             <textarea rows={3} value={content} onChange={e=>setContent(e.target.value)}
               placeholder={type==="Job referral" ? "I can refer people at [company]. What role and a bit about yourself..." : "What's on your mind?"}
-              style={{ width:"100%", boxSizing:"border-box", resize:"none", fontSize:13, border:"1px solid #e8e4ce", borderRadius:10, padding:"10px 12px", fontFamily:"inherit", lineHeight:1.6, outline:"none" }}
+              style={{ width:"100%", boxSizing:"border-box", resize:"none", fontSize:13, border:"1px solid #1F2937", borderRadius:10, padding:"10px 12px", fontFamily:"inherit", lineHeight:1.6, outline:"none" }}
             />
 
             {type==="Job referral" && (
               <div style={{ display:"flex", gap:8 }}>
-                <input value={referralCompany} onChange={e=>setReferralCompany(e.target.value)} placeholder="Company" style={{ flex:1, fontSize:12, border:"1px solid #e8e4ce", borderRadius:8, padding:"8px 10px", fontFamily:"inherit" }} />
-                <input value={referralRole} onChange={e=>setReferralRole(e.target.value)} placeholder="Role (optional)" style={{ flex:1, fontSize:12, border:"1px solid #e8e4ce", borderRadius:8, padding:"8px 10px", fontFamily:"inherit" }} />
+                <input value={referralCompany} onChange={e=>setReferralCompany(e.target.value)} placeholder="Company" style={{ flex:1, fontSize:12, border:"1px solid #1F2937", borderRadius:8, padding:"8px 10px", fontFamily:"inherit" }} />
+                <input value={referralRole} onChange={e=>setReferralRole(e.target.value)} placeholder="Role (optional)" style={{ flex:1, fontSize:12, border:"1px solid #1F2937", borderRadius:8, padding:"8px 10px", fontFamily:"inherit" }} />
               </div>
             )}
             {type==="Resource" && (
-              <input value={linkUrl} onChange={e=>setLinkUrl(e.target.value)} placeholder="Link URL (optional)" style={{ width:"100%", boxSizing:"border-box", fontSize:12, border:"1px solid #e8e4ce", borderRadius:8, padding:"8px 10px", fontFamily:"inherit" }} />
+              <input value={linkUrl} onChange={e=>setLinkUrl(e.target.value)} placeholder="Link URL (optional)" style={{ width:"100%", boxSizing:"border-box", fontSize:12, border:"1px solid #1F2937", borderRadius:8, padding:"8px 10px", fontFamily:"inherit" }} />
             )}
 
             {/* Media previews */}
@@ -476,7 +476,7 @@ function ProfileCard({ displayName, role, targetRole, circlesCount, followersCou
   const bg = avatarBg(displayName);
   const inits = initials(displayName);
   return (
-    <div style={{ backgroundColor:"#fff", border:"1px solid #e8e4ce", borderRadius:14, overflow:"hidden", marginBottom:10 }}>
+    <div style={{ backgroundColor:"#fff", border:"1px solid #1F2937", borderRadius:14, overflow:"hidden", marginBottom:10 }}>
       <div style={{ height:52, background:"linear-gradient(135deg, #0A3323 0%, #105666 100%)" }} />
       <div style={{ padding:"0 16px 16px", position:"relative" }}>
         <div style={{ width:50, height:50, borderRadius:"50%", backgroundColor:bg, border:"3px solid #fff", display:"flex", alignItems:"center", justifyContent:"center", fontSize:17, fontWeight:800, position:"absolute", top:-25 }}>{inits}</div>
@@ -513,7 +513,7 @@ function RightSidebar({ communities, myCommIds }: {
     <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
       {/* My circles */}
       {myComms.length > 0 && (
-        <div style={{ backgroundColor:"#fff", border:"1px solid #e8e4ce", borderRadius:14, padding:16 }}>
+        <div style={{ backgroundColor:"#fff", border:"1px solid #1F2937", borderRadius:14, padding:16 }}>
           <p style={{ fontSize:10, fontWeight:700, color:"#839958", textTransform:"uppercase", letterSpacing:"0.5px", margin:"0 0 12px" }}>My circles</p>
           {myComms.map(c => (
             <Link key={c.id} href={`/communities/${c.slug}`} style={{ display:"flex", alignItems:"center", gap:10, textDecoration:"none", padding:"7px 0", borderBottom:"1px solid #f5f0e8" }}>
@@ -530,7 +530,7 @@ function RightSidebar({ communities, myCommIds }: {
 
       {/* Suggested circles */}
       {suggestedComms.length > 0 && (
-        <div style={{ backgroundColor:"#fff", border:"1px solid #e8e4ce", borderRadius:14, padding:16 }}>
+        <div style={{ backgroundColor:"#fff", border:"1px solid #1F2937", borderRadius:14, padding:16 }}>
           <p style={{ fontSize:10, fontWeight:700, color:"#839958", textTransform:"uppercase", letterSpacing:"0.5px", margin:"0 0 12px" }}>Circles to join</p>
           {suggestedComms.map(c => (
             <div key={c.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"7px 0", borderBottom:"1px solid #f5f0e8" }}>
@@ -539,7 +539,7 @@ function RightSidebar({ communities, myCommIds }: {
                 <p style={{ fontSize:12, fontWeight:700, color:"#0A3323", margin:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.name}</p>
                 <p style={{ fontSize:10, color:"#839958", margin:0 }}>{c.member_count.toLocaleString("en-IN")} members</p>
               </div>
-              <Link href={`/communities/${c.slug}`} style={{ fontSize:10, fontWeight:700, color:"#0A3323", textDecoration:"none", backgroundColor:"#F7F4D5", border:"1px solid #e8e4ce", borderRadius:6, padding:"3px 8px", whiteSpace:"nowrap" }}>Join</Link>
+              <Link href={`/communities/${c.slug}`} style={{ fontSize:10, fontWeight:700, color:"#0A3323", textDecoration:"none", backgroundColor:"#F7F4D5", border:"1px solid #1F2937", borderRadius:6, padding:"3px 8px", whiteSpace:"nowrap" }}>Join</Link>
             </div>
           ))}
         </div>
@@ -700,7 +700,7 @@ export default function FeedPage() {
               followingCount={0}
             />
           )}
-          <div style={{ backgroundColor:"#fff", border:"1px solid #e8e4ce", borderRadius:14, padding:"12px 8px" }}>
+          <div style={{ backgroundColor:"#fff", border:"1px solid #1F2937", borderRadius:14, padding:"12px 8px" }}>
             {[
               { href:"/communities", icon:"👥", label:"My circles" },
               { href:"/jobs",        icon:"💼", label:"Jobs for you" },
@@ -739,7 +739,7 @@ export default function FeedPage() {
 
           {/* ── Not logged in: sign-in CTA ── */}
           {!sessionLoading && !userId && (
-            <div style={{ backgroundColor:"#fff", border:"1px solid #e8e4ce", borderRadius:16, padding:"40px 24px", textAlign:"center", marginBottom:12 }}>
+            <div style={{ backgroundColor:"#fff", border:"1px solid #1F2937", borderRadius:16, padding:"40px 24px", textAlign:"center", marginBottom:12 }}>
               <div style={{ fontSize:40, marginBottom:12 }}>👋</div>
               <p style={{ fontSize:16, fontWeight:800, color:"#0A3323", margin:"0 0 8px" }}>
                 Welcome to Mentor
@@ -762,12 +762,12 @@ export default function FeedPage() {
           )}
 
           {loading ? (
-            <div style={{ backgroundColor:"#fff", border:"1px solid #e8e4ce", borderRadius:14, padding:32, textAlign:"center" }}>
+            <div style={{ backgroundColor:"#fff", border:"1px solid #1F2937", borderRadius:14, padding:32, textAlign:"center" }}>
               <p style={{ color:"#839958", fontSize:13 }}>Loading your feed…</p>
             </div>
           ) : !userId ? null : myCommIds.size === 0 ? (
             // No approved group memberships — prompt to join
-            <div style={{ backgroundColor:"#fff", border:"1.5px dashed #e8e4ce", borderRadius:16, padding:"40px 28px", textAlign:"center" }}>
+            <div style={{ backgroundColor:"#fff", border:"1.5px dashed #1F2937", borderRadius:16, padding:"40px 28px", textAlign:"center" }}>
               <p style={{ fontSize:14, fontWeight:700, color:"#1a1a1a", margin:"0 0 12px", lineHeight:1.6 }}>
                 Your feed is quiet because it only shows posts from groups you're a member of. That's by design — no noise, just signal from verified peers.
               </p>
@@ -779,7 +779,7 @@ export default function FeedPage() {
               </Link>
             </div>
           ) : filteredPosts.length === 0 ? (
-            <div style={{ backgroundColor:"#fff", border:"1px solid #e8e4ce", borderRadius:14, padding:"48px 32px", textAlign:"center" }}>
+            <div style={{ backgroundColor:"#fff", border:"1px solid #1F2937", borderRadius:14, padding:"48px 32px", textAlign:"center" }}>
               <div style={{ fontSize:40, marginBottom:12 }}>
                 {filter==="saved" ? "🔖" : "💬"}
               </div>

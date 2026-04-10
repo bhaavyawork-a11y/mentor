@@ -21,7 +21,6 @@ interface Community {
   icon_color: string;
   member_count: number;
   posts_this_week: number;
-  // Fetched on-demand in ApplyPanel (not in list query — safe before migration 014)
   requires_verification?: boolean;
   screening_questions?: ScreeningQuestion[];
 }
@@ -46,8 +45,8 @@ function groupEmoji(slug: string): string {
 
 const textareaStyle: React.CSSProperties = {
   width: "100%", boxSizing: "border-box", padding: "10px 12px",
-  fontSize: 13, border: "1px solid #e8e4ce", borderRadius: 8,
-  fontFamily: "inherit", outline: "none", backgroundColor: "#fff", color: "#1a1a1a",
+  fontSize: 13, border: "1px solid #374151", borderRadius: 8,
+  fontFamily: "inherit", outline: "none", backgroundColor: "#0F1117", color: "#F9FAFB",
   minHeight: 72, resize: "vertical" as const, lineHeight: 1.5,
 };
 
@@ -56,12 +55,12 @@ function MyGroupCard({ community }: { community: Community }) {
   return (
     <Link href={`/communities/${community.slug}`} style={{ textDecoration: "none" }}>
       <div style={{
-        backgroundColor: "#fff", border: "1.5px solid #e8e4ce", borderRadius: 14,
+        backgroundColor: "#181C24", border: "1.5px solid #1F2937", borderRadius: 14,
         padding: "14px 16px", display: "flex", alignItems: "center", gap: 12,
         cursor: "pointer", transition: "all 0.15s",
       }}
-        onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = "#0A3323"; }}
-        onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = "#e8e4ce"; }}
+        onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = "#064E3B"; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = "#1F2937"; }}
       >
         <div style={{
           width: 44, height: 44, borderRadius: 10, flexShrink: 0,
@@ -72,17 +71,17 @@ function MyGroupCard({ community }: { community: Community }) {
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 1 }}>
-            <span style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a" }}>{community.name}</span>
-            <span style={{ fontSize: 10, fontWeight: 700, backgroundColor: "#e6f4ea", color: "#0A3323", borderRadius: 99, padding: "2px 8px" }}>
+            <span style={{ fontSize: 14, fontWeight: 700, color: "#F9FAFB" }}>{community.name}</span>
+            <span style={{ fontSize: 10, fontWeight: 700, backgroundColor: "rgba(6,78,59,0.25)", color: "#6EE7B7", borderRadius: 99, padding: "2px 8px" }}>
               ✓ Member
             </span>
           </div>
-          <span style={{ fontSize: 11, color: "#839958" }}>
+          <span style={{ fontSize: 11, color: "#6B7280" }}>
             {community.member_count.toLocaleString()} members
             {community.posts_this_week > 0 && ` · ${community.posts_this_week} posts this week`}
           </span>
         </div>
-        <span style={{ fontSize: 16, color: "#c8c4ae", flexShrink: 0 }}>→</span>
+        <span style={{ fontSize: 16, color: "#374151", flexShrink: 0 }}>→</span>
       </div>
     </Link>
   );
@@ -100,8 +99,8 @@ function PendingCard({ community, app }: { community: Community; app: AppRecord 
 
   return (
     <div style={{
-      backgroundColor: rejected ? "#fff8f5" : "#fffdf0",
-      border: `1.5px solid ${rejected ? "#f0cbbf" : "#e8e4ce"}`,
+      backgroundColor: rejected ? "rgba(239,68,68,0.07)" : "rgba(245,158,11,0.07)",
+      border: `1.5px solid ${rejected ? "rgba(239,68,68,0.25)" : "rgba(245,158,11,0.25)"}`,
       borderRadius: 14, padding: "14px 16px",
       display: "flex", alignItems: "center", gap: 12,
     }}>
@@ -115,22 +114,22 @@ function PendingCard({ community, app }: { community: Community; app: AppRecord 
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
-          <span style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a" }}>{community.name}</span>
+          <span style={{ fontSize: 13, fontWeight: 700, color: "#F9FAFB" }}>{community.name}</span>
           <span style={{
             fontSize: 10, fontWeight: 700, borderRadius: 99, padding: "2px 8px",
-            backgroundColor: rejected ? "#fef3ee" : "#fffbea",
-            color: rejected ? "#c0714a" : "#9a7d00",
+            backgroundColor: rejected ? "rgba(239,68,68,0.15)" : "rgba(245,158,11,0.15)",
+            color: rejected ? "#FCA5A5" : "#FCD34D",
           }}>
             {rejected ? "Not approved" : "Under review"}
           </span>
         </div>
         {rejected && app.ai_feedback && (
-          <p style={{ fontSize: 11, color: "#c0714a", margin: "3px 0 0", lineHeight: 1.4 }}>
+          <p style={{ fontSize: 11, color: "#FCA5A5", margin: "3px 0 0", lineHeight: 1.4 }}>
             {app.ai_feedback.slice(0, 100)}{app.ai_feedback.length > 100 ? "…" : ""}
           </p>
         )}
         {!rejected && (
-          <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>
+          <p style={{ fontSize: 11, color: "#6B7280", margin: 0 }}>
             Screening completed — reviewing your application
           </p>
         )}
@@ -140,14 +139,14 @@ function PendingCard({ community, app }: { community: Community; app: AppRecord 
           {canReapply ? (
             <Link href={`/communities/${community.slug}/reapply`} style={{
               padding: "7px 14px", borderRadius: 8, border: "none",
-              backgroundColor: "#0A3323", color: "#F7F4D5",
+              backgroundColor: "#064E3B", color: "#F9FAFB",
               fontSize: 12, fontWeight: 700, textDecoration: "none",
               cursor: "pointer", display: "block",
             }}>
               Reapply
             </Link>
           ) : (
-            <span style={{ fontSize: 11, color: "#c0714a", fontWeight: 600 }}>
+            <span style={{ fontSize: 11, color: "#FCA5A5", fontWeight: 600 }}>
               Reapply in {daysUntilReapply} {daysUntilReapply === 1 ? "day" : "days"}
             </span>
           )}
@@ -171,8 +170,6 @@ function ApplyPanel({ community, onDone }: {
     status: "approved" | "rejected"; score: number; feedback: string;
   } | null>(null);
 
-  // Fetch screening questions on-demand (avoids breaking the list query
-  // before migration 014 is applied)
   useEffect(() => {
     const fetchQs = async () => {
       try {
@@ -216,22 +213,22 @@ function ApplyPanel({ community, onDone }: {
   if (result) {
     const ok = result.status === "approved";
     return (
-      <div style={{ padding: "16px", borderTop: "1px solid #e8e4ce" }}>
+      <div style={{ padding: "16px", borderTop: "1px solid #1F2937" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
           <span style={{ fontSize: 22 }}>{ok ? "🎉" : "😔"}</span>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: ok ? "#0A3323" : "#c0714a" }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: ok ? "#6EE7B7" : "#FCA5A5" }}>
               {ok ? `Welcome to ${community.name}!` : "Application not approved"}
             </div>
-            <div style={{ fontSize: 11, color: "#839958" }}>AI score: {result.score}/100</div>
+            <div style={{ fontSize: 11, color: "#6B7280" }}>AI score: {result.score}/100</div>
           </div>
         </div>
-        <p style={{ fontSize: 12, color: "#555", lineHeight: 1.5, margin: "0 0 12px" }}>
+        <p style={{ fontSize: 12, color: "#9CA3AF", lineHeight: 1.5, margin: "0 0 12px" }}>
           {result.feedback}
         </p>
         {ok && (
           <Link href={`/communities/${community.slug}`} style={{
-            display: "inline-block", padding: "10px 20px", backgroundColor: "#0A3323", color: "#F7F4D5",
+            display: "inline-block", padding: "10px 20px", backgroundColor: "#064E3B", color: "#F9FAFB",
             borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none",
           }}>
             Enter group →
@@ -243,15 +240,15 @@ function ApplyPanel({ community, onDone }: {
 
   if (loadingQs) {
     return (
-      <div style={{ padding: "20px 16px", borderTop: "1px solid #e8e4ce", textAlign: "center" }}>
-        <p style={{ fontSize: 12, color: "#839958", margin: 0 }}>Loading screening questions…</p>
+      <div style={{ padding: "20px 16px", borderTop: "1px solid #1F2937", textAlign: "center" }}>
+        <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>Loading screening questions…</p>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: "16px", borderTop: "1px solid #e8e4ce", backgroundColor: "#fafaf4" }}>
-      <p style={{ fontSize: 12, color: "#839958", margin: "0 0 14px", lineHeight: 1.5 }}>
+    <div style={{ padding: "16px", borderTop: "1px solid #1F2937", backgroundColor: "#1F2937" }}>
+      <p style={{ fontSize: 12, color: "#9CA3AF", margin: "0 0 14px", lineHeight: 1.5 }}>
         {questions.length > 0
           ? `Answer ${questions.length} short questions. AI evaluates your fit — be specific with real examples.`
           : "Click submit to apply — no screening questions for this group."}
@@ -261,7 +258,7 @@ function ApplyPanel({ community, onDone }: {
           const val = answers[q.id] || "";
           return (
             <div key={q.id}>
-              <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#0A3323", marginBottom: 5, lineHeight: 1.4 }}>
+              <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#6EE7B7", marginBottom: 5, lineHeight: 1.4 }}>
                 Q{i + 1}. {q.question}
               </label>
               <textarea
@@ -270,7 +267,7 @@ function ApplyPanel({ community, onDone }: {
                 placeholder={q.placeholder ?? "Be specific — give real examples…"}
                 style={{
                   ...textareaStyle,
-                  borderColor: val.trim().length > 0 && val.trim().length < 20 ? "#e8b4a0" : "#e8e4ce",
+                  borderColor: val.trim().length > 0 && val.trim().length < 20 ? "rgba(239,68,68,0.5)" : "#374151",
                 }}
               />
             </div>
@@ -283,8 +280,8 @@ function ApplyPanel({ community, onDone }: {
           disabled={!canSubmit || submitting}
           style={{
             padding: "10px 22px", borderRadius: 10, border: "none",
-            backgroundColor: canSubmit && !submitting ? "#0A3323" : "#c8c4ae",
-            color: "#F7F4D5", fontSize: 13, fontWeight: 700,
+            backgroundColor: canSubmit && !submitting ? "#064E3B" : "#374151",
+            color: "#F9FAFB", fontSize: 13, fontWeight: 700,
             cursor: canSubmit && !submitting ? "pointer" : "default",
             fontFamily: "inherit", display: "flex", alignItems: "center", gap: 8,
           }}
@@ -311,7 +308,7 @@ function DiscoverCard({ community, onApplied, atGroupCap }: {
 
   return (
     <div style={{
-      backgroundColor: "#fff", border: "1.5px solid #e8e4ce", borderRadius: 16,
+      backgroundColor: "#181C24", border: "1.5px solid #1F2937", borderRadius: 16,
       overflow: "hidden", transition: "border-color 0.15s",
     }}>
       {/* Card header */}
@@ -324,9 +321,9 @@ function DiscoverCard({ community, onApplied, atGroupCap }: {
           {groupEmoji(community.slug)}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 800, color: "#1a1a1a", margin: "0 0 4px" }}>{community.name}</h3>
+          <h3 style={{ fontSize: 14, fontWeight: 800, color: "#F9FAFB", margin: "0 0 4px" }}>{community.name}</h3>
           {community.role_type && (
-            <span style={{ fontSize: 10, fontWeight: 600, backgroundColor: "#f0ede0", color: "#839958", borderRadius: 99, padding: "2px 8px" }}>
+            <span style={{ fontSize: 10, fontWeight: 600, backgroundColor: "#1F2937", color: "#6B7280", borderRadius: 99, padding: "2px 8px" }}>
               {community.role_type}
             </span>
           )}
@@ -335,7 +332,7 @@ function DiscoverCard({ community, onApplied, atGroupCap }: {
 
       {community.description && (
         <p style={{
-          fontSize: 12, color: "#666", margin: "0 18px 10px", lineHeight: 1.55,
+          fontSize: 12, color: "#9CA3AF", margin: "0 18px 10px", lineHeight: 1.55,
           display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as const, overflow: "hidden",
         }}>
           {community.description}
@@ -343,12 +340,12 @@ function DiscoverCard({ community, onApplied, atGroupCap }: {
       )}
 
       <div style={{ display: "flex", gap: 16, padding: "0 18px 14px" }}>
-        <span style={{ fontSize: 11, color: "#839958" }}>{community.member_count.toLocaleString()} members</span>
+        <span style={{ fontSize: 11, color: "#6B7280" }}>{community.member_count.toLocaleString()} members</span>
         {community.posts_this_week > 0 && (
-          <span style={{ fontSize: 11, color: "#b0ab8c" }}>{community.posts_this_week} posts/wk</span>
+          <span style={{ fontSize: 11, color: "#6B7280" }}>{community.posts_this_week} posts/wk</span>
         )}
         {community.requires_verification && (
-          <span style={{ fontSize: 10, color: "#0A3323", fontWeight: 600 }}>🔒 Verified only</span>
+          <span style={{ fontSize: 10, color: "#6EE7B7", fontWeight: 600 }}>🔒 Verified only</span>
         )}
       </div>
 
@@ -357,7 +354,7 @@ function DiscoverCard({ community, onApplied, atGroupCap }: {
         {["💬 Discussions", "📚 Library", "🤝 Warm Intros", "💼 Open Roles"].map(ch => (
           <span key={ch} style={{
             fontSize: 10, padding: "3px 8px", borderRadius: 6,
-            backgroundColor: "#f5f3ea", color: "#839958", fontWeight: 500,
+            backgroundColor: "#1F2937", color: "#6B7280", fontWeight: 500,
           }}>
             {ch}
           </span>
@@ -370,8 +367,8 @@ function DiscoverCard({ community, onApplied, atGroupCap }: {
           {atGroupCap ? (
             <div style={{
               padding: "10px 14px", borderRadius: 10,
-              backgroundColor: "#fff8ee", border: "1px solid #e8c87a",
-              fontSize: 12, color: "#9a7020", lineHeight: 1.5,
+              backgroundColor: "rgba(180,83,9,0.1)", border: "1px solid rgba(180,83,9,0.3)",
+              fontSize: 12, color: "#FCD34D", lineHeight: 1.5,
             }}>
               You&apos;re already in 2 groups. Leave a group before joining another — Mentor limits membership to keep each community focused.
             </div>
@@ -379,9 +376,10 @@ function DiscoverCard({ community, onApplied, atGroupCap }: {
             <button
               onClick={() => setApplying(true)}
               style={{
-                width: "100%", padding: "11px", borderRadius: 10, border: "1.5px solid #0A3323",
-                backgroundColor: "transparent", color: "#0A3323",
+                width: "100%", padding: "11px", borderRadius: 10, border: "1.5px solid #064E3B",
+                backgroundColor: "transparent", color: "#6EE7B7",
                 fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
+                transition: "all 0.15s",
               }}
             >
               Apply to join →
@@ -416,8 +414,6 @@ export default function CommunitiesPage() {
   const [approvedCount, setApprovedCount] = useState(0);
 
   const load = useCallback(async () => {
-    // Select only stable columns — new columns (requires_verification, screening_questions)
-    // are fetched on-demand in the ApplyPanel to avoid breaking before migration 014 runs
     const { data: comms } = await supabase
       .from("communities")
       .select("id, slug, name, description, role_type, icon_color, member_count, posts_this_week")
@@ -435,11 +431,9 @@ export default function CommunitiesPage() {
       (members ?? []).forEach((m: MemberRecord) => mm.set(m.community_id, m));
       setMemberMap(mm);
 
-      // Count approved memberships
       const approved = (members ?? []).filter((m: MemberRecord) => m.status === "approved");
       setApprovedCount(approved.length);
 
-      // Re-verification: oldest approved membership > 11 months old
       const elevenMonthsAgo = Date.now() - 11 * 30 * 24 * 60 * 60 * 1000;
       const needsReverif = approved.some((m: MemberRecord & { created_at?: string }) =>
         m.created_at && new Date(m.created_at).getTime() < elevenMonthsAgo
@@ -488,18 +482,18 @@ export default function CommunitiesPage() {
 
   if (loading) {
     return (
-      <div style={{ maxWidth: 860, margin: "0 auto", padding: "40px 0" }}>
-        <p style={{ fontSize: 14, color: "#839958" }}>Loading groups…</p>
+      <div style={{ maxWidth: 860, margin: "0 auto", padding: "40px 16px" }}>
+        <p style={{ fontSize: 14, color: "#6B7280" }}>Loading groups…</p>
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: 860, margin: "0 auto", padding: "0 0 80px" }}>
+    <div style={{ maxWidth: 860, margin: "0 auto", padding: "24px 16px 80px" }}>
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>Groups</h1>
-        <p style={{ fontSize: 14, color: "#839958", margin: 0 }}>
+        <h1 style={{ fontSize: 24, fontWeight: 800, color: "#F9FAFB", margin: "0 0 6px" }}>Groups</h1>
+        <p style={{ fontSize: 14, color: "#6B7280", margin: 0 }}>
           Exclusive verified communities for professionals like you. Apply to join, post in channels, get referrals.
         </p>
       </div>
@@ -507,17 +501,17 @@ export default function CommunitiesPage() {
       {/* Re-verification nudge */}
       {needsReverification && (
         <div style={{
-          marginBottom: 20, backgroundColor: "#fff8ee",
-          border: "1px solid #e8c87a", borderRadius: 14,
+          marginBottom: 20, backgroundColor: "rgba(180,83,9,0.1)",
+          border: "1px solid rgba(180,83,9,0.35)", borderRadius: 14,
           padding: "14px 16px", display: "flex", alignItems: "flex-start", gap: 12,
         }}>
           <span style={{ fontSize: 18, flexShrink: 0 }}>⚡</span>
           <div>
-            <p style={{ fontSize: 13, fontWeight: 700, color: "#9a7020", margin: "0 0 3px" }}>Keep your profile current</p>
-            <p style={{ fontSize: 12, color: "#b08030", margin: "0 0 6px", lineHeight: 1.5 }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "#FCD34D", margin: "0 0 3px" }}>Keep your profile current</p>
+            <p style={{ fontSize: 12, color: "#9CA3AF", margin: "0 0 6px", lineHeight: 1.5 }}>
               It&apos;s been almost a year since you joined Mentor. Update your role and company so your peers know where you are today.
             </p>
-            <Link href="/profile" style={{ fontSize: 12, color: "#9a7020", fontWeight: 700, textDecoration: "underline" }}>
+            <Link href="/profile" style={{ fontSize: 12, color: "#FCD34D", fontWeight: 700, textDecoration: "underline" }}>
               Update my profile →
             </Link>
           </div>
@@ -527,7 +521,7 @@ export default function CommunitiesPage() {
       {/* My groups */}
       {myGroups.length > 0 && (
         <section style={{ marginBottom: 36 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 12px" }}>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 12px" }}>
             My Groups ({myGroups.length}/2)
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -539,7 +533,7 @@ export default function CommunitiesPage() {
       {/* Pending */}
       {pendingGroups.length > 0 && (
         <section style={{ marginBottom: 36 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 12px" }}>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 12px" }}>
             Applications
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -553,13 +547,13 @@ export default function CommunitiesPage() {
       {/* Empty state — no groups yet */}
       {myGroups.length === 0 && pendingGroups.length === 0 && (
         <div style={{
-          backgroundColor: "#fff", border: "1.5px dashed #e8e4ce", borderRadius: 16,
+          backgroundColor: "#181C24", border: "1.5px dashed #1F2937", borderRadius: 16,
           padding: "40px 28px", textAlign: "center", marginBottom: 32,
         }}>
-          <p style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a", margin: "0 0 12px", lineHeight: 1.5 }}>
-            You haven't joined a group yet. Apply to a verified group to access discussions, job postings, and peers in your role.
+          <p style={{ fontSize: 14, fontWeight: 700, color: "#F9FAFB", margin: "0 0 12px", lineHeight: 1.5 }}>
+            You haven&apos;t joined a group yet. Apply to a verified group to access discussions, job postings, and peers in your role.
           </p>
-          <a href="#discover-section" style={{ fontSize: 13, fontWeight: 700, color: "#0A3323", textDecoration: "none", cursor: "pointer" }}>
+          <a href="#discover-section" style={{ fontSize: 13, fontWeight: 700, color: "#6EE7B7", textDecoration: "none", cursor: "pointer" }}>
             Apply to a group →
           </a>
         </div>
@@ -568,7 +562,7 @@ export default function CommunitiesPage() {
       {/* Discover */}
       {discoverGroups.length > 0 && (
         <section id="discover-section">
-          <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 12px" }}>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 12px" }}>
             Discover Groups — Apply to Join
           </p>
           <div className="communities-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16 }}>

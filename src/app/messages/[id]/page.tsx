@@ -156,7 +156,7 @@ export default function ChatPage() {
     <div style={{ maxWidth:680, margin:"0 auto", display:"flex", flexDirection:"column", height:"calc(100vh - 40px)" }}>
 
       {/* Header */}
-      <div style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 0 14px", borderBottom:"1px solid #e8e4ce", flexShrink:0 }}>
+      <div style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 0 14px", borderBottom:"1px solid #1F2937", flexShrink:0 }}>
         <Link href="/messages" style={{ fontSize:18, color:"#839958", textDecoration:"none", lineHeight:1 }}>←</Link>
         <div style={{ width:38, height:38, borderRadius:"50%", backgroundColor:otherBg, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontWeight:800 }}>
           {initials(otherName)}
@@ -166,7 +166,7 @@ export default function ChatPage() {
           {otherUser?.current_job_role && <p style={{ fontSize:11, color:"#839958", margin:0 }}>{otherUser.current_job_role}</p>}
         </div>
         {otherUser && (
-          <Link href={`/profile/${otherUser.id}`} style={{ marginLeft:"auto", fontSize:11, fontWeight:600, color:"#839958", textDecoration:"none", border:"1px solid #e8e4ce", borderRadius:8, padding:"5px 12px" }}>View profile</Link>
+          <Link href={`/profile/${otherUser.id}`} style={{ marginLeft:"auto", fontSize:11, fontWeight:600, color:"#839958", textDecoration:"none", border:"1px solid #1F2937", borderRadius:8, padding:"5px 12px" }}>View profile</Link>
         )}
       </div>
 
@@ -204,7 +204,7 @@ export default function ChatPage() {
                     <div style={{ maxWidth:"70%" }}>
                       {/* Shared post preview */}
                       {msg.shared_post_id && msg.shared_post && (
-                        <div style={{ backgroundColor: isMe?"rgba(255,255,255,0.15)":"#F9F7EC", border:"1px solid #e8e4ce", borderRadius:10, padding:"8px 12px", marginBottom:4, fontSize:12 }}>
+                        <div style={{ backgroundColor: isMe?"rgba(255,255,255,0.15)":"#0F1117", border:"1px solid #1F2937", borderRadius:10, padding:"8px 12px", marginBottom:4, fontSize:12 }}>
                           <p style={{ fontSize:10, fontWeight:700, color:"#839958", margin:"0 0 4px", textTransform:"uppercase" }}>Shared post</p>
                           <p style={{ fontSize:12, color:"#333", margin:0, lineHeight:1.5 }}>{msg.shared_post.content.slice(0,100)}{msg.shared_post.content.length>100?"…":""}</p>
                         </div>
@@ -213,7 +213,7 @@ export default function ChatPage() {
                         <div style={{
                           backgroundColor: isMe?"#0A3323":"#fff",
                           color: isMe?"#F7F4D5":"#1a1a1a",
-                          border: isMe?"none":"1px solid #e8e4ce",
+                          border: isMe?"none":"1px solid #1F2937",
                           borderRadius: isMe?"14px 14px 4px 14px":"4px 14px 14px 14px",
                           padding:"9px 13px", fontSize:13, lineHeight:1.6,
                         }}>
@@ -232,7 +232,7 @@ export default function ChatPage() {
       </div>
 
       {/* Input */}
-      <div style={{ borderTop:"1px solid #e8e4ce", padding:"12px 0 4px", flexShrink:0 }}>
+      <div style={{ borderTop:"1px solid #1F2937", padding:"12px 0 4px", flexShrink:0 }}>
         <div style={{ display:"flex", gap:10, alignItems:"flex-end" }}>
           <textarea
             ref={inputRef}
@@ -241,7 +241,7 @@ export default function ChatPage() {
             onKeyDown={handleKeyDown}
             placeholder={`Message ${otherName}…`}
             rows={1}
-            style={{ flex:1, fontSize:13, border:"1px solid #e8e4ce", borderRadius:12, padding:"10px 14px", resize:"none", fontFamily:"inherit", lineHeight:1.6, outline:"none", maxHeight:120, overflowY:"auto" }}
+            style={{ flex:1, fontSize:13, border:"1px solid #1F2937", borderRadius:12, padding:"10px 14px", resize:"none", fontFamily:"inherit", lineHeight:1.6, outline:"none", maxHeight:120, overflowY:"auto" }}
           />
           <button
             onClick={handleSend}

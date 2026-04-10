@@ -100,11 +100,11 @@ export default function ExpertProfilePage() {
     }
   };
 
-  if (loading) return <div style={{ padding: 40 }}><p style={{ color: "#839958" }}>Loading…</p></div>;
+  if (loading) return <div style={{ padding: 40 }}><p style={{ color: "#6B7280" }}>Loading…</p></div>;
 
   const field = (label: string, key: keyof FormState, type: "text" | "url" | "number" | "textarea" = "text", placeholder = "") => (
     <div style={{ marginBottom: 20 }}>
-      <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#0A3323", marginBottom: 6 }}>{label}</label>
+      <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#F9FAFB", marginBottom: 6 }}>{label}</label>
       {type === "textarea" ? (
         <textarea
           value={form[key] as string}
@@ -112,9 +112,9 @@ export default function ExpertProfilePage() {
           placeholder={placeholder}
           rows={4}
           style={{
-            width: "100%", boxSizing: "border-box", border: "1px solid #e8e4ce",
+            width: "100%", boxSizing: "border-box", border: "1px solid #1F2937",
             borderRadius: 10, padding: "10px 14px", fontSize: 13, fontFamily: "inherit",
-            backgroundColor: "#fff", outline: "none", resize: "vertical", color: "#1a1a1a",
+            backgroundColor: "#181C24", outline: "none", resize: "vertical", color: "#F9FAFB",
           }}
         />
       ) : (
@@ -126,9 +126,9 @@ export default function ExpertProfilePage() {
           min={type === "number" ? 0 : undefined}
           max={type === "number" ? 40 : undefined}
           style={{
-            width: "100%", boxSizing: "border-box", border: "1px solid #e8e4ce",
+            width: "100%", boxSizing: "border-box", border: "1px solid #1F2937",
             borderRadius: 10, padding: "10px 14px", fontSize: 13, fontFamily: "inherit",
-            backgroundColor: "#fff", outline: "none", color: "#1a1a1a",
+            backgroundColor: "#181C24", outline: "none", color: "#F9FAFB",
           }}
         />
       )}
@@ -137,7 +137,7 @@ export default function ExpertProfilePage() {
 
   const chipGroup = (label: string, options: string[], field: "expertise_areas" | "industries") => (
     <div style={{ marginBottom: 24 }}>
-      <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#0A3323", marginBottom: 8 }}>{label}</label>
+      <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#F9FAFB", marginBottom: 8 }}>{label}</label>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
         {options.map(opt => {
           const active = form[field].includes(opt);
@@ -160,15 +160,15 @@ export default function ExpertProfilePage() {
   return (
     <div style={{ padding: 32, maxWidth: 680 }}>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 800, color: "#0A3323", margin: "0 0 4px" }}>
+        <h1 style={{ fontSize: 22, fontWeight: 800, color: "#F9FAFB", margin: "0 0 4px" }}>
           {expertId ? "My Profile" : "Create Expert Profile"}
         </h1>
-        <p style={{ fontSize: 13, color: "#839958", margin: 0 }}>
+        <p style={{ fontSize: 13, color: "#6B7280", margin: 0 }}>
           This is what mentees see when browsing experts.
         </p>
       </div>
 
-      <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: "28px 28px 24px" }}>
+      <div style={{ backgroundColor: "#181C24", border: "1px solid #1F2937", borderRadius: 16, padding: "28px 28px 24px" }}>
         {field("Full name", "full_name", "text", "Your full name")}
         {field("Headline", "headline", "text", "e.g. Senior PM at Swiggy · Ex-BCG · IIT Delhi")}
         {field("Bio", "bio", "textarea", "Tell mentees about your background, what you're good at, and how you can help them…")}
@@ -183,7 +183,7 @@ export default function ExpertProfilePage() {
         )}
 
         <button onClick={save} disabled={saving || !form.full_name} style={{
-          backgroundColor: saving ? "#839958" : "#0A3323", color: "#F7F4D5",
+          backgroundColor: saving ? "#839958" : "#0A3323", color: "#F9FAFB",
           border: "none", borderRadius: 12, padding: "12px 28px",
           fontSize: 13, fontWeight: 800, cursor: saving || !form.full_name ? "default" : "pointer",
           opacity: !form.full_name ? 0.6 : 1,

@@ -65,9 +65,9 @@ function avatarBg(id: string) {
 }
 
 const STATUS_STYLE: Record<string, { bg: string; color: string; label: string }> = {
-  confirmed: { bg: "#83995822", color: "#0A3323", label: "Confirmed" },
+  confirmed: { bg: "#83995822", color: "#F9FAFB", label: "Confirmed" },
   pending:   { bg: "#FFF3CC",   color: "#8a6200", label: "Pending" },
-  completed: { bg: "#f0f0f0",   color: "#666",    label: "Completed" },
+  completed: { bg: "#f0f0f0",   color: "#9CA3AF",    label: "Completed" },
   cancelled: { bg: "#fee2e2",   color: "#dc2626", label: "Cancelled" },
   refunded:  { bg: "#f0f0f0",   color: "#999",    label: "Refunded" },
 };
@@ -85,7 +85,7 @@ function BookButton({ serviceId, expertId, label, price }: { serviceId: string; 
   };
   return (
     <button onClick={handleBook} disabled={loading} style={{
-      backgroundColor: "#0A3323", color: "#839958",
+      backgroundColor: "#064E3B", color: "#6B7280",
       border: "none", borderRadius: 8, padding: "7px 14px",
       fontSize: 12, fontWeight: 700, cursor: loading ? "default" : "pointer",
       opacity: loading ? 0.7 : 1, whiteSpace: "nowrap",
@@ -104,7 +104,7 @@ function ExpertCard({ expert }: { expert: Expert }) {
 
   return (
     <div style={{
-      backgroundColor: "#fff", border: "1px solid #e8e4ce",
+      backgroundColor: "#181C24", border: "1px solid #1F2937",
       borderRadius: 16, overflow: "hidden",
       transition: "box-shadow 0.2s, border-color 0.2s",
     }}
@@ -118,7 +118,7 @@ function ExpertCard({ expert }: { expert: Expert }) {
           <div style={{
             width: 52, height: 52, borderRadius: 14, backgroundColor: bg,
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 18, fontWeight: 800, color: "#1a1a1a", flexShrink: 0,
+            fontSize: 18, fontWeight: 800, color: "#F9FAFB", flexShrink: 0,
             border: "2px solid rgba(255,255,255,0.6)",
           }}>
             {initials}
@@ -126,27 +126,27 @@ function ExpertCard({ expert }: { expert: Expert }) {
 
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <p style={{ fontSize: 15, fontWeight: 800, color: "#1a1a1a", margin: 0 }}>{expert.full_name}</p>
+              <p style={{ fontSize: 15, fontWeight: 800, color: "#F9FAFB", margin: 0 }}>{expert.full_name}</p>
               {expert.is_verified && <span style={{ fontSize: 14 }}>✓</span>}
             </div>
             {expert.headline && (
-              <p style={{ fontSize: 12, color: "#555", margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              <p style={{ fontSize: 12, color: "#9CA3AF", margin: "2px 0 0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                 {expert.headline}
               </p>
             )}
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 6 }}>
-              <span style={{ fontSize: 12, color: "#1a1a1a", fontWeight: 600 }}>
+              <span style={{ fontSize: 12, color: "#F9FAFB", fontWeight: 600 }}>
                 ⭐ {expert.rating.toFixed(1)}
-                <span style={{ fontWeight: 400, color: "#839958" }}> ({expert.review_count})</span>
+                <span style={{ fontWeight: 400, color: "#6B7280" }}> ({expert.review_count})</span>
               </span>
-              <span style={{ fontSize: 11, color: "#839958" }}>{expert.years_experience} yrs exp</span>
+              <span style={{ fontSize: 11, color: "#6B7280" }}>{expert.years_experience} yrs exp</span>
             </div>
           </div>
 
           {activeServices.length > 0 && (
             <div style={{ textAlign: "right", flexShrink: 0 }}>
-              <p style={{ fontSize: 10, color: "#839958", margin: 0 }}>from</p>
-              <p style={{ fontSize: 16, fontWeight: 800, color: "#0A3323", margin: 0 }}>
+              <p style={{ fontSize: 10, color: "#6B7280", margin: 0 }}>from</p>
+              <p style={{ fontSize: 16, fontWeight: 800, color: "#F9FAFB", margin: 0 }}>
                 {formatINR(Math.min(...activeServices.map(s => s.price_cents)))}
               </p>
             </div>
@@ -160,7 +160,7 @@ function ExpertCard({ expert }: { expert: Expert }) {
         {expert.expertise_areas?.length > 0 && (
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
             {expert.expertise_areas.slice(0, 4).map(area => (
-              <span key={area} style={{ fontSize: 11, backgroundColor: "#f5f5f0", color: "#555", borderRadius: 99, padding: "3px 10px", fontWeight: 500 }}>
+              <span key={area} style={{ fontSize: 11, backgroundColor: "#f5f5f0", color: "#9CA3AF", borderRadius: 99, padding: "3px 10px", fontWeight: 500 }}>
                 {area}
               </span>
             ))}
@@ -177,10 +177,10 @@ function ExpertCard({ expert }: { expert: Expert }) {
                 border: "1px solid #f0efe8",
               }}>
                 <div style={{ minWidth: 0, flex: 1 }}>
-                  <p style={{ fontSize: 13, fontWeight: 600, color: "#1a1a1a", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: "#F9FAFB", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {service.title}
                   </p>
-                  <p style={{ fontSize: 11, color: "#839958", margin: "2px 0 0" }}>
+                  <p style={{ fontSize: 11, color: "#6B7280", margin: "2px 0 0" }}>
                     {service.duration_mins} min · {service.type}
                   </p>
                 </div>
@@ -189,11 +189,11 @@ function ExpertCard({ expert }: { expert: Expert }) {
             ))}
           </div>
         ) : (
-          <p style={{ fontSize: 12, color: "#b0ab8c", marginBottom: 14 }}>No services listed yet.</p>
+          <p style={{ fontSize: 12, color: "#6B7280", marginBottom: 14 }}>No services listed yet.</p>
         )}
 
         <Link href={`/experts/${expert.id}`} style={{
-          display: "block", textAlign: "center", fontSize: 12, color: "#839958",
+          display: "block", textAlign: "center", fontSize: 12, color: "#6B7280",
           textDecoration: "none", paddingTop: 10, borderTop: "1px solid #f0efe8",
         }}>
           View full profile →
@@ -211,7 +211,7 @@ function MySessionsPanel({ bookings, loading }: { bookings: Booking[]; loading: 
 
   if (loading) return (
     <div style={{ padding: 24 }}>
-      <p style={{ fontSize: 13, color: "#839958" }}>Loading your sessions…</p>
+      <p style={{ fontSize: 13, color: "#6B7280" }}>Loading your sessions…</p>
     </div>
   );
 
@@ -219,18 +219,18 @@ function MySessionsPanel({ bookings, loading }: { bookings: Booking[]; loading: 
     <div style={{ display: "flex", flexDirection: "column", gap: 0, height: "100%", overflowY: "auto" }}>
       {/* Next up */}
       {next ? (
-        <div style={{ padding: "20px 20px 16px", borderBottom: "1px solid #e8e4ce" }}>
-          <p style={{ fontSize: 10, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 10px" }}>Next up</p>
+        <div style={{ padding: "20px 20px 16px", borderBottom: "1px solid #1F2937" }}>
+          <p style={{ fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 10px" }}>Next up</p>
           <div style={{
             background: "linear-gradient(135deg, #0A3323 0%, #1a5c3a 100%)",
             borderRadius: 14, padding: 16,
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, color: "#F7F4D5", flexShrink: 0 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, color: "#F9FAFB", flexShrink: 0 }}>
                 {next.expert?.full_name[0] ?? "?"}
               </div>
               <div>
-                <p style={{ fontSize: 13, fontWeight: 700, color: "#F7F4D5", margin: 0 }}>{next.expert?.full_name}</p>
+                <p style={{ fontSize: 13, fontWeight: 700, color: "#F9FAFB", margin: 0 }}>{next.expert?.full_name}</p>
                 <p style={{ fontSize: 11, color: "rgba(247,244,213,0.6)", margin: 0 }}>{next.service?.title}</p>
               </div>
             </div>
@@ -240,7 +240,7 @@ function MySessionsPanel({ bookings, loading }: { bookings: Booking[]; loading: 
             {next.meeting_url ? (
               <a href={next.meeting_url} target="_blank" rel="noopener noreferrer" style={{
                 display: "block", textAlign: "center", backgroundColor: "#839958",
-                color: "#0A3323", borderRadius: 9, padding: "9px 0",
+                color: "#F9FAFB", borderRadius: 9, padding: "9px 0",
                 fontSize: 13, fontWeight: 800, textDecoration: "none",
               }}>
                 📹 Join call
@@ -253,20 +253,20 @@ function MySessionsPanel({ bookings, loading }: { bookings: Booking[]; loading: 
           </div>
         </div>
       ) : (
-        <div style={{ padding: "20px 20px 0", borderBottom: upcoming.length === 0 ? "1px solid #e8e4ce" : "none" }}>
-          <p style={{ fontSize: 10, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 10px" }}>Upcoming</p>
+        <div style={{ padding: "20px 20px 0", borderBottom: upcoming.length === 0 ? "1px solid #1F2937" : "none" }}>
+          <p style={{ fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 10px" }}>Upcoming</p>
           <div style={{ backgroundColor: "#fafaf8", border: "1px dashed #e8e4ce", borderRadius: 12, padding: "20px 16px", textAlign: "center", marginBottom: 16 }}>
             <p style={{ fontSize: 22, margin: "0 0 6px" }}>📅</p>
-            <p style={{ fontSize: 13, fontWeight: 600, color: "#1a1a1a", margin: "0 0 4px" }}>No upcoming sessions</p>
-            <p style={{ fontSize: 12, color: "#839958", margin: 0 }}>Book time with an expert on the left</p>
+            <p style={{ fontSize: 13, fontWeight: 600, color: "#F9FAFB", margin: "0 0 4px" }}>No upcoming sessions</p>
+            <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>Book time with an expert on the left</p>
           </div>
         </div>
       )}
 
       {/* More upcoming */}
       {upcoming.length > 1 && (
-        <div style={{ padding: "16px 20px", borderBottom: "1px solid #e8e4ce" }}>
-          <p style={{ fontSize: 10, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 10px" }}>Also upcoming</p>
+        <div style={{ padding: "16px 20px", borderBottom: "1px solid #1F2937" }}>
+          <p style={{ fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 10px" }}>Also upcoming</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {upcoming.slice(1).map(b => (
               <BookingRow key={b.id} booking={b} />
@@ -278,7 +278,7 @@ function MySessionsPanel({ bookings, loading }: { bookings: Booking[]; loading: 
       {/* Past sessions */}
       {past.length > 0 && (
         <div style={{ padding: "16px 20px" }}>
-          <p style={{ fontSize: 10, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 10px" }}>Past sessions</p>
+          <p style={{ fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 10px" }}>Past sessions</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {past.map(b => <BookingRow key={b.id} booking={b} />)}
           </div>
@@ -287,8 +287,8 @@ function MySessionsPanel({ bookings, loading }: { bookings: Booking[]; loading: 
 
       {bookings.length === 0 && !loading && (
         <div style={{ padding: "20px 20px" }}>
-          <p style={{ fontSize: 10, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 10px" }}>Past sessions</p>
-          <p style={{ fontSize: 12, color: "#b0ab8c" }}>Sessions you've completed will appear here.</p>
+          <p style={{ fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 10px" }}>Past sessions</p>
+          <p style={{ fontSize: 12, color: "#6B7280" }}>Sessions you've completed will appear here.</p>
         </div>
       )}
     </div>
@@ -300,14 +300,14 @@ function BookingRow({ booking }: { booking: Booking }) {
   return (
     <div style={{ backgroundColor: "#fafaf8", border: "1px solid #f0efe8", borderRadius: 10, padding: "10px 12px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-        <p style={{ fontSize: 12, fontWeight: 700, color: "#1a1a1a", margin: 0, flex: 1 }}>{booking.expert?.full_name ?? "Expert"}</p>
+        <p style={{ fontSize: 12, fontWeight: 700, color: "#F9FAFB", margin: 0, flex: 1 }}>{booking.expert?.full_name ?? "Expert"}</p>
         <span style={{ fontSize: 10, fontWeight: 700, backgroundColor: status.bg, color: status.color, borderRadius: 99, padding: "2px 8px" }}>
           {status.label}
         </span>
       </div>
-      <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>{booking.service?.title}</p>
+      <p style={{ fontSize: 11, color: "#6B7280", margin: 0 }}>{booking.service?.title}</p>
       {booking.scheduled_at && (
-        <p style={{ fontSize: 11, color: "#b0ab8c", margin: "3px 0 0" }}>
+        <p style={{ fontSize: 11, color: "#6B7280", margin: "3px 0 0" }}>
           {new Date(booking.scheduled_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
         </p>
       )}
@@ -387,9 +387,9 @@ export default function SessionsPage() {
     <div className="experts-wrap">
 
       {/* ── Page header ── */}
-      <div style={{ paddingBottom: 20, borderBottom: "1px solid #e8e4ce", flexShrink: 0 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 800, color: "#0A3323", margin: "0 0 4px" }}>Experts</h1>
-        <p style={{ fontSize: 13, color: "#839958", margin: 0 }}>
+      <div style={{ paddingBottom: 20, borderBottom: "1px solid #1F2937", flexShrink: 0 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 800, color: "#F9FAFB", margin: "0 0 4px" }}>Experts</h1>
+        <p style={{ fontSize: 13, color: "#6B7280", margin: 0 }}>
           Book 1:1 time with people who've been where you want to go.
         </p>
       </div>
@@ -402,12 +402,12 @@ export default function SessionsPage() {
       {/* ── Sign-in banner for unauthenticated users ── */}
       {!session && (
         <div style={{
-          backgroundColor: "#0A3323", borderRadius: 12,
+          backgroundColor: "#064E3B", borderRadius: 12,
           padding: "16px 20px", margin: "16px 0 4px",
           display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap",
         }}>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: 13, fontWeight: 700, color: "#F7F4D5", margin: "0 0 2px" }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "#F9FAFB", margin: "0 0 2px" }}>
               Sign in to book a session
             </p>
             <p style={{ fontSize: 11, color: "rgba(247,244,213,0.6)", margin: 0 }}>
@@ -415,8 +415,8 @@ export default function SessionsPage() {
             </p>
           </div>
           <Link href="/auth/login?next=/experts" style={{
-            fontSize: 12, fontWeight: 700, color: "#0A3323",
-            backgroundColor: "#F7F4D5", borderRadius: 8,
+            fontSize: 12, fontWeight: 700, color: "#F9FAFB",
+            backgroundColor: "rgba(6,78,59,0.2)", borderRadius: 8,
             padding: "8px 16px", textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0,
           }}>
             Sign in →
@@ -437,10 +437,10 @@ export default function SessionsPage() {
               onChange={e => setSearch(e.target.value)}
               placeholder="Search by name, role, or expertise…"
               style={{
-                width: "100%", boxSizing: "border-box", border: "1px solid #e8e4ce",
+                width: "100%", boxSizing: "border-box", border: "1px solid #1F2937",
                 borderRadius: 10, padding: "10px 14px", fontSize: 13,
-                backgroundColor: "#fff", outline: "none", marginBottom: 10,
-                fontFamily: "inherit", color: "#1a1a1a",
+                backgroundColor: "#181C24", outline: "none", marginBottom: 10,
+                fontFamily: "inherit", color: "#F9FAFB",
               }}
               onFocus={e => (e.target.style.borderColor = "#0A3323")}
               onBlur={e => (e.target.style.borderColor = "#e8e4ce")}
@@ -467,14 +467,14 @@ export default function SessionsPage() {
             {expertsLoading ? (
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 {[1, 2, 3].map(i => (
-                  <div key={i} style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, height: 200, opacity: 0.5 }} />
+                  <div key={i} style={{ backgroundColor: "#181C24", border: "1px solid #1F2937", borderRadius: 16, height: 200, opacity: 0.5 }} />
                 ))}
               </div>
             ) : filtered.length === 0 ? (
               <div style={{ textAlign: "center", padding: "60px 0" }}>
                 <p style={{ fontSize: 32, margin: "0 0 12px" }}>🔍</p>
-                <p style={{ fontSize: 14, color: "#839958" }}>No experts match your search.</p>
-                <button onClick={() => { setSearch(""); setActiveFilter("All"); }} style={{ marginTop: 12, fontSize: 12, color: "#0A3323", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>
+                <p style={{ fontSize: 14, color: "#6B7280" }}>No experts match your search.</p>
+                <button onClick={() => { setSearch(""); setActiveFilter("All"); }} style={{ marginTop: 12, fontSize: 12, color: "#F9FAFB", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>
                   Clear filters
                 </button>
               </div>
@@ -489,11 +489,11 @@ export default function SessionsPage() {
         {/* ── RIGHT: My sessions ── */}
         <div className="experts-panel">
           {/* Panel header */}
-          <div style={{ padding: "16px 20px 14px", borderBottom: "1px solid #e8e4ce", flexShrink: 0 }}>
+          <div style={{ padding: "16px 20px 14px", borderBottom: "1px solid #1F2937", flexShrink: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <p style={{ fontSize: 14, fontWeight: 800, color: "#1a1a1a", margin: 0 }}>My Sessions</p>
+              <p style={{ fontSize: 14, fontWeight: 800, color: "#F9FAFB", margin: 0 }}>My Sessions</p>
               {upcomingCount > 0 && (
-                <span style={{ fontSize: 10, fontWeight: 700, backgroundColor: "#0A3323", color: "#839958", borderRadius: 99, padding: "2px 8px" }}>
+                <span style={{ fontSize: 10, fontWeight: 700, backgroundColor: "#064E3B", color: "#6B7280", borderRadius: 99, padding: "2px 8px" }}>
                   {upcomingCount} upcoming
                 </span>
               )}
@@ -502,7 +502,7 @@ export default function SessionsPage() {
 
           {!session ? (
             <div style={{ padding: 24, textAlign: "center" }}>
-              <p style={{ fontSize: 13, color: "#839958", marginBottom: 12 }}>Sign in to see your booked sessions.</p>
+              <p style={{ fontSize: 13, color: "#6B7280", marginBottom: 12 }}>Sign in to see your booked sessions.</p>
             </div>
           ) : (
             <MySessionsPanel bookings={bookings} loading={bookingsLoading} />

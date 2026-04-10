@@ -76,13 +76,13 @@ function CompanyLogo({ domain, name }: { domain: string | null; name: string }) 
 
   if (!domain || fallback) {
     return (
-      <div style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 800, color: "#1a1a1a", flexShrink: 0 }}>
+      <div style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 800, color: "#F9FAFB", flexShrink: 0 }}>
         {initial}
       </div>
     );
   }
   return (
-    <div style={{ width: 40, height: 40, borderRadius: 8, border: "1px solid #e8e4ce", backgroundColor: "#fff", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, overflow: "hidden" }}>
+    <div style={{ width: 40, height: 40, borderRadius: 8, border: "1px solid #1F2937", backgroundColor: "#181C24", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, overflow: "hidden" }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={`https://logo.clearbit.com/${domain}`}
@@ -136,14 +136,14 @@ function JobCard({
   };
 
   return (
-    <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 14, padding: 20, display: "flex", flexDirection: "column", gap: 12 }}>
+    <div style={{ backgroundColor: "#181C24", border: "1px solid #1F2937", borderRadius: 14, padding: 20, display: "flex", flexDirection: "column", gap: 12 }}>
       {/* Top row */}
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <CompanyLogo domain={job.company_domain} name={job.company_name} />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ fontSize: 13, fontWeight: 700, color: "#0A3323", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{job.company_name}</p>
+          <p style={{ fontSize: 13, fontWeight: 700, color: "#F9FAFB", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{job.company_name}</p>
           {days !== null && (
-            <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>
+            <p style={{ fontSize: 11, color: "#6B7280", margin: 0 }}>
               {days === 0 ? "Posted today" : `${days}d ago`}
             </p>
           )}
@@ -156,17 +156,17 @@ function JobCard({
       </div>
 
       {/* Role */}
-      <h3 style={{ fontSize: 17, fontWeight: 800, color: "#0A3323", margin: 0, lineHeight: 1.3 }}>{job.title}</h3>
+      <h3 style={{ fontSize: 17, fontWeight: 800, color: "#F9FAFB", margin: 0, lineHeight: 1.3 }}>{job.title}</h3>
 
       {/* Tags row */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center" }}>
         {tags.map((tag) => (
-          <span key={tag} style={{ fontSize: 11, fontWeight: 600, backgroundColor: "#F9F7EC", color: "#839958", borderRadius: 99, padding: "4px 10px" }}>
+          <span key={tag} style={{ fontSize: 11, fontWeight: 600, backgroundColor: "#0F1117", color: "#6B7280", borderRadius: 99, padding: "4px 10px" }}>
             {tag}
           </span>
         ))}
         {salary && (
-          <span style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#0A332311", color: "#0A3323", borderRadius: 99, padding: "4px 10px" }}>
+          <span style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#0A332311", color: "#F9FAFB", borderRadius: 99, padding: "4px 10px" }}>
             {salary}
           </span>
         )}
@@ -174,7 +174,7 @@ function JobCard({
 
       {/* Description (strip salary from end to avoid duplication) */}
       {job.description_snippet && (
-        <p style={{ fontSize: 12, color: "#839958", margin: 0, lineHeight: 1.6, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+        <p style={{ fontSize: 12, color: "#6B7280", margin: 0, lineHeight: 1.6, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
           {job.description_snippet}
         </p>
       )}
@@ -192,7 +192,7 @@ function JobCard({
           href={job.apply_url}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#0A3323", color: "#F7F4D5", borderRadius: 8, padding: "7px 14px", textDecoration: "none", display: "inline-block" }}
+          style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#064E3B", color: "#F9FAFB", borderRadius: 8, padding: "7px 14px", textDecoration: "none", display: "inline-block" }}
         >
           Apply now →
         </a>
@@ -282,41 +282,41 @@ export default function JobsClient({
   return (
     <div style={{ maxWidth: 760, margin: "0 auto", padding: "32px 0" }}>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>Jobs for you</h1>
-        <p style={{ fontSize: 14, color: "#839958", margin: 0 }}>
+        <h1 style={{ fontSize: 24, fontWeight: 800, color: "#F9FAFB", margin: "0 0 6px" }}>Jobs for you</h1>
+        <p style={{ fontSize: 14, color: "#6B7280", margin: 0 }}>
           {targetRole ? `Matched for: ${targetRole}` : "Complete your profile to get personalised matches."}
         </p>
       </div>
 
       {/* Filters */}
-      <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 16, padding: "18px 20px", marginBottom: 28, display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ backgroundColor: "#181C24", border: "1px solid #1F2937", borderRadius: 16, padding: "18px 20px", marginBottom: 28, display: "flex", flexDirection: "column", gap: 14 }}>
         <input className="input" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by role, company, location…" style={{ width: "100%", boxSizing: "border-box" }} />
 
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>Job type</p>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>Job type</p>
           <PillRow options={JOB_TYPES} value={jobType} onChange={setJobType} />
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>Department</p>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", margin: 0 }}>Department</p>
           <PillRow options={DEPARTMENTS} value={dept} onChange={setDept} />
         </div>
 
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
           <div style={{ flex: 1, minWidth: 160 }}>
-            <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 8px" }}>Company</p>
+            <p style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 8px" }}>Company</p>
             <select value={company} onChange={(e) => setCompany(e.target.value)} className="input" style={{ width: "100%" }}>
               {companies.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
           <div>
-            <p style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 8px" }}>Sort</p>
+            <p style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 8px" }}>Sort</p>
             <PillRow options={SORTS} value={sort} onChange={setSort} />
           </div>
         </div>
       </div>
 
-      <p style={{ fontSize: 13, color: "#839958", margin: "0 0 16px" }}>
+      <p style={{ fontSize: 13, color: "#6B7280", margin: "0 0 16px" }}>
         {filtered.length} job{filtered.length !== 1 ? "s" : ""}
         {jobs.length !== filtered.length && ` of ${jobs.length}`}
       </p>
@@ -325,11 +325,11 @@ export default function JobsClient({
         {filtered.length === 0 ? (
           <div style={{ textAlign: "center", padding: "80px 0" }}>
             <div style={{ fontSize: 48, marginBottom: 12 }}>🔍</div>
-            <p style={{ fontSize: 14, color: "#839958", marginBottom: 16 }}>
+            <p style={{ fontSize: 14, color: "#6B7280", marginBottom: 16 }}>
               {jobs.length === 0 ? "Jobs are syncing… Check back in a few minutes." : "No jobs match your filters."}
             </p>
             {jobs.length === 0 && (
-              <a href="/companies" style={{ fontSize: 13, fontWeight: 700, color: "#0A3323", textDecoration: "none" }}>Browse companies →</a>
+              <a href="/companies" style={{ fontSize: 13, fontWeight: 700, color: "#F9FAFB", textDecoration: "none" }}>Browse companies →</a>
             )}
           </div>
         ) : (

@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { useSession } from "@/hooks/useSession";
+import { useProfile } from "@/hooks/useProfile";
 import Link from "next/link";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -28,9 +29,17 @@ const INDUSTRIES = [
 
 const SIZES = ["1-10", "11-50", "51-200", "201-500", "500+"] as const;
 
+const EMPLOYER_TITLES = [
+  "HR Manager", "HR Business Partner", "Talent Acquisition", "Recruiter",
+  "Technical Recruiter", "Head of HR", "VP of People", "Chief People Officer",
+  "People Operations", "Hiring Manager", "Founder / CEO", "Co-founder",
+  "Engineering Manager", "Team Lead", "Other",
+];
+
+// ─── Dark palette styles ──────────────────────────────────────────────────────
 const CARD: React.CSSProperties = {
-  backgroundColor: "#fff",
-  border: "1.5px solid #e8e4ce",
+  backgroundColor: "#181C24",
+  border: "1.5px solid #1F2937",
   borderRadius: 16,
   padding: "28px 28px",
   marginBottom: 0,
@@ -41,19 +50,19 @@ const INPUT: React.CSSProperties = {
   boxSizing: "border-box",
   padding: "10px 14px",
   fontSize: 14,
-  border: "1.5px solid #e8e4ce",
+  border: "1.5px solid #374151",
   borderRadius: 10,
   fontFamily: "inherit",
   outline: "none",
-  backgroundColor: "#fff",
-  color: "#1a1a1a",
+  backgroundColor: "#0F1117",
+  color: "#F9FAFB",
 };
 
 const LABEL: React.CSSProperties = {
   display: "block",
   fontSize: 12,
   fontWeight: 700,
-  color: "#0A3323",
+  color: "#9CA3AF",
   marginBottom: 6,
 };
 
@@ -61,8 +70,8 @@ const BTN_PRIMARY: React.CSSProperties = {
   padding: "12px 28px",
   borderRadius: 10,
   border: "none",
-  backgroundColor: "#0A3323",
-  color: "#F7F4D5",
+  backgroundColor: "#064E3B",
+  color: "#F9FAFB",
   fontSize: 14,
   fontWeight: 700,
   cursor: "pointer",
@@ -72,9 +81,9 @@ const BTN_PRIMARY: React.CSSProperties = {
 const BTN_GHOST: React.CSSProperties = {
   padding: "12px 20px",
   borderRadius: 10,
-  border: "1.5px solid #e8e4ce",
+  border: "1.5px solid #374151",
   backgroundColor: "transparent",
-  color: "#839958",
+  color: "#9CA3AF",
   fontSize: 14,
   fontWeight: 600,
   cursor: "pointer",
@@ -98,9 +107,152 @@ function Steps({ current, total }: { current: number; total: number }) {
       {Array.from({ length: total }).map((_, i) => (
         <div key={i} style={{
           flex: 1, height: 4, borderRadius: 99,
-          backgroundColor: i < current ? "#0A3323" : i === current - 1 ? "#0A3323" : "#e8e4ce",
+          backgroundColor: i < current ? "#064E3B" : "#1F2937",
         }} />
       ))}
+    </div>
+  );
+}
+
+// ─── Employer registration wall ───────────────────────────────────────────────
+function EmployerWall({ onVerified }: { onVerified: () => void }) {
+  const [company, setCompany] = useState("");
+  const [title, setTitle] = useState("");
+  const [linkedin, setLinkedin] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async () => {
+    if (!company.trim() || !title) return;
+    setSubmitting(true);
+    setError("");
+    try {
+      const res = await fetch("/api/employer/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          company_name: company,
+          employer_title: title,
+          linkedin_url: linkedin || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        onVerified();
+      } else {
+        setError(data.error ?? "Registration failed. Please try again.");
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div style={{ maxWidth: 520, margin: "0 auto", padding: "0 0 80px" }}>
+      {/* Header */}
+      <div style={{ marginBottom: 32 }}>
+        <div style={{ fontSize: 40, marginBottom: 14 }}>🏢</div>
+        <h1 style={{ fontSize: 24, fontWeight: 800, color: "#F9FAFB", margin: "0 0 10px" }}>
+          Employer verification
+        </h1>
+        <p style={{ fontSize: 14, color: "#9CA3AF", margin: 0, lineHeight: 1.7 }}>
+          Job posting is reserved for verified HR professionals and hiring managers.
+          Tell us about yourself and you&apos;ll have access instantly.
+        </p>
+      </div>
+
+      <div style={CARD}>
+        <h2 style={{ fontSize: 15, fontWeight: 800, color: "#F9FAFB", margin: "0 0 20px" }}>
+          Your hiring details
+        </h2>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+          {/* Company */}
+          <div>
+            <label style={LABEL}>Company name *</label>
+            <input
+              style={INPUT}
+              value={company}
+              onChange={e => setCompany(e.target.value)}
+              placeholder="e.g. Zepto, Razorpay, Meesho…"
+              autoFocus
+            />
+          </div>
+
+          {/* Title */}
+          <div>
+            <label style={LABEL}>Your role in hiring *</label>
+            <select
+              style={{ ...INPUT, appearance: "none" }}
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+            >
+              <option value="">Select your role…</option>
+              {EMPLOYER_TITLES.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </div>
+
+          {/* LinkedIn (optional but helps) */}
+          <div>
+            <label style={LABEL}>
+              LinkedIn profile <span style={{ fontWeight: 400, color: "#6B7280" }}>(optional, speeds up verification)</span>
+            </label>
+            <input
+              style={INPUT}
+              value={linkedin}
+              onChange={e => setLinkedin(e.target.value)}
+              placeholder="https://linkedin.com/in/yourname"
+            />
+          </div>
+        </div>
+
+        {error && (
+          <div style={{
+            marginTop: 16, padding: "10px 14px",
+            backgroundColor: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)",
+            borderRadius: 10, fontSize: 13, color: "#FCA5A5",
+          }}>
+            {error}
+          </div>
+        )}
+
+        {/* Trust callout */}
+        <div style={{
+          marginTop: 20, padding: "12px 14px",
+          backgroundColor: "rgba(6,78,59,0.15)", border: "1px solid rgba(6,78,59,0.4)",
+          borderRadius: 10,
+        }}>
+          <div style={{ fontSize: 12, color: "#6EE7B7", fontWeight: 700, marginBottom: 4 }}>
+            Why we do this
+          </div>
+          <div style={{ fontSize: 12, color: "#9CA3AF", lineHeight: 1.6 }}>
+            Mentor groups are verified-professional communities. Only genuine employers
+            can post jobs, so members get roles that match their level — not spam.
+          </div>
+        </div>
+
+        <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
+          <button
+            style={{
+              ...BTN_PRIMARY,
+              opacity: (company.trim() && title) ? 1 : 0.45,
+              display: "flex", alignItems: "center", gap: 8,
+            }}
+            disabled={!company.trim() || !title || submitting}
+            onClick={handleSubmit}
+          >
+            {submitting ? (
+              <><span style={{ animation: "spin 1s linear infinite", display: "inline-block" }}>⟳</span> Verifying…</>
+            ) : "Get verified →"}
+          </button>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      `}</style>
     </div>
   );
 }
@@ -111,6 +263,7 @@ function PostJobInner() {
   const router = useRouter();
   const supabase = createClient();
   const { session } = useSession();
+  const { profile, loading: profileLoading } = useProfile();
 
   const preselectedGroupId = searchParams.get("group") ?? "";
 
@@ -118,6 +271,7 @@ function PostJobInner() {
   const [communities, setCommunities] = useState<Community[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [postedSlug, setPostedSlug] = useState("");
+  const [isVerified, setIsVerified] = useState<boolean | null>(null);
 
   // Form state
   const [company, setCompany] = useState({
@@ -134,6 +288,21 @@ function PostJobInner() {
   const [appEmail, setAppEmail] = useState("");
   const [appUrl, setAppUrl] = useState("");
 
+  // Check employer verification status
+  useEffect(() => {
+    if (!profileLoading) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const p = profile as any;
+      const verified: boolean = p?.is_employer_verified ?? false;
+      setIsVerified(verified);
+      // Pre-fill company name if they've registered before
+      const existingCompany: string | undefined = p?.employer_company;
+      if (existingCompany) {
+        setCompany(c => ({ ...c, name: existingCompany }));
+      }
+    }
+  }, [profile, profileLoading]);
+
   // Load communities
   useEffect(() => {
     supabase
@@ -147,12 +316,26 @@ function PostJobInner() {
   if (!session) {
     return (
       <div style={{ maxWidth: 560, margin: "60px auto", textAlign: "center" }}>
-        <p style={{ fontSize: 14, color: "#839958" }}>Please sign in to post a job.</p>
+        <p style={{ fontSize: 14, color: "#9CA3AF" }}>Please sign in to post a job.</p>
         <Link href="/auth/login" style={{ ...BTN_PRIMARY, display: "inline-block", marginTop: 16, textDecoration: "none" }}>
           Sign in
         </Link>
       </div>
     );
+  }
+
+  // Loading state
+  if (profileLoading || isVerified === null) {
+    return (
+      <div style={{ maxWidth: 560, margin: "60px auto", textAlign: "center" }}>
+        <p style={{ fontSize: 14, color: "#6B7280" }}>Loading…</p>
+      </div>
+    );
+  }
+
+  // ─── Employer verification wall ──────────────────────────────────────────────
+  if (!isVerified) {
+    return <EmployerWall onVerified={() => setIsVerified(true)} />;
   }
 
   const selectedGroup = communities.find(c => c.id === targetGroupId);
@@ -205,13 +388,13 @@ function PostJobInner() {
       <div style={{ maxWidth: 560, margin: "0 auto", padding: "0 0 80px" }}>
         <div style={{ ...CARD, textAlign: "center" }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>🎯</div>
-          <h2 style={{ fontSize: 22, fontWeight: 800, color: "#0A3323", margin: "0 0 10px" }}>Job posted</h2>
-          <p style={{ fontSize: 14, color: "#839958", margin: "0 0 6px", lineHeight: 1.6 }}>
-            <strong style={{ color: "#1a1a1a" }}>{role.title}</strong> at{" "}
-            <strong style={{ color: "#1a1a1a" }}>{company.name}</strong> is now live in the{" "}
-            <strong style={{ color: "#0A3323" }}>{selectedGroup?.name}</strong> group.
+          <h2 style={{ fontSize: 22, fontWeight: 800, color: "#F9FAFB", margin: "0 0 10px" }}>Job posted</h2>
+          <p style={{ fontSize: 14, color: "#9CA3AF", margin: "0 0 6px", lineHeight: 1.6 }}>
+            <strong style={{ color: "#F9FAFB" }}>{role.title}</strong> at{" "}
+            <strong style={{ color: "#F9FAFB" }}>{company.name}</strong> is now live in the{" "}
+            <strong style={{ color: "#6EE7B7" }}>{selectedGroup?.name}</strong> group.
           </p>
-          <p style={{ fontSize: 13, color: "#b0ab8c", margin: "0 0 24px" }}>
+          <p style={{ fontSize: 13, color: "#6B7280", margin: "0 0 24px" }}>
             Members will see it in Open Roles. Verified professionals only — no unscreened applicant pile.
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
@@ -231,8 +414,8 @@ function PostJobInner() {
     <div style={{ maxWidth: 560, margin: "0 auto", padding: "0 0 80px" }}>
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>Post a Job</h1>
-        <p style={{ fontSize: 14, color: "#839958", margin: 0 }}>
+        <h1 style={{ fontSize: 24, fontWeight: 800, color: "#F9FAFB", margin: "0 0 6px" }}>Post a Job</h1>
+        <p style={{ fontSize: 14, color: "#9CA3AF", margin: 0 }}>
           Reach verified professionals directly — no unscreened pile.
         </p>
       </div>
@@ -242,7 +425,7 @@ function PostJobInner() {
       {/* ── Step 1: Company ─────────────────────────────────────────────────── */}
       {step === 1 && (
         <div style={CARD}>
-          <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1a1a1a", margin: "0 0 20px" }}>Your company</h2>
+          <h2 style={{ fontSize: 16, fontWeight: 800, color: "#F9FAFB", margin: "0 0 20px" }}>Your company</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div>
               <label style={LABEL}>Company name *</label>
@@ -300,7 +483,7 @@ function PostJobInner() {
       {/* ── Step 2: The Role ─────────────────────────────────────────────────── */}
       {step === 2 && (
         <div style={CARD}>
-          <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1a1a1a", margin: "0 0 20px" }}>The role</h2>
+          <h2 style={{ fontSize: 16, fontWeight: 800, color: "#F9FAFB", margin: "0 0 20px" }}>The role</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div>
               <label style={LABEL}>Job title *</label>
@@ -322,14 +505,14 @@ function PostJobInner() {
               </select>
             </div>
             <div>
-              <label style={LABEL}>Description * <span style={{ fontWeight: 400, color: "#b0ab8c" }}>(min 200 characters)</span></label>
+              <label style={LABEL}>Description * <span style={{ fontWeight: 400, color: "#6B7280" }}>(min 200 characters)</span></label>
               <textarea
                 style={{ ...INPUT, minHeight: 120, resize: "vertical" }}
                 value={role.description}
                 onChange={e => setRole({ ...role, description: e.target.value })}
                 placeholder="Describe the role, responsibilities, and what makes it exciting…"
               />
-              <div style={{ fontSize: 11, color: role.description.length >= 200 ? "#839958" : "#b0ab8c", textAlign: "right", marginTop: 4 }}>
+              <div style={{ fontSize: 11, color: role.description.length >= 200 ? "#6EE7B7" : "#6B7280", textAlign: "right", marginTop: 4 }}>
                 {role.description.length}/200
               </div>
             </div>
@@ -351,11 +534,11 @@ function PostJobInner() {
                 onChange={e => setRole({ ...role, location: e.target.value })}
                 placeholder="Bangalore / Mumbai / Delhi" />
             </div>
-            <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", fontSize: 13, color: "#1a1a1a" }}>
+            <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", fontSize: 13, color: "#F9FAFB" }}>
               <input
                 type="checkbox" checked={role.remote_ok}
                 onChange={e => setRole({ ...role, remote_ok: e.target.checked })}
-                style={{ width: 16, height: 16, accentColor: "#0A3323" }}
+                style={{ width: 16, height: 16, accentColor: "#064E3B" }}
               />
               Remote OK
             </label>
@@ -388,20 +571,20 @@ function PostJobInner() {
       {/* ── Step 3: Target Group ─────────────────────────────────────────────── */}
       {step === 3 && (
         <div style={CARD}>
-          <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>Target group</h2>
-          <p style={{ fontSize: 13, color: "#839958", margin: "0 0 20px" }}>
+          <h2 style={{ fontSize: 16, fontWeight: 800, color: "#F9FAFB", margin: "0 0 6px" }}>Target group</h2>
+          <p style={{ fontSize: 13, color: "#9CA3AF", margin: "0 0 20px" }}>
             Choose one group. Your job posts directly to their Open Roles channel.
           </p>
 
           {recommended.length > 0 && recommended[0].id !== targetGroupId && (
             <div style={{
-              backgroundColor: "#f0fdf4", border: "1px solid #bbf7d0",
+              backgroundColor: "rgba(6,78,59,0.15)", border: "1px solid rgba(6,78,59,0.4)",
               borderRadius: 10, padding: "10px 14px", marginBottom: 16,
-              fontSize: 12, color: "#0A3323",
+              fontSize: 12, color: "#6EE7B7",
             }}>
               💡 Recommended: <strong>{recommended[0].name}</strong> — best match for {role.role_type} roles
               <button
-                style={{ marginLeft: 10, fontSize: 11, fontWeight: 700, color: "#0A3323", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}
+                style={{ marginLeft: 10, fontSize: 11, fontWeight: 700, color: "#6EE7B7", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}
                 onClick={() => setTargetGroupId(recommended[0].id)}
               >
                 Select
@@ -419,8 +602,8 @@ function PostJobInner() {
                   style={{
                     display: "flex", alignItems: "center", gap: 14,
                     padding: "14px 16px", borderRadius: 12, cursor: "pointer",
-                    border: `1.5px solid ${selected ? "#0A3323" : "#e8e4ce"}`,
-                    backgroundColor: selected ? "#f0fdf4" : "#fff",
+                    border: `1.5px solid ${selected ? "#064E3B" : "#1F2937"}`,
+                    backgroundColor: selected ? "rgba(6,78,59,0.2)" : "#0F1117",
                     fontFamily: "inherit", textAlign: "left", width: "100%",
                     transition: "all 0.15s",
                   }}
@@ -433,12 +616,12 @@ function PostJobInner() {
                     {groupEmoji(c.slug)}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a" }}>{c.name}</div>
-                    <div style={{ fontSize: 11, color: "#839958", marginTop: 2 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#F9FAFB" }}>{c.name}</div>
+                    <div style={{ fontSize: 11, color: "#6B7280", marginTop: 2 }}>
                       {c.member_count.toLocaleString()} verified {c.role_type ?? ""} professionals
                     </div>
                   </div>
-                  {selected && <span style={{ color: "#0A3323", fontSize: 18 }}>✓</span>}
+                  {selected && <span style={{ color: "#6EE7B7", fontSize: 18 }}>✓</span>}
                 </button>
               );
             })}
@@ -459,8 +642,8 @@ function PostJobInner() {
       {/* ── Step 4: Application method ───────────────────────────────────────── */}
       {step === 4 && (
         <div style={CARD}>
-          <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1a1a1a", margin: "0 0 6px" }}>How to apply</h2>
-          <p style={{ fontSize: 13, color: "#839958", margin: "0 0 20px" }}>Choose how interested members reach you.</p>
+          <h2 style={{ fontSize: 16, fontWeight: 800, color: "#F9FAFB", margin: "0 0 6px" }}>How to apply</h2>
+          <p style={{ fontSize: 13, color: "#9CA3AF", margin: "0 0 20px" }}>Choose how interested members reach you.</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {[
               { id: "platform" as const, label: "Track applications on Mentor", desc: "Members apply with a cover note — you review in one place." },
@@ -473,19 +656,19 @@ function PostJobInner() {
                 style={{
                   display: "flex", alignItems: "flex-start", gap: 12,
                   padding: "14px 16px", borderRadius: 12, cursor: "pointer",
-                  border: `1.5px solid ${appMethod === opt.id ? "#0A3323" : "#e8e4ce"}`,
-                  backgroundColor: appMethod === opt.id ? "#f0fdf4" : "#fff",
+                  border: `1.5px solid ${appMethod === opt.id ? "#064E3B" : "#1F2937"}`,
+                  backgroundColor: appMethod === opt.id ? "rgba(6,78,59,0.2)" : "#0F1117",
                   fontFamily: "inherit", textAlign: "left", width: "100%",
                 }}
               >
                 <div style={{
                   width: 20, height: 20, borderRadius: 99, flexShrink: 0, marginTop: 1,
-                  border: `2px solid ${appMethod === opt.id ? "#0A3323" : "#c8c4ae"}`,
-                  backgroundColor: appMethod === opt.id ? "#0A3323" : "transparent",
+                  border: `2px solid ${appMethod === opt.id ? "#064E3B" : "#374151"}`,
+                  backgroundColor: appMethod === opt.id ? "#064E3B" : "transparent",
                 }} />
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "#1a1a1a" }}>{opt.label}</div>
-                  <div style={{ fontSize: 12, color: "#839958", marginTop: 2 }}>{opt.desc}</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#F9FAFB" }}>{opt.label}</div>
+                  <div style={{ fontSize: 12, color: "#6B7280", marginTop: 2 }}>{opt.desc}</div>
                 </div>
               </button>
             ))}
@@ -523,21 +706,21 @@ function PostJobInner() {
       {/* ── Step 5: Review ───────────────────────────────────────────────────── */}
       {step === 5 && (
         <div style={CARD}>
-          <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1a1a1a", margin: "0 0 20px" }}>Review & post</h2>
+          <h2 style={{ fontSize: 16, fontWeight: 800, color: "#F9FAFB", margin: "0 0 20px" }}>Review & post</h2>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             {/* Company summary */}
-            <div style={{ backgroundColor: "#fafaf4", borderRadius: 12, padding: "14px 16px" }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Company</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a" }}>{company.name}</div>
-              {company.industry && <div style={{ fontSize: 12, color: "#839958", marginTop: 2 }}>{company.industry}{company.size ? ` · ${company.size} employees` : ""}</div>}
+            <div style={{ backgroundColor: "#0F1117", borderRadius: 12, padding: "14px 16px" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Company</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#F9FAFB" }}>{company.name}</div>
+              {company.industry && <div style={{ fontSize: 12, color: "#6B7280", marginTop: 2 }}>{company.industry}{company.size ? ` · ${company.size} employees` : ""}</div>}
             </div>
 
             {/* Role summary */}
-            <div style={{ backgroundColor: "#fafaf4", borderRadius: 12, padding: "14px 16px" }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Role</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: "#1a1a1a" }}>{role.title}</div>
-              <div style={{ fontSize: 12, color: "#839958", marginTop: 2 }}>
+            <div style={{ backgroundColor: "#0F1117", borderRadius: 12, padding: "14px 16px" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Role</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#F9FAFB" }}>{role.title}</div>
+              <div style={{ fontSize: 12, color: "#6B7280", marginTop: 2 }}>
                 {role.role_type}
                 {role.location ? ` · ${role.location}` : ""}
                 {role.remote_ok ? " · Remote OK" : ""}
@@ -548,21 +731,21 @@ function PostJobInner() {
 
             {/* Target group */}
             {selectedGroup && (
-              <div style={{ backgroundColor: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 12, padding: "14px 16px" }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#0A3323", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Posting to</div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "#0A3323" }}>
+              <div style={{ backgroundColor: "rgba(6,78,59,0.15)", border: "1px solid rgba(6,78,59,0.4)", borderRadius: 12, padding: "14px 16px" }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#6EE7B7", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Posting to</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: "#F9FAFB" }}>
                   {groupEmoji(selectedGroup.slug)} {selectedGroup.name}
                 </div>
-                <div style={{ fontSize: 12, color: "#839958", marginTop: 2 }}>
+                <div style={{ fontSize: 12, color: "#9CA3AF", marginTop: 2 }}>
                   {selectedGroup.member_count.toLocaleString()} verified professionals · Open Roles channel
                 </div>
               </div>
             )}
 
             {/* Application method */}
-            <div style={{ backgroundColor: "#fafaf4", borderRadius: 12, padding: "14px 16px" }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#839958", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6 }}>Applications</div>
-              <div style={{ fontSize: 13, color: "#1a1a1a" }}>
+            <div style={{ backgroundColor: "#0F1117", borderRadius: 12, padding: "14px 16px" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6 }}>Applications</div>
+              <div style={{ fontSize: 13, color: "#F9FAFB" }}>
                 {appMethod === "platform" && "Tracked on Mentor"}
                 {appMethod === "email" && `Email: ${appEmail}`}
                 {appMethod === "url" && `Link: ${appUrl}`}
@@ -597,7 +780,7 @@ export default function PostJobPage() {
   return (
     <Suspense fallback={
       <div style={{ maxWidth: 560, margin: "60px auto", textAlign: "center" }}>
-        <p style={{ fontSize: 14, color: "#839958" }}>Loading…</p>
+        <p style={{ fontSize: 14, color: "#6B7280" }}>Loading…</p>
       </div>
     }>
       <PostJobInner />

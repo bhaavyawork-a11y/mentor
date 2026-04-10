@@ -26,8 +26,8 @@ interface Community {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const inputStyle: React.CSSProperties = {
   width: "100%", boxSizing: "border-box", padding: "12px 14px",
-  fontSize: 14, border: "1px solid #e8e4ce", borderRadius: 10,
-  fontFamily: "inherit", outline: "none", backgroundColor: "#fff", color: "#1a1a1a",
+  fontSize: 14, border: "1px solid #1F2937", borderRadius: 10,
+  fontFamily: "inherit", outline: "none", backgroundColor: "#0F1117", color: "#F9FAFB",
 };
 
 const textareaStyle: React.CSSProperties = {
@@ -51,11 +51,11 @@ function StepProfile({ name, setName, role, setRole }: {
 }) {
   return (
     <div>
-      <p style={{ fontSize: 13, color: "#839958", margin: "0 0 20px", lineHeight: 1.6 }}>
+      <p style={{ fontSize: 13, color: "#6B7280", margin: "0 0 20px", lineHeight: 1.6 }}>
         This helps us match you to the right community and personalise your experience.
       </p>
       <div style={{ marginBottom: 16 }}>
-        <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#0A3323", marginBottom: 6 }}>
+        <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#F9FAFB", marginBottom: 6 }}>
           What should we call you?
         </label>
         <input
@@ -66,7 +66,7 @@ function StepProfile({ name, setName, role, setRole }: {
         />
       </div>
       <div>
-        <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#0A3323", marginBottom: 6 }}>
+        <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: "#F9FAFB", marginBottom: 6 }}>
           Current or target role
         </label>
         <select
@@ -90,9 +90,9 @@ function StepPickGroup({ communities, chosen, setChosen }: {
 }) {
   return (
     <div>
-      <p style={{ fontSize: 13, color: "#839958", margin: "0 0 4px", lineHeight: 1.6 }}>
+      <p style={{ fontSize: 13, color: "#6B7280", margin: "0 0 4px", lineHeight: 1.6 }}>
         Each group is verified — you&apos;ll answer 3 quick questions to confirm you belong.
-        You can only join <strong style={{ color: "#0A3323" }}>one group at signup</strong>. More later.
+        You can only join <strong style={{ color: "#F9FAFB" }}>one group at signup</strong>. More later.
       </p>
       <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 8 }}>
         {communities.map(c => {
@@ -118,17 +118,17 @@ function StepPickGroup({ communities, chosen, setChosen }: {
                 {groupEmoji(c.slug)}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 13, fontWeight: active ? 700 : 600, color: "#1a1a1a", marginBottom: 2 }}>
+                <div style={{ fontSize: 13, fontWeight: active ? 700 : 600, color: "#F9FAFB", marginBottom: 2 }}>
                   {c.name}
                 </div>
-                <div style={{ fontSize: 11, color: "#839958", lineHeight: 1.4 }}>
+                <div style={{ fontSize: 11, color: "#6B7280", lineHeight: 1.4 }}>
                   {c.member_count.toLocaleString()} members · {c.role_type || c.name}
                 </div>
               </div>
               {active && (
                 <span style={{
                   width: 20, height: 20, borderRadius: "50%",
-                  backgroundColor: "#0A3323", color: "#fff",
+                  backgroundColor: "#064E3B", color: "#fff",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontSize: 11, fontWeight: 700, flexShrink: 0,
                 }}>✓</span>
@@ -155,7 +155,7 @@ function StepScreening({ community, answers, setAnswers }: {
       <div style={{
         display: "flex", alignItems: "center", gap: 10, marginBottom: 20,
         padding: "12px 14px", borderRadius: 10, backgroundColor: "#F0EFD8",
-        border: "1px solid #e8e4ce",
+        border: "1px solid #1F2937",
       }}>
         <div style={{
           width: 32, height: 32, borderRadius: 8, flexShrink: 0,
@@ -165,11 +165,11 @@ function StepScreening({ community, answers, setAnswers }: {
           {groupEmoji(community.slug)}
         </div>
         <div>
-          <div style={{ fontSize: 12, fontWeight: 700, color: "#0A3323" }}>Applying to: {community.name}</div>
-          <div style={{ fontSize: 11, color: "#839958" }}>AI-reviewed · 1 minute · {answeredCount}/{questions.length} answered</div>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "#F9FAFB" }}>Applying to: {community.name}</div>
+          <div style={{ fontSize: 11, color: "#6B7280" }}>AI-reviewed · 1 minute · {answeredCount}/{questions.length} answered</div>
         </div>
       </div>
-      <p style={{ fontSize: 12, color: "#839958", margin: "0 0 16px", lineHeight: 1.5 }}>
+      <p style={{ fontSize: 12, color: "#6B7280", margin: "0 0 16px", lineHeight: 1.5 }}>
         Your answers are reviewed by our AI to verify you&apos;re a fit for this group.
         Be specific — vague answers won&apos;t pass. Each answer should be at least 2-3 sentences.
       </p>
@@ -180,10 +180,10 @@ function StepScreening({ community, answers, setAnswers }: {
           return (
             <div key={q.id}>
               <label style={{
-                display: "block", fontSize: 12, fontWeight: 700, color: "#0A3323", marginBottom: 6,
+                display: "block", fontSize: 12, fontWeight: 700, color: "#F9FAFB", marginBottom: 6,
                 lineHeight: 1.4,
               }}>
-                <span style={{ color: "#839958", marginRight: 6 }}>Q{i + 1}.</span>
+                <span style={{ color: "#6B7280", marginRight: 6 }}>Q{i + 1}.</span>
                 {q.question}
               </label>
               <textarea
@@ -196,7 +196,7 @@ function StepScreening({ community, answers, setAnswers }: {
                 }}
               />
               {val.trim().length > 0 && !isLong && (
-                <p style={{ fontSize: 11, color: "#c0714a", margin: "4px 0 0" }}>
+                <p style={{ fontSize: 11, color: "#FCA5A5", margin: "4px 0 0" }}>
                   Add more detail — short answers are unlikely to pass.
                 </p>
               )}
@@ -238,7 +238,7 @@ function StepResult({
         }}>
           {isApproved ? "✅" : "❌"}
         </div>
-        <h2 style={{ fontSize: 20, fontWeight: 800, color: "#0A3323", margin: "0 0 4px", textAlign: "center" }}>
+        <h2 style={{ fontSize: 20, fontWeight: 800, color: "#F9FAFB", margin: "0 0 4px", textAlign: "center" }}>
           {isApproved ? `Welcome to ${community.name}!` : "Not quite yet"}
         </h2>
         <div style={{
@@ -249,7 +249,7 @@ function StepResult({
           border: `1.5px solid ${isApproved ? "#0A3323" : "#e8b4a0"}`,
         }}>
           AI Score: {score}/100
-          <span style={{ fontSize: 10, fontWeight: 400, color: "#839958" }}>
+          <span style={{ fontSize: 10, fontWeight: 400, color: "#6B7280" }}>
             · {isApproved ? "Pass" : "Below threshold (70)"}
           </span>
         </div>
@@ -261,7 +261,7 @@ function StepResult({
         backgroundColor: isApproved ? "#F0EFD8" : "#fef8f5",
         border: `1px solid ${isApproved ? "#e8e4ce" : "#f0cbbf"}`,
       }}>
-        <p style={{ fontSize: 13, color: "#1a1a1a", margin: 0, lineHeight: 1.6 }}>
+        <p style={{ fontSize: 13, color: "#F9FAFB", margin: 0, lineHeight: 1.6 }}>
           {feedback}
         </p>
       </div>
@@ -269,9 +269,9 @@ function StepResult({
       {/* Strengths / improvements */}
       {strengths.length > 0 && (
         <div style={{ marginBottom: 12 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: "#0A3323", marginBottom: 6 }}>Strengths noted:</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#F9FAFB", marginBottom: 6 }}>Strengths noted:</div>
           {strengths.map((s, i) => (
-            <div key={i} style={{ fontSize: 12, color: "#555", paddingLeft: 12, marginBottom: 4, lineHeight: 1.4 }}>
+            <div key={i} style={{ fontSize: 12, color: "#9CA3AF", paddingLeft: 12, marginBottom: 4, lineHeight: 1.4 }}>
               · {s}
             </div>
           ))}
@@ -279,9 +279,9 @@ function StepResult({
       )}
       {!isApproved && areasToImprove.length > 0 && (
         <div style={{ marginBottom: 12 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: "#c0714a", marginBottom: 6 }}>To strengthen your application:</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#FCA5A5", marginBottom: 6 }}>To strengthen your application:</div>
           {areasToImprove.map((a, i) => (
-            <div key={i} style={{ fontSize: 12, color: "#555", paddingLeft: 12, marginBottom: 4, lineHeight: 1.4 }}>
+            <div key={i} style={{ fontSize: 12, color: "#9CA3AF", paddingLeft: 12, marginBottom: 4, lineHeight: 1.4 }}>
               · {a}
             </div>
           ))}
@@ -295,7 +295,7 @@ function StepResult({
             onClick={onEnterGroup}
             style={{
               width: "100%", padding: "14px", borderRadius: 12, border: "none",
-              backgroundColor: "#0A3323", color: "#F7F4D5",
+              backgroundColor: "#064E3B", color: "#F9FAFB",
               fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit",
             }}
           >
@@ -307,13 +307,13 @@ function StepResult({
               onClick={onTryAnother}
               style={{
                 width: "100%", padding: "14px", borderRadius: 12, border: "none",
-                backgroundColor: "#0A3323", color: "#F7F4D5",
+                backgroundColor: "#064E3B", color: "#F9FAFB",
                 fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit",
               }}
             >
               Try another group
             </button>
-            <p style={{ fontSize: 11, color: "#839958", textAlign: "center", margin: 0 }}>
+            <p style={{ fontSize: 11, color: "#6B7280", textAlign: "center", margin: 0 }}>
               Pick a group that better matches your current experience and try again.
             </p>
           </>
@@ -485,20 +485,20 @@ export default function WelcomePage() {
   const progress = ((step - 1) / totalSteps) * 100;
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#f5f3ea", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px 16px" }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "#1F2937", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px 16px" }}>
       <div style={{ width: "100%", maxWidth: 520 }}>
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: 24 }}>
-          <span style={{ fontSize: 22, fontWeight: 800, color: "#0A3323" }}>
-            mentor<span style={{ color: "#D3968C" }}>.</span>
+          <span style={{ fontSize: 22, fontWeight: 800, color: "#F9FAFB" }}>
+            mentor<span style={{ color: "#B45309" }}>.</span>
           </span>
         </div>
 
         {/* Progress bar */}
         {step < 4 && (
           <>
-            <div style={{ backgroundColor: "#e8e4ce", borderRadius: 99, height: 4, marginBottom: 16, overflow: "hidden" }}>
-              <div style={{ height: "100%", backgroundColor: "#0A3323", borderRadius: 99, width: `${progress}%`, transition: "width 0.4s ease" }} />
+            <div style={{ backgroundColor: "#1F2937", borderRadius: 99, height: 4, marginBottom: 16, overflow: "hidden" }}>
+              <div style={{ height: "100%", backgroundColor: "#064E3B", borderRadius: 99, width: `${progress}%`, transition: "width 0.4s ease" }} />
             </div>
             <div style={{ display: "flex", gap: 6, marginBottom: 20, justifyContent: "center" }}>
               {[1, 2, 3].map(s => (
@@ -513,12 +513,12 @@ export default function WelcomePage() {
         )}
 
         {/* Card */}
-        <div style={{ backgroundColor: "#fff", border: "1px solid #e8e4ce", borderRadius: 20, boxShadow: "0 4px 24px rgba(0,0,0,0.06)", overflow: "hidden" }}>
+        <div style={{ backgroundColor: "#181C24", border: "1px solid #1F2937", borderRadius: 20, boxShadow: "0 4px 24px rgba(0,0,0,0.06)", overflow: "hidden" }}>
           {/* Header */}
-          <div style={{ padding: "22px 24px 18px", borderBottom: "1px solid #e8e4ce" }}>
+          <div style={{ padding: "22px 24px 18px", borderBottom: "1px solid #1F2937" }}>
             <div style={{ fontSize: 26, marginBottom: 6 }}>{current.emoji}</div>
-            <h1 style={{ fontSize: 19, fontWeight: 800, color: "#0A3323", margin: "0 0 3px" }}>{current.title}</h1>
-            <p style={{ fontSize: 12, color: "#839958", margin: 0 }}>{current.subtitle}</p>
+            <h1 style={{ fontSize: 19, fontWeight: 800, color: "#F9FAFB", margin: "0 0 3px" }}>{current.title}</h1>
+            <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>{current.subtitle}</p>
           </div>
 
           {/* Body */}
@@ -552,7 +552,7 @@ export default function WelcomePage() {
               {step > 1 ? (
                 <button
                   onClick={() => setStep(s => s - 1)}
-                  style={{ background: "none", border: "none", fontSize: 13, color: "#839958", cursor: "pointer", fontFamily: "inherit", padding: 0 }}
+                  style={{ background: "none", border: "none", fontSize: 13, color: "#6B7280", cursor: "pointer", fontFamily: "inherit", padding: 0 }}
                 >
                   ← Back
                 </button>
@@ -563,7 +563,7 @@ export default function WelcomePage() {
                 disabled={saving || evaluating || !canProceed()}
                 style={{
                   backgroundColor: canProceed() && !saving && !evaluating ? "#0A3323" : "#c8c4ae",
-                  color: "#F7F4D5", border: "none", borderRadius: 12,
+                  color: "#F9FAFB", border: "none", borderRadius: 12,
                   padding: "12px 28px", fontSize: 14, fontWeight: 800,
                   cursor: canProceed() && !saving && !evaluating ? "pointer" : "default",
                   fontFamily: "inherit", transition: "background 0.15s",
@@ -591,7 +591,7 @@ export default function WelcomePage() {
                 }
                 router.push("/communities");
               }}
-              style={{ background: "none", border: "none", fontSize: 12, color: "#b0ab8c", cursor: "pointer", fontFamily: "inherit" }}
+              style={{ background: "none", border: "none", fontSize: 12, color: "#6B7280", cursor: "pointer", fontFamily: "inherit" }}
             >
               Skip setup → explore groups
             </button>
