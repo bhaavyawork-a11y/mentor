@@ -8,7 +8,22 @@ import type { Profile } from "@/types";
 
 const INDUSTRIES = ["Technology","Finance","Healthcare","Education","Consulting","Media","Retail","Manufacturing","Legal","Government","Other"];
 
-export default function ProfileForm({ profile, userId, memberSince, groupCount, postCount }: { profile: Profile | null; userId: string; memberSince?: string; groupCount?: number; postCount?: number }) {
+const CAREER_ACTIONS = [
+  { key: "post_created",    label: "Posts & discussions", icon: "💬" },
+  { key: "referral_post",   label: "Referrals shared",   icon: "🤝" },
+  { key: "job_application", label: "Jobs applied to",    icon: "💼" },
+  { key: "intro_requested", label: "Peer intros made",   icon: "👋" },
+  { key: "invite_sent",     label: "Invites sent",       icon: "✉️" },
+];
+
+export default function ProfileForm({ profile, userId, memberSince, groupCount, postCount, eventCounts }: {
+  profile: Profile | null;
+  userId: string;
+  memberSince?: string;
+  groupCount?: number;
+  postCount?: number;
+  eventCounts?: Record<string, number>;
+}) {
   const router   = useRouter();
   const supabase = createClient();
   const [saving, setSaving] = useState(false);
@@ -82,21 +97,73 @@ export default function ProfileForm({ profile, userId, memberSince, groupCount, 
         </div>
       </Section>
 
-      {(memberSince || groupCount !== undefined || postCount !== undefined) && (
-        <div style={{ backgroundColor: "#18181b", border: "1px solid #27272a", borderRadius: "16px", padding: "20px 24px", marginBottom: 0 }}>
-          <h3 style={{ fontSize: "11px", fontWeight: 700, color: "#a1a1aa", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 16px" }}>Your Mentor Activity</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px" }}>
+      {/* ── Career Activity (North Star metric) ── */}
+      {eventCounts !== undefined && (
+        <div style={{ backgroundColor: "#181C24", border: "1px solid #1F2937", borderRadius: "16px", padding: "20px 24px" }}>
+          {/* Header */}
+          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 20 }}>
+            <div>
+              <p style={{ fontSize: "11px", fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.5px", margin: "0 0 6px" }}>
+                Career actions this month
+              </p>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                <span style={{ fontSize: "32px", fontWeight: 800, color: "#6EE7B7", lineHeight: 1 }}>
+                  {Object.values(eventCounts).reduce((a, b) => a + b, 0)}
+                </span>
+                <span style={{ fontSize: "13px", color: "#6B7280" }}>actions in last 30 days</span>
+              </div>
+            </div>
+            <div style={{ fontSize: "10px", color: "#374151", fontWeight: 600, textAlign: "right" }}>
+              LAST 30 DAYS
+            </div>
+          </div>
+
+          {/* Breakdown */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {CAREER_ACTIONS.map(({ key, label, icon }) => {
+              const count = eventCounts[key] ?? 0;
+              const maxCount = Math.max(...CAREER_ACTIONS.map(a => eventCounts[a.key] ?? 0), 1);
+              const barWidth = count > 0 ? Math.max((count / maxCount) * 100, 6) : 0;
+              return (
+                <div key={key} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <span style={{ fontSize: 14, flexShrink: 0, width: 20 }}>{icon}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                      <span style={{ fontSize: "12px", color: "#9CA3AF", fontWeight: 500 }}>{label}</span>
+                      <span style={{ fontSize: "12px", fontWeight: 700, color: count > 0 ? "#F9FAFB" : "#374151" }}>{count}</span>
+                    </div>
+                    <div style={{ height: 3, backgroundColor: "#1F2937", borderRadius: 99, overflow: "hidden" }}>
+                      {barWidth > 0 && (
+                        <div style={{
+                          height: "100%", borderRadius: 99,
+                          width: `${barWidth}%`,
+                          backgroundColor: "#064E3B",
+                          transition: "width 0.4s ease",
+                        }} />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Context bar */}
+          <div style={{
+            marginTop: 18, paddingTop: 14, borderTop: "1px solid #1F2937",
+            display: "flex", gap: 24,
+          }}>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "20px", fontWeight: 700, color: "#10b981", marginBottom: "4px" }}>{memberSince || "—"}</div>
-              <div style={{ fontSize: "11px", color: "#71717a", marginTop: "2px" }}>Member since</div>
+              <div style={{ fontSize: "16px", fontWeight: 700, color: "#F9FAFB" }}>{memberSince || "—"}</div>
+              <div style={{ fontSize: "10px", color: "#6B7280", marginTop: 2 }}>Member since</div>
             </div>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "20px", fontWeight: 700, color: "#10b981", marginBottom: "4px" }}>{groupCount ?? "—"}</div>
-              <div style={{ fontSize: "11px", color: "#71717a", marginTop: "2px" }}>Groups joined</div>
+              <div style={{ fontSize: "16px", fontWeight: 700, color: "#F9FAFB" }}>{groupCount ?? 0}</div>
+              <div style={{ fontSize: "10px", color: "#6B7280", marginTop: 2 }}>Groups</div>
             </div>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "20px", fontWeight: 700, color: "#10b981", marginBottom: "4px" }}>{postCount ?? "—"}</div>
-              <div style={{ fontSize: "11px", color: "#71717a", marginTop: "2px" }}>Contributions</div>
+              <div style={{ fontSize: "16px", fontWeight: 700, color: "#F9FAFB" }}>{postCount ?? 0}</div>
+              <div style={{ fontSize: "10px", color: "#6B7280", marginTop: 2 }}>Total posts</div>
             </div>
           </div>
         </div>

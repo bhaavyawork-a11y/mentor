@@ -239,6 +239,19 @@ function PostComposer({ communityId, channelType, postTypes, onPosted, userId }:
       referral_company: company.trim() || null,
       referral_role: roleTitle.trim() || null,
     });
+    // Fire career event (non-blocking)
+    const eventType = type === "Referral" ? "referral_post" : "post_created";
+    // Fire career event non-blocking
+    void (async () => {
+      try {
+        await supabase.from("career_events").insert({
+          user_id: userId,
+          event_type: eventType,
+          community_id: communityId,
+          metadata: { channel: channelType, post_type: type },
+        });
+      } catch { /* ignore */ }
+    })();
     setContent(""); setLinkUrl(""); setCompany(""); setRole(""); setOpen(false);
     onPosted();
     setPosting(false);
@@ -271,9 +284,9 @@ function PostComposer({ communityId, channelType, postTypes, onPosted, userId }:
         {postTypes.map(pt => (
           <button key={pt} onClick={() => setType(pt)} style={{
             padding: "5px 12px", borderRadius: 99, border: "1.5px solid",
-            borderColor: type === pt ? "#0A3323" : "#e8e4ce",
-            backgroundColor: type === pt ? "#0A3323" : "#fff",
-            color: type === pt ? "#F7F4D5" : "#839958",
+            borderColor: type === pt ? "#064E3B" : "#374151",
+            backgroundColor: type === pt ? "#064E3B" : "transparent",
+            color: type === pt ? "#F9FAFB" : "#6B7280",
             fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
           }}>
             {pt}
@@ -335,7 +348,7 @@ function PostComposer({ communityId, channelType, postTypes, onPosted, userId }:
         </button>
         <button onClick={handlePost} disabled={!content.trim() || posting} style={{
           padding: "8px 20px", borderRadius: 8, border: "none",
-          backgroundColor: content.trim() ? "#0A3323" : "#c8c4ae",
+          backgroundColor: content.trim() ? "#064E3B" : "#374151",
           color: "#F9FAFB", fontSize: 13, fontWeight: 700,
           cursor: content.trim() && !posting ? "pointer" : "default",
           fontFamily: "inherit",
@@ -375,7 +388,7 @@ function MemberDirectory({ members, onClose }: { members: Member[]; onClose: () 
             return (
             <div key={m.user_id} style={{
               display: "flex", alignItems: "center", gap: 12,
-              padding: "10px 0", borderBottom: "1px solid #f5f3ea",
+              padding: "10px 0", borderBottom: "1px solid #1F2937",
             }}>
               <Avatar userId={m.user_id} name={p?.full_name} size={40} />
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -542,7 +555,7 @@ function InvitePanel({ communityId, userId }: { communityId: string; userId: str
                 padding: "8px 14px",
                 borderRadius: 8,
                 border: "none",
-                backgroundColor: email.trim() && !sending ? "#0A3323" : "#c8c4ae",
+                backgroundColor: email.trim() && !sending ? "#064E3B" : "#374151",
                 color: "#F9FAFB",
                 fontSize: 12,
                 fontWeight: 700,
@@ -561,7 +574,7 @@ function InvitePanel({ communityId, userId }: { communityId: string; userId: str
       </div>
 
       {invites.length > 0 && (
-        <div style={{ borderTop: "1px solid #f0ede0", paddingTop: 12 }}>
+        <div style={{ borderTop: "1px solid #1F2937", paddingTop: 12 }}>
           <p style={{ fontSize: 10, fontWeight: 700, color: "#6B7280", margin: "0 0 8px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
             Sent Invites
           </p>
@@ -569,7 +582,7 @@ function InvitePanel({ communityId, userId }: { communityId: string; userId: str
             {invites.map(inv => (
               <div key={inv.id} style={{
                 padding: "8px",
-                backgroundColor: "#f9f7ec",
+                backgroundColor: "#0F1117",
                 borderRadius: 8,
                 fontSize: 11,
               }}>
@@ -579,11 +592,11 @@ function InvitePanel({ communityId, userId }: { communityId: string; userId: str
                     fontSize: 9,
                     fontWeight: 700,
                     backgroundColor:
-                      inv.status === "pending" ? "#fffbea" :
-                      inv.status === "used" ? "#e6f4ea" : "#fff8f5",
+                      inv.status === "pending" ? "rgba(245,158,11,0.15)" :
+                      inv.status === "used" ? "rgba(6,78,59,0.2)" : "rgba(239,68,68,0.12)",
                     color:
-                      inv.status === "pending" ? "#9a7d00" :
-                      inv.status === "used" ? "#0A3323" : "#c0714a",
+                      inv.status === "pending" ? "#FCD34D" :
+                      inv.status === "used" ? "#6EE7B7" : "#FCA5A5",
                     padding: "2px 6px",
                     borderRadius: 4,
                     textTransform: "capitalize",
@@ -638,10 +651,20 @@ function OnboardingModal({
   const supabase = createClient();
   const [submitting, setSubmitting] = useState(false);
 
+  const fireCareerEvent = async (eventType: string, meta?: Record<string, unknown>) => {
+    try {
+      await supabase.from("career_events").insert({
+        user_id: userId,
+        event_type: eventType,
+        community_id: communityId,
+        metadata: meta ?? {},
+      });
+    } catch { /* non-blocking */ }
+  };
+
   const handleNext = async () => {
     if (onboarding.step === 1) {
       if (!onboarding.intro.trim()) return;
-      // Create intro post
       setSubmitting(true);
       try {
         await supabase.from("community_posts").insert({
@@ -652,6 +675,7 @@ function OnboardingModal({
           channel_type: "discussions",
           title: "Introduction",
         });
+        await fireCareerEvent("post_created", { channel: "discussions", type: "introduction" });
       } catch (e) {
         console.error("Failed to post intro:", e);
       }
@@ -659,9 +683,21 @@ function OnboardingModal({
       setOnboarding({ ...onboarding, step: 2, intro: "" });
     } else if (onboarding.step === 2) {
       if (onboarding.selectedMembers.size === 0) return;
+      setSubmitting(true);
+      try {
+        // Fire intro_requested event for each selected peer
+        for (const peerId of Array.from(onboarding.selectedMembers)) {
+          await supabase.from("career_events").insert({
+            user_id: userId,
+            event_type: "intro_requested",
+            community_id: communityId,
+            metadata: { target_user_id: peerId },
+          });
+        }
+      } catch { /* non-blocking */ }
+      setSubmitting(false);
       setOnboarding({ ...onboarding, step: 3, selectedMembers: new Set() });
     } else if (onboarding.step === 3) {
-      // Final step: create question post and mark onboarding complete
       setSubmitting(true);
       try {
         if (onboarding.question.trim()) {
@@ -672,8 +708,8 @@ function OnboardingModal({
             content: onboarding.question.trim(),
             channel_type: "discussions",
           });
+          await fireCareerEvent("post_created", { channel: "discussions", type: "first_question" });
         }
-        // Mark onboarding complete
         await supabase.from("profiles").update({ onboarding_completed: true }).eq("id", userId);
       } catch (e) {
         console.error("Failed to complete onboarding:", e);
@@ -742,14 +778,14 @@ function OnboardingModal({
           </div>
           <div style={{
             height: 4,
-            backgroundColor: "rgba(247, 244, 213, 0.2)",
+            backgroundColor: "rgba(255,255,255,0.2)",
             borderRadius: 2,
             overflow: "hidden",
             marginBottom: 16,
           }}>
             <div style={{
               height: "100%",
-              backgroundColor: "rgba(6,78,59,0.2)",
+              backgroundColor: "#F9FAFB",
               width: `${progressPct}%`,
               transition: "width 0.3s ease",
             }} />
@@ -825,7 +861,7 @@ function OnboardingModal({
                         padding: "12px",
                         borderRadius: 12,
                         border: isSelected ? "2px solid #064E3B" : "1.5px solid #1F2937",
-                        backgroundColor: isSelected ? "#F0EFD8" : "#fff",
+                        backgroundColor: isSelected ? "rgba(6,78,59,0.25)" : "#0F1117",
                         cursor: "pointer",
                         fontFamily: "inherit",
                         textAlign: "center",
@@ -912,7 +948,7 @@ function OnboardingModal({
               padding: "9px 20px",
               borderRadius: 8,
               border: "none",
-              backgroundColor: canProceed && !submitting ? "#0A3323" : "#c8c4ae",
+              backgroundColor: canProceed && !submitting ? "#064E3B" : "#374151",
               color: "#F9FAFB",
               fontSize: 13,
               fontWeight: 700,
@@ -982,21 +1018,18 @@ export default function CommunityPage() {
       const isApproved = memberData?.status === "approved" || !!memberData;
       setIsMember(isApproved);
 
-      // Check if onboarding needed (member is new — joined < 5 mins ago)
-      if (isApproved && memberData?.created_at) {
-        const createdAt = new Date(memberData.created_at).getTime();
-        const now = Date.now();
-        const fiveMinutes = 5 * 60 * 1000;
-
-        if (now - createdAt < fiveMinutes) {
-          // Check if onboarding_completed is false
+      // Show onboarding if member is approved and hasn't completed it yet
+      if (isApproved) {
+        const lsKey = `mentor_onboarding_shown_${userId}_${community?.id ?? slug}`;
+        const alreadyShown = typeof window !== "undefined" && localStorage.getItem(lsKey);
+        if (!alreadyShown) {
           const { data: profileData } = await supabase
             .from("profiles")
             .select("onboarding_completed")
             .eq("id", userId)
             .single();
-
           if (!profileData?.onboarding_completed) {
+            if (typeof window !== "undefined") localStorage.setItem(lsKey, "1");
             setOnboarding(prev => ({ ...prev, active: true }));
           }
         }
@@ -1093,8 +1126,8 @@ export default function CommunityPage() {
               display: "flex", alignItems: "center", gap: 10, width: "100%",
               padding: "9px 10px", borderRadius: 9, marginBottom: 2,
               border: "none", textAlign: "left", cursor: "pointer", fontFamily: "inherit",
-              backgroundColor: activeTab === ch.type ? "#F0EFD8" : "transparent",
-              color: activeTab === ch.type ? "#0A3323" : "#555",
+              backgroundColor: activeTab === ch.type ? "rgba(6,78,59,0.3)" : "transparent",
+              color: activeTab === ch.type ? "#F9FAFB" : "#9CA3AF",
               transition: "background 0.1s",
             }}>
               <span style={{ fontSize: 16 }}>{ch.emoji}</span>

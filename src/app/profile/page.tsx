@@ -28,6 +28,21 @@ export default async function ProfilePage() {
     .select("id", { count: "exact" })
     .eq("user_id", session.user.id);
 
+  // Fetch career events for last 30 days
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  const { data: careerEvents } = await supabase
+    .from("career_events")
+    .select("event_type, created_at")
+    .eq("user_id", session.user.id)
+    .gte("created_at", thirtyDaysAgo)
+    .order("created_at", { ascending: false });
+
+  // Aggregate by event type
+  const eventCounts: Record<string, number> = {};
+  for (const ev of (careerEvents ?? [])) {
+    eventCounts[ev.event_type] = (eventCounts[ev.event_type] ?? 0) + 1;
+  }
+
   // Format member since date
   const memberSince = profile?.created_at
     ? new Date(profile.created_at).toLocaleDateString("en-US", { month: "short", year: "numeric" })
@@ -41,7 +56,14 @@ export default async function ProfilePage() {
           Your career story. Keep it updated to get better matches.
         </p>
       </div>
-      <ProfileForm profile={profile} userId={session.user.id} memberSince={memberSince} groupCount={groupCount || 0} postCount={postCount || 0} />
+      <ProfileForm
+        profile={profile}
+        userId={session.user.id}
+        memberSince={memberSince}
+        groupCount={groupCount || 0}
+        postCount={postCount || 0}
+        eventCounts={eventCounts}
+      />
     </div>
   );
 }
