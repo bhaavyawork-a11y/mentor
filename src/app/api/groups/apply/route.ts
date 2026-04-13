@@ -126,69 +126,10 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // ─── Skip verification for communities that don't require it ─────────────
-    if (!community.requires_verification) {
-      // Direct approval
-      const { error: memberErr } = await supabase
-        .from("community_members")
-        .upsert({ community_id, user_id: user.id, status: "approved" });
-
-      if (memberErr) {
-        return NextResponse.json({ error: "Failed to join community" }, { status: 500 });
-      }
-
-      return NextResponse.json({ status: "approved", score: 100, feedback: `Welcome to ${community.name}!` });
-    }
-
-    // ─── AI Evaluation via Groq ───────────────────────────────────────────────
-    const apiKey = process.env.GROQ_API_KEY;
-    if (!apiKey) {
-      return NextResponse.json({ error: "AI evaluation unavailable" }, { status: 500 });
-    }
-
-    const prompt = buildEvalPrompt(community as Community, answers);
-
-    const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        messages: [{ role: "user", content: prompt }],
-        max_tokens: 512,
-        temperature: 0.3, // Low temp for consistent evaluation
-        stream: false,
-        response_format: { type: "json_object" },
-      }),
-    });
-
-    if (!groqRes.ok) {
-      const errText = await groqRes.text();
-      console.error("Groq evaluation error:", groqRes.status, errText);
-      return NextResponse.json({ error: "AI evaluation failed" }, { status: 502 });
-    }
-
-    const groqData = await groqRes.json();
-    let evaluation: {
-      score: number;
-      decision: "approved" | "rejected";
-      feedback: string;
-      strengths?: string[];
-      areas_to_improve?: string[];
-    };
-
-    try {
-      const content = groqData.choices?.[0]?.message?.content ?? "{}";
-      evaluation = JSON.parse(content);
-    } catch {
-      console.error("Failed to parse Groq JSON:", groqData.choices?.[0]?.message?.content);
-      return NextResponse.json({ error: "AI evaluation parse error" }, { status: 500 });
-    }
-
-    const { score, decision, feedback } = evaluation;
-    const isApproved = decision === "approved" && score >= 70;
+    // ─── Auto-approve: anyone who submits answers gets in (dev/beta mode) ───────
+    const isApproved = true;
+    const score = 100;
+    const feedback = `Welcome to ${community.name}! Great to have you here.`;
 
     // ─── Save application record ──────────────────────────────────────────────
     const appData = {
@@ -237,8 +178,6 @@ export async function POST(req: NextRequest) {
       status: isApproved ? "approved" : "rejected",
       score,
       feedback,
-      strengths: evaluation.strengths ?? [],
-      areas_to_improve: evaluation.areas_to_improve ?? [],
     });
 
   } catch (error) {
