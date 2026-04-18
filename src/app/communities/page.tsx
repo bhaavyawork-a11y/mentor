@@ -59,7 +59,7 @@ function MyGroupCard({ community }: { community: Community }) {
         padding: "14px 16px", display: "flex", alignItems: "center", gap: 12,
         cursor: "pointer", transition: "all 0.15s",
       }}
-        onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = "#064E3B"; }}
+        onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = "#1A3A8F"; }}
         onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = "#1F2937"; }}
       >
         <div style={{
@@ -72,7 +72,7 @@ function MyGroupCard({ community }: { community: Community }) {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 1 }}>
             <span style={{ fontSize: 14, fontWeight: 700, color: "#F9FAFB" }}>{community.name}</span>
-            <span style={{ fontSize: 10, fontWeight: 700, backgroundColor: "rgba(6,78,59,0.25)", color: "#6EE7B7", borderRadius: 99, padding: "2px 8px" }}>
+            <span style={{ fontSize: 10, fontWeight: 700, backgroundColor: "rgba(26,58,143,0.15)", color: "#93B4FF", borderRadius: 99, padding: "2px 8px" }}>
               ✓ Member
             </span>
           </div>
@@ -118,7 +118,7 @@ function PendingCard({ community, app }: { community: Community; app: AppRecord 
           <span style={{
             fontSize: 10, fontWeight: 700, borderRadius: 99, padding: "2px 8px",
             backgroundColor: rejected ? "rgba(239,68,68,0.15)" : "rgba(245,158,11,0.15)",
-            color: rejected ? "#FCA5A5" : "#FCD34D",
+            color: rejected ? "#FCA5A5" : "#93B4FF",
           }}>
             {rejected ? "Not approved" : "Under review"}
           </span>
@@ -139,7 +139,7 @@ function PendingCard({ community, app }: { community: Community; app: AppRecord 
           {canReapply ? (
             <Link href={`/communities/${community.slug}/reapply`} style={{
               padding: "7px 14px", borderRadius: 8, border: "none",
-              backgroundColor: "#064E3B", color: "#F9FAFB",
+              backgroundColor: "#1A3A8F", color: "#F9FAFB",
               fontSize: 12, fontWeight: 700, textDecoration: "none",
               cursor: "pointer", display: "block",
             }}>
@@ -217,7 +217,7 @@ function ApplyPanel({ community, onDone }: {
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
           <span style={{ fontSize: 22 }}>{ok ? "🎉" : "😔"}</span>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: ok ? "#6EE7B7" : "#FCA5A5" }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: ok ? "#93B4FF" : "#FCA5A5" }}>
               {ok ? `Welcome to ${community.name}!` : "Application not approved"}
             </div>
             <div style={{ fontSize: 11, color: "#6B7280" }}>AI score: {result.score}/100</div>
@@ -228,7 +228,7 @@ function ApplyPanel({ community, onDone }: {
         </p>
         {ok && (
           <Link href={`/communities/${community.slug}`} style={{
-            display: "inline-block", padding: "10px 20px", backgroundColor: "#064E3B", color: "#F9FAFB",
+            display: "inline-block", padding: "10px 20px", backgroundColor: "#1A3A8F", color: "#F9FAFB",
             borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none",
           }}>
             Enter group →
@@ -258,7 +258,7 @@ function ApplyPanel({ community, onDone }: {
           const val = answers[q.id] || "";
           return (
             <div key={q.id}>
-              <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#6EE7B7", marginBottom: 5, lineHeight: 1.4 }}>
+              <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#93B4FF", marginBottom: 5, lineHeight: 1.4 }}>
                 Q{i + 1}. {q.question}
               </label>
               <textarea
@@ -280,7 +280,7 @@ function ApplyPanel({ community, onDone }: {
           disabled={!canSubmit || submitting}
           style={{
             padding: "10px 22px", borderRadius: 10, border: "none",
-            backgroundColor: canSubmit && !submitting ? "#064E3B" : "#374151",
+            backgroundColor: canSubmit && !submitting ? "#1A3A8F" : "#374151",
             color: "#F9FAFB", fontSize: 13, fontWeight: 700,
             cursor: canSubmit && !submitting ? "pointer" : "default",
             fontFamily: "inherit", display: "flex", alignItems: "center", gap: 8,
@@ -345,7 +345,7 @@ function DiscoverCard({ community, onApplied, atGroupCap }: {
           <span style={{ fontSize: 11, color: "#6B7280" }}>{community.posts_this_week} posts/wk</span>
         )}
         {community.requires_verification && (
-          <span style={{ fontSize: 10, color: "#6EE7B7", fontWeight: 600 }}>🔒 Verified only</span>
+          <span style={{ fontSize: 10, color: "#93B4FF", fontWeight: 600 }}>🔒 Verified only</span>
         )}
       </div>
 
@@ -368,7 +368,7 @@ function DiscoverCard({ community, onApplied, atGroupCap }: {
             <div style={{
               padding: "10px 14px", borderRadius: 10,
               backgroundColor: "rgba(180,83,9,0.1)", border: "1px solid rgba(180,83,9,0.3)",
-              fontSize: 12, color: "#FCD34D", lineHeight: 1.5,
+              fontSize: 12, color: "#93B4FF", lineHeight: 1.5,
             }}>
               You&apos;re already in 2 groups. Leave a group before joining another — Mentor limits membership to keep each community focused.
             </div>
@@ -376,8 +376,8 @@ function DiscoverCard({ community, onApplied, atGroupCap }: {
             <button
               onClick={() => setApplying(true)}
               style={{
-                width: "100%", padding: "11px", borderRadius: 10, border: "1.5px solid #064E3B",
-                backgroundColor: "transparent", color: "#6EE7B7",
+                width: "100%", padding: "11px", borderRadius: 10, border: "1.5px solid #1A3A8F",
+                backgroundColor: "transparent", color: "#93B4FF",
                 fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
                 transition: "all 0.15s",
               }}
@@ -507,11 +507,11 @@ export default function CommunitiesPage() {
         }}>
           <span style={{ fontSize: 18, flexShrink: 0 }}>⚡</span>
           <div>
-            <p style={{ fontSize: 13, fontWeight: 700, color: "#FCD34D", margin: "0 0 3px" }}>Keep your profile current</p>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "#93B4FF", margin: "0 0 3px" }}>Keep your profile current</p>
             <p style={{ fontSize: 12, color: "#9CA3AF", margin: "0 0 6px", lineHeight: 1.5 }}>
               It&apos;s been almost a year since you joined Mentor. Update your role and company so your peers know where you are today.
             </p>
-            <Link href="/profile" style={{ fontSize: 12, color: "#FCD34D", fontWeight: 700, textDecoration: "underline" }}>
+            <Link href="/profile" style={{ fontSize: 12, color: "#93B4FF", fontWeight: 700, textDecoration: "underline" }}>
               Update my profile →
             </Link>
           </div>
@@ -553,7 +553,7 @@ export default function CommunitiesPage() {
           <p style={{ fontSize: 14, fontWeight: 700, color: "#F9FAFB", margin: "0 0 12px", lineHeight: 1.5 }}>
             You haven&apos;t joined a group yet. Apply to a verified group to access discussions, job postings, and peers in your role.
           </p>
-          <a href="#discover-section" style={{ fontSize: 13, fontWeight: 700, color: "#6EE7B7", textDecoration: "none", cursor: "pointer" }}>
+          <a href="#discover-section" style={{ fontSize: 13, fontWeight: 700, color: "#93B4FF", textDecoration: "none", cursor: "pointer" }}>
             Apply to a group →
           </a>
         </div>

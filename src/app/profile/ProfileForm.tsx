@@ -107,7 +107,7 @@ export default function ProfileForm({ profile, userId, memberSince, groupCount, 
                 Career actions this month
               </p>
               <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                <span style={{ fontSize: "32px", fontWeight: 800, color: "#6EE7B7", lineHeight: 1 }}>
+                <span style={{ fontSize: "32px", fontWeight: 800, color: "#93B4FF", lineHeight: 1 }}>
                   {Object.values(eventCounts).reduce((a, b) => a + b, 0)}
                 </span>
                 <span style={{ fontSize: "13px", color: "#6B7280" }}>actions in last 30 days</span>
@@ -137,7 +137,7 @@ export default function ProfileForm({ profile, userId, memberSince, groupCount, 
                         <div style={{
                           height: "100%", borderRadius: 99,
                           width: `${barWidth}%`,
-                          backgroundColor: "#064E3B",
+                          backgroundColor: "#1A3A8F",
                           transition: "width 0.4s ease",
                         }} />
                       )}

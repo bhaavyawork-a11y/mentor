@@ -276,7 +276,7 @@ function PostComposer({ communityId, channelType, postTypes, onPosted, userId }:
 
   return (
     <div style={{
-      backgroundColor: "#181C24", border: "1.5px solid #064E3B", borderRadius: 14,
+      backgroundColor: "#181C24", border: "1.5px solid #1A3A8F", borderRadius: 14,
       padding: "16px 18px", marginBottom: 16,
     }}>
       {/* Type selector */}
@@ -284,8 +284,8 @@ function PostComposer({ communityId, channelType, postTypes, onPosted, userId }:
         {postTypes.map(pt => (
           <button key={pt} onClick={() => setType(pt)} style={{
             padding: "5px 12px", borderRadius: 99, border: "1.5px solid",
-            borderColor: type === pt ? "#064E3B" : "#374151",
-            backgroundColor: type === pt ? "#064E3B" : "transparent",
+            borderColor: type === pt ? "#1A3A8F" : "#374151",
+            backgroundColor: type === pt ? "#1A3A8F" : "transparent",
             color: type === pt ? "#F9FAFB" : "#6B7280",
             fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
           }}>
@@ -348,7 +348,7 @@ function PostComposer({ communityId, channelType, postTypes, onPosted, userId }:
         </button>
         <button onClick={handlePost} disabled={!content.trim() || posting} style={{
           padding: "8px 20px", borderRadius: 8, border: "none",
-          backgroundColor: content.trim() ? "#064E3B" : "#374151",
+          backgroundColor: content.trim() ? "#1A3A8F" : "#374151",
           color: "#F9FAFB", fontSize: 13, fontWeight: 700,
           cursor: content.trim() && !posting ? "pointer" : "default",
           fontFamily: "inherit",
@@ -395,7 +395,7 @@ function MemberDirectory({ members, onClose }: { members: Member[]; onClose: () 
                 <div style={{ fontSize: 13, fontWeight: 700, color: "#F9FAFB", marginBottom: 1, display: "flex", alignItems: "center", gap: 6 }}>
                   {p?.full_name ?? "Member"}
                   {p?.headline && /founder|vp|director|head of|partner|principal|chief|cto|cpo|cmo|coo|ceo/i.test(p.headline) && (
-                    <span style={{ marginLeft: "6px", display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "10px", fontWeight: 600, backgroundColor: "#a0822040", color: "#FCD34D", borderRadius: "4px", padding: "2px 8px", border: "0.5px solid #c0a08080" }}>
+                    <span style={{ marginLeft: "6px", display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "10px", fontWeight: 600, backgroundColor: "#a0822040", color: "#93B4FF", borderRadius: "4px", padding: "2px 8px", border: "0.5px solid #c0a08080" }}>
                       Expert
                     </span>
                   )}
@@ -555,7 +555,7 @@ function InvitePanel({ communityId, userId }: { communityId: string; userId: str
                 padding: "8px 14px",
                 borderRadius: 8,
                 border: "none",
-                backgroundColor: email.trim() && !sending ? "#064E3B" : "#374151",
+                backgroundColor: email.trim() && !sending ? "#1A3A8F" : "#374151",
                 color: "#F9FAFB",
                 fontSize: 12,
                 fontWeight: 700,
@@ -595,8 +595,8 @@ function InvitePanel({ communityId, userId }: { communityId: string; userId: str
                       inv.status === "pending" ? "rgba(245,158,11,0.15)" :
                       inv.status === "used" ? "rgba(6,78,59,0.2)" : "rgba(239,68,68,0.12)",
                     color:
-                      inv.status === "pending" ? "#FCD34D" :
-                      inv.status === "used" ? "#6EE7B7" : "#FCA5A5",
+                      inv.status === "pending" ? "#93B4FF" :
+                      inv.status === "used" ? "#93B4FF" : "#FCA5A5",
                     padding: "2px 6px",
                     borderRadius: 4,
                     textTransform: "capitalize",
@@ -768,7 +768,7 @@ function OnboardingModal({
       }}>
         {/* Header with progress */}
         <div style={{
-          backgroundColor: "#064E3B",
+          backgroundColor: "#1A3A8F",
           color: "#F9FAFB",
           padding: "24px 24px 16px",
           textAlign: "center",
@@ -860,7 +860,7 @@ function OnboardingModal({
                       style={{
                         padding: "12px",
                         borderRadius: 12,
-                        border: isSelected ? "2px solid #064E3B" : "1.5px solid #1F2937",
+                        border: isSelected ? "2px solid #1A3A8F" : "1.5px solid #1F2937",
                         backgroundColor: isSelected ? "rgba(6,78,59,0.25)" : "#0F1117",
                         cursor: "pointer",
                         fontFamily: "inherit",
@@ -872,7 +872,7 @@ function OnboardingModal({
                       <div style={{ fontSize: 11, fontWeight: 700, color: "#F9FAFB", marginTop: 8, marginBottom: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: 4, flexWrap: "wrap" }}>
                         {p?.full_name ?? "Member"}
                         {p?.headline && /founder|vp|director|head of|partner|principal|chief|cto|cpo|cmo|coo|ceo/i.test(p.headline) && (
-                          <span style={{ fontSize: "9px", fontWeight: 600, backgroundColor: "#a0822040", color: "#FCD34D", borderRadius: "3px", padding: "1px 5px", border: "0.5px solid #c0a08080" }}>
+                          <span style={{ fontSize: "9px", fontWeight: 600, backgroundColor: "#a0822040", color: "#93B4FF", borderRadius: "3px", padding: "1px 5px", border: "0.5px solid #c0a08080" }}>
                             Expert
                           </span>
                         )}
@@ -948,7 +948,7 @@ function OnboardingModal({
               padding: "9px 20px",
               borderRadius: 8,
               border: "none",
-              backgroundColor: canProceed && !submitting ? "#064E3B" : "#374151",
+              backgroundColor: canProceed && !submitting ? "#1A3A8F" : "#374151",
               color: "#F9FAFB",
               fontSize: 13,
               fontWeight: 700,
@@ -1237,7 +1237,7 @@ export default function CommunityPage() {
                 Apply to join {community.name} to read and post in channels.
               </p>
               <Link href="/communities" style={{
-                display: "inline-block", padding: "10px 20px", backgroundColor: "#064E3B",
+                display: "inline-block", padding: "10px 20px", backgroundColor: "#1A3A8F",
                 color: "#F9FAFB", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none",
               }}>
                 Apply to join →
@@ -1260,7 +1260,7 @@ export default function CommunityPage() {
           {activeTab === "job_board" && (
             <div style={{
               backgroundColor: "#0a4d2a",
-              border: "1.5px solid #064E3B",
+              border: "1.5px solid #1A3A8F",
               borderRadius: 12,
               padding: "14px 16px",
               marginBottom: 16,

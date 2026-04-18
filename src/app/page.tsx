@@ -66,7 +66,7 @@ export default async function HomePage() {
       {/* ── Nav ── */}
       <header className="landing-nav">
         <Link href="/" className="landing-logo">
-          mentor<span style={{ color: "#B45309" }}>.</span>
+          mentor<span style={{ color: "#5B8AFF" }}>.</span>
         </Link>
         <nav className="landing-nav-links">
           {[
@@ -90,7 +90,7 @@ export default async function HomePage() {
         {/* Tag pill */}
         <div style={{
           display: "inline-block",
-          backgroundColor: "rgba(6,78,59,0.2)", color: "#F9FAFB",
+          backgroundColor: "rgba(26,58,143,0.12)", color: "#F9FAFB",
           fontSize: 12, fontWeight: 700, borderRadius: 99,
           padding: "6px 18px", marginBottom: 24, letterSpacing: "0.3px",
           border: "1px solid #1F2937",
@@ -100,7 +100,7 @@ export default async function HomePage() {
 
         <h1 className="landing-h1">
           Get in through the{" "}
-          <span style={{ color: "#B45309" }}>side door.</span>
+          <span style={{ color: "#5B8AFF" }}>side door.</span>
         </h1>
 
         <p className="landing-hero-sub">
@@ -190,7 +190,7 @@ export default async function HomePage() {
             </p>
             <Link href="/auth/login" style={{
               fontSize: 12, fontWeight: 700,
-              backgroundColor: "#B45309", color: "#ffffff",
+              backgroundColor: "#5B8AFF", color: "#ffffff",
               borderRadius: 8, padding: "8px 14px", textDecoration: "none",
               whiteSpace: "nowrap",
             }}>
@@ -201,7 +201,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Stats bar ── */}
-      <section style={{ backgroundColor: "#064E3B", padding: "40px 24px" }}>
+      <section style={{ backgroundColor: "#1A3A8F", padding: "40px 24px" }}>
         <div className="landing-stats-grid">
           {[
             { num: "2,400+", label: "Referrals given"            },
@@ -210,7 +210,7 @@ export default async function HomePage() {
             { num: "92%",    label: "Interview rate via referral" },
           ].map(({ num, label }) => (
             <div key={label} style={{ textAlign: "center" }}>
-              <p style={{ fontSize: 30, fontWeight: 800, color: "#B45309", margin: "0 0 4px", lineHeight: 1 }}>{num}</p>
+              <p style={{ fontSize: 30, fontWeight: 800, color: "#5B8AFF", margin: "0 0 4px", lineHeight: 1 }}>{num}</p>
               <p style={{ fontSize: 10, fontWeight: 600, color: "rgba(247,244,213,0.45)", textTransform: "uppercase", letterSpacing: "0.7px", margin: 0 }}>{label}</p>
             </div>
           ))}
@@ -219,7 +219,7 @@ export default async function HomePage() {
 
       {/* ── Features ── */}
       <section className="landing-section">
-        <p className="landing-eyebrow" style={{ color: "#B45309" }}>EVERYTHING YOU NEED</p>
+        <p className="landing-eyebrow" style={{ color: "#5B8AFF" }}>EVERYTHING YOU NEED</p>
         <h2 className="landing-h2">One platform, the full journey</h2>
         <div className="landing-features-grid">
           {FEATURES.map(({ icon, title, desc }) => (
@@ -237,7 +237,7 @@ export default async function HomePage() {
 
       {/* ── Communities ── */}
       <section className="landing-section">
-        <p className="landing-eyebrow" style={{ color: "#B45309" }}>COMMUNITIES</p>
+        <p className="landing-eyebrow" style={{ color: "#5B8AFF" }}>COMMUNITIES</p>
         <h2 className="landing-h2">Find your people. Get inside.</h2>
         <p style={{ fontSize: 15, color: "#6B7280", margin: "0 0 28px" }}>
           Gated circles for people in the same role, at the same stage.
@@ -252,7 +252,7 @@ export default async function HomePage() {
             }}>
               <div style={{
                 width: 48, height: 48, borderRadius: 12,
-                backgroundColor: "rgba(6,78,59,0.2)",
+                backgroundColor: "rgba(26,58,143,0.12)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontSize: 24,
               }}>
@@ -261,7 +261,7 @@ export default async function HomePage() {
               <div>
                 <p style={{ fontSize: 13, fontWeight: 700, color: "#F9FAFB", margin: "0 0 3px" }}>{name}</p>
                 <p style={{ fontSize: 11, color: "#6B7280", margin: "0 0 2px" }}>{members.toLocaleString("en-IN")} members</p>
-                <p style={{ fontSize: 10, fontWeight: 700, color: "#B45309", margin: 0 }}>{canRefer} can refer</p>
+                <p style={{ fontSize: 10, fontWeight: 700, color: "#5B8AFF", margin: 0 }}>{canRefer} can refer</p>
               </div>
             </Link>
           ))}
@@ -299,14 +299,14 @@ export default async function HomePage() {
           <div style={{ flex: 1 }}>
             <p style={{ fontSize: 18, fontWeight: 700, color: "#F9FAFB", lineHeight: 1.7, margin: "0 0 16px" }}>
               &ldquo;I applied cold to Zepto 3 times. No response. Joined the Founders Office circle, connected with someone inside, got a referral.{" "}
-              <span style={{ color: "#B45309" }}>Interview in 4 days.</span>&rdquo;
+              <span style={{ color: "#5B8AFF" }}>Interview in 4 days.</span>&rdquo;
             </p>
             <p style={{ fontSize: 12, color: "rgba(247,244,213,0.45)", margin: 0 }}>
               — Rohan Verma, Chief of Staff at Zepto
             </p>
           </div>
           <div style={{ textAlign: "center", flexShrink: 0 }}>
-            <div style={{ backgroundColor: "rgba(6,78,59,0.2)", borderRadius: 14, padding: "20px 28px" }}>
+            <div style={{ backgroundColor: "rgba(26,58,143,0.12)", borderRadius: 14, padding: "20px 28px" }}>
               <p style={{ fontSize: 36, fontWeight: 800, color: "#F9FAFB", margin: "0 0 4px", lineHeight: 1 }}>4 days</p>
               <p style={{ fontSize: 11, color: "rgba(10,51,35,0.55)", margin: 0 }}>cold apply → interview</p>
             </div>
@@ -328,7 +328,7 @@ export default async function HomePage() {
       {/* ── Footer ── */}
       <footer className="landing-footer">
         <Link href="/" className="landing-logo" style={{ color: "#F9FAFB" }}>
-          mentor<span style={{ color: "#B45309" }}>.</span>
+          mentor<span style={{ color: "#5B8AFF" }}>.</span>
         </Link>
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
           {["About", "Privacy", "Terms"].map((label) => (

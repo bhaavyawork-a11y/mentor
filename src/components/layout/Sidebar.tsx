@@ -5,44 +5,9 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { useSession } from "@/hooks/useSession";
 import { useProfile } from "@/hooks/useProfile";
-import type { Profile } from "@/types";
 import { useEffect, useRef, useState } from "react";
 
-// ─── Level system ─────────────────────────────────────────────────────────────
-
-type LevelEntry = { level: number; name: string; min: number; next: number | null };
-
-const LEVELS: LevelEntry[] = [
-  { level: 1, name: "Rookie",       min: 0,    next: 200  },
-  { level: 2, name: "Explorer",     min: 200,  next: 500  },
-  { level: 3, name: "Practitioner", min: 500,  next: 1000 },
-  { level: 4, name: "Expert",       min: 1000, next: 2000 },
-  { level: 5, name: "Master",       min: 2000, next: null },
-];
-
-function calcXP(profile: Profile | null): number {
-  if (!profile) return 0;
-  const fields = [
-    profile.full_name, profile.bio, profile.location,
-    profile.current_job_role, profile.target_role, profile.industry, profile.linkedin_url,
-  ];
-  return (
-    fields.filter(Boolean).length * 15 +
-    Math.min((profile.skills ?? []).length * 5, 50) +
-    (profile.interview_xp ?? 0)
-  );
-}
-
-function getLevelInfo(xp: number) {
-  let current: LevelEntry = LEVELS[0];
-  for (const l of LEVELS) { if (xp >= l.min) current = l; }
-  const nextLevel = current.level < 5 ? LEVELS[current.level] : null;
-  const progress  = nextLevel ? (xp - current.min) / (nextLevel.min - current.min) : 1;
-  const toNext    = nextLevel ? nextLevel.min - xp : 0;
-  return { current, nextLevel, progress, toNext };
-}
-
-// ─── Nav items (5 top-level) ──────────────────────────────────────────────────
+// ─── Nav items ────────────────────────────────────────────────────────────────
 
 type NavItem = { label: string; href: string; icon: string; matchPrefixes: string[] };
 
@@ -64,8 +29,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname  = usePathname();
   const router    = useRouter();
   const supabase  = createClient();
-  const { session }  = useSession();
-  const { profile }  = useProfile();
+  const { session } = useSession();
+  const { profile } = useProfile();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -91,9 +56,6 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const firstName   = displayName.split(" ")[0];
   const initials    = displayName.split(" ").map((n: string) => n[0]).slice(0, 2).join("").toUpperCase();
 
-  const xp = calcXP(profile ?? null);
-  const { current: currentLevel, nextLevel, progress, toNext } = getLevelInfo(xp);
-
   return (
     <div style={{
       width: 225,
@@ -110,7 +72,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           onClick={onNavigate}
           style={{ fontSize: 18, fontWeight: 800, color: "#F9FAFB", textDecoration: "none", display: "block" }}
         >
-          mentor<span style={{ color: "#B45309" }}>.</span>
+          mentor<span style={{ color: "#5B8AFF" }}>.</span>
         </Link>
       </div>
 
@@ -131,7 +93,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                 borderRadius: 10,
                 textDecoration: "none",
                 marginBottom: 2,
-                backgroundColor: active ? "rgba(6,78,59,0.35)" : "transparent",
+                backgroundColor: active ? "rgba(26,58,143,0.3)" : "transparent",
                 color: active ? "#F9FAFB" : "#9CA3AF",
                 fontWeight: active ? 700 : 500,
                 fontSize: 14,
@@ -144,7 +106,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                 <span style={{
                   marginLeft: "auto",
                   width: 6, height: 6, borderRadius: "50%",
-                  backgroundColor: "#064E3B",
+                  backgroundColor: "#5B8AFF",
                   flexShrink: 0,
                 }} />
               )}
@@ -177,24 +139,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         </div>
       </div>
 
-      {/* ── XP footer + avatar ── */}
-      <div style={{ padding: "12px 10px", borderTop: "1px solid #1F2937", flexShrink: 0 }}>
-        {/* XP bar */}
-        <div style={{ backgroundColor: "#064E3B", borderRadius: 10, padding: "10px 12px", marginBottom: 10 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-            <span style={{ fontSize: 10, color: "#D1FAE5", textTransform: "uppercase", letterSpacing: "0.6px", fontWeight: 700 }}>
-              Lv {currentLevel.level} · {currentLevel.name}
-            </span>
-            <span style={{ fontSize: 11, color: "#B45309", fontWeight: 800 }}>{xp} XP</span>
-          </div>
-          <div style={{ height: 4, backgroundColor: "rgba(255,255,255,0.1)", borderRadius: 99, overflow: "hidden", marginBottom: 4 }}>
-            <div style={{ height: "100%", width: `${Math.min(progress * 100, 100)}%`, backgroundColor: "#B45309", borderRadius: 99 }} />
-          </div>
-          <div style={{ fontSize: 9, color: "rgba(209,250,229,0.5)" }}>
-            {nextLevel ? `${toNext} XP to Lv ${nextLevel.level}` : "Max level · Master"}
-          </div>
-        </div>
-
+      {/* ── Avatar footer ── */}
+      <div style={{ padding: "12px 10px", borderTop: "1px solid #1C2030", flexShrink: 0 }}>
         {/* Avatar + dropdown */}
         <div style={{ position: "relative" }} ref={dropdownRef}>
           <div
@@ -206,7 +152,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           >
             <div style={{
               width: 32, height: 32, borderRadius: "50%",
-              backgroundColor: "#B45309", color: "#ffffff",
+              backgroundColor: "#1A3A8F", color: "#ffffff",
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 11, fontWeight: 800, flexShrink: 0,
             }}>
