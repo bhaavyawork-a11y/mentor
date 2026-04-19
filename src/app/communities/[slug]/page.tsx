@@ -1236,7 +1236,7 @@ export default function CommunityPage() {
               <p style={{ fontSize: 13, color: "#6B7280", margin: "0 0 14px" }}>
                 Apply to join {community.name} to read and post in channels.
               </p>
-              <Link href="/communities" style={{
+              <Link href={`/communities/${community.slug}/apply`} style={{
                 display: "inline-block", padding: "10px 20px", backgroundColor: "#1A3A8F",
                 color: "#F9FAFB", borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: "none",
               }}>

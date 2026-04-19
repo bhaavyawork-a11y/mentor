@@ -306,15 +306,15 @@ const FEATURES = [
   { icon: "🎯", label: "Verified open roles"    },
 ];
 
-function SpotlightDiscover({ communities, onApplied, atGroupCap }: {
+function SpotlightDiscover({ communities, atGroupCap }: {
   communities: Community[];
-  onApplied: (communityId: string, status: "approved" | "rejected") => void;
+  onApplied?: (communityId: string, status: "approved" | "rejected") => void;
   atGroupCap: boolean;
 }) {
   const [idx, setIdx] = useState(0);
-  const [applying, setApplying] = useState(false);
 
-  useEffect(() => { setApplying(false); }, [idx]);
+  // reset to first question when switching groups
+  useEffect(() => { void idx; }, [idx]);
 
   if (communities.length === 0) return null;
   const community = communities[idx];
@@ -422,29 +422,23 @@ function SpotlightDiscover({ communities, onApplied, atGroupCap }: {
           </div>
 
           {/* Apply / cap notice */}
-          {!applying && (
-            atGroupCap ? (
-              <div style={{
-                padding: "10px 14px", borderRadius: 10, backgroundColor: "rgba(26,58,143,0.1)",
-                border: "1px solid rgba(26,58,143,0.25)", fontSize: 12, color: "#93B4FF", lineHeight: 1.5,
-              }}>
-                You&apos;re in 2 groups — the max. Leave one first to apply here.
-              </div>
-            ) : (
-              <button onClick={() => setApplying(true)} style={{
-                width: "100%", padding: "13px", borderRadius: 12,
-                backgroundColor: "#1A3A8F", color: "#fff",
-                fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit",
-                border: "none", letterSpacing: "-0.2px", transition: "background 0.15s",
-              }}>
-                Apply to join →
-              </button>
-            )
-          )}
-
-          {/* Inline apply panel */}
-          {applying && (
-            <ApplyPanel community={community} onDone={r => { onApplied(community.id, r.status); setApplying(false); }} />
+          {atGroupCap ? (
+            <div style={{
+              padding: "10px 14px", borderRadius: 10, backgroundColor: "rgba(26,58,143,0.1)",
+              border: "1px solid rgba(26,58,143,0.25)", fontSize: 12, color: "#93B4FF", lineHeight: 1.5,
+            }}>
+              You&apos;re in 2 groups — the max. Leave one first to apply here.
+            </div>
+          ) : (
+            <Link href={`/communities/${community.slug}/apply`} style={{
+              display: "block", width: "100%", padding: "13px", borderRadius: 12,
+              backgroundColor: "#1A3A8F", color: "#fff",
+              fontSize: 14, fontWeight: 800, fontFamily: "inherit",
+              textDecoration: "none", textAlign: "center",
+              letterSpacing: "-0.2px",
+            }}>
+              Apply to join →
+            </Link>
           )}
         </div>
 
