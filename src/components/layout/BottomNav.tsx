@@ -6,8 +6,8 @@ import { usePathname } from "next/navigation";
 interface NavItem {
   label: string;
   href: string;
-  icon: (active: boolean) => React.ReactNode;
   matchPrefixes?: string[];
+  icon: (active: boolean) => React.ReactNode;
 }
 
 const NAV_ITEMS: NavItem[] = [
@@ -15,8 +15,10 @@ const NAV_ITEMS: NavItem[] = [
     label: "Groups",
     href: "/communities",
     matchPrefixes: ["/communities"],
-    icon: (active: boolean) => (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.5 : 1.8} strokeLinecap="round" strokeLinejoin="round">
+    icon: (active) => (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth={active ? 2.5 : 1.8}
+        strokeLinecap="round" strokeLinejoin="round">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
         <circle cx="9" cy="7" r="4"/>
         <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
@@ -28,8 +30,10 @@ const NAV_ITEMS: NavItem[] = [
     label: "Messages",
     href: "/messages",
     matchPrefixes: ["/messages"],
-    icon: (active: boolean) => (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.5 : 1.8} strokeLinecap="round" strokeLinejoin="round">
+    icon: (active) => (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth={active ? 2.5 : 1.8}
+        strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
       </svg>
     ),
@@ -38,8 +42,10 @@ const NAV_ITEMS: NavItem[] = [
     label: "Profile",
     href: "/profile",
     matchPrefixes: ["/profile", "/settings"],
-    icon: (active: boolean) => (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.5 : 1.8} strokeLinecap="round" strokeLinejoin="round">
+    icon: (active) => (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth={active ? 2.5 : 1.8}
+        strokeLinecap="round" strokeLinejoin="round">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
         <circle cx="12" cy="7" r="4"/>
       </svg>
@@ -52,7 +58,7 @@ export default function BottomNav() {
 
   return (
     <>
-      {/* Spacer so content doesn't hide behind nav */}
+      {/* Spacer so page content doesn't hide behind nav */}
       <div className="bottom-nav-spacer" />
 
       <nav
@@ -61,8 +67,8 @@ export default function BottomNav() {
           bottom: 0,
           left: 0,
           right: 0,
-          backgroundColor: "#0C0E14",
-          borderTop: "1px solid rgba(255,255,255,0.07)",
+          backgroundColor: "#FFFFFF",
+          borderTop: "1px solid #E5E7EB",
           display: "flex",
           alignItems: "stretch",
           zIndex: 900,
@@ -70,10 +76,11 @@ export default function BottomNav() {
         }}
       >
         {NAV_ITEMS.map((item) => {
-          const active =
-            item.matchPrefixes
-              ? item.matchPrefixes.some((p) => pathname === p || pathname.startsWith(p + "/"))
-              : pathname === item.href;
+          const active = item.matchPrefixes
+            ? item.matchPrefixes.some(
+                (p) => pathname === p || pathname.startsWith(p + "/")
+              )
+            : pathname === item.href;
 
           return (
             <Link
@@ -85,33 +92,19 @@ export default function BottomNav() {
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: 4,
+                gap: 3,
                 paddingTop: 10,
-                paddingBottom: 8,
-                color: active ? "#5B8AFF" : "rgba(156,163,175,0.6)",
+                paddingBottom: 10,
+                color: active ? "#111827" : "#9CA3AF",
                 textDecoration: "none",
                 fontSize: 10,
                 fontWeight: active ? 700 : 500,
-                letterSpacing: "0.01em",
+                letterSpacing: "0.02em",
                 transition: "color 0.15s",
-                minHeight: 56,
+                minHeight: 60,
                 WebkitTapHighlightColor: "transparent",
-                position: "relative",
               }}
             >
-              {/* Active top indicator */}
-              {active && (
-                <span style={{
-                  position: "absolute",
-                  top: 0,
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  width: 24,
-                  height: 2,
-                  borderRadius: "0 0 2px 2px",
-                  backgroundColor: "#5B8AFF",
-                }} />
-              )}
               {item.icon(active)}
               {item.label}
             </Link>
