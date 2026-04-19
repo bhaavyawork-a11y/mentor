@@ -104,7 +104,7 @@ function StepPickGroup({ communities, chosen, setChosen }: {
               style={{
                 display: "flex", alignItems: "center", gap: 14, padding: "14px 16px",
                 borderRadius: 12, textAlign: "left", width: "100%",
-                border: `1.5px solid ${active ? "#0A3323" : "#e8e4ce"}`,
+                border: `1.5px solid ${active ? "#1A3A8F" : "#e8e4ce"}`,
                 backgroundColor: active ? "#F0EFD8" : "#fff",
                 cursor: "pointer", fontFamily: "inherit", transition: "all 0.12s",
               }}
@@ -128,7 +128,7 @@ function StepPickGroup({ communities, chosen, setChosen }: {
               {active && (
                 <span style={{
                   width: 20, height: 20, borderRadius: "50%",
-                  backgroundColor: "#064E3B", color: "#fff",
+                  backgroundColor: "#1A3A8F", color: "#fff",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontSize: 11, fontWeight: 700, flexShrink: 0,
                 }}>✓</span>
@@ -192,7 +192,7 @@ function StepScreening({ community, answers, setAnswers }: {
                 placeholder={q.placeholder || "Be specific — give real examples, numbers, and outcomes…"}
                 style={{
                   ...textareaStyle,
-                  borderColor: val.trim().length > 0 && !isLong ? "#e8b4a0" : isLong ? "#0A3323" : "#e8e4ce",
+                  borderColor: val.trim().length > 0 && !isLong ? "#e8b4a0" : isLong ? "#1A3A8F" : "#e8e4ce",
                 }}
               />
               {val.trim().length > 0 && !isLong && (
@@ -232,7 +232,7 @@ function StepResult({
       }}>
         <div style={{
           width: 64, height: 64, borderRadius: "50%", marginBottom: 12,
-          backgroundColor: isApproved ? "#0A3323" : "#fef3ee",
+          backgroundColor: isApproved ? "#1A3A8F" : "#fef3ee",
           display: "flex", alignItems: "center", justifyContent: "center",
           fontSize: 28,
         }}>
@@ -245,8 +245,8 @@ function StepResult({
           display: "inline-flex", alignItems: "center", gap: 6, marginTop: 8,
           padding: "4px 14px", borderRadius: 99, fontSize: 12, fontWeight: 700,
           backgroundColor: isApproved ? "#e6f4ea" : "#fef3ee",
-          color: isApproved ? "#0A3323" : "#c0714a",
-          border: `1.5px solid ${isApproved ? "#0A3323" : "#e8b4a0"}`,
+          color: isApproved ? "#1A3A8F" : "#c0714a",
+          border: `1.5px solid ${isApproved ? "#1A3A8F" : "#e8b4a0"}`,
         }}>
           AI Score: {score}/100
           <span style={{ fontSize: 10, fontWeight: 400, color: "#6B7280" }}>
@@ -295,7 +295,7 @@ function StepResult({
             onClick={onEnterGroup}
             style={{
               width: "100%", padding: "14px", borderRadius: 12, border: "none",
-              backgroundColor: "#064E3B", color: "#F9FAFB",
+              backgroundColor: "#1A3A8F", color: "#F9FAFB",
               fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit",
             }}
           >
@@ -307,7 +307,7 @@ function StepResult({
               onClick={onTryAnother}
               style={{
                 width: "100%", padding: "14px", borderRadius: 12, border: "none",
-                backgroundColor: "#064E3B", color: "#F9FAFB",
+                backgroundColor: "#1A3A8F", color: "#F9FAFB",
                 fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit",
               }}
             >
@@ -490,7 +490,7 @@ export default function WelcomePage() {
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: 24 }}>
           <span style={{ fontSize: 22, fontWeight: 800, color: "#F9FAFB" }}>
-            mentor<span style={{ color: "#B45309" }}>.</span>
+            mentor<span style={{ color: "#5B8AFF" }}>.</span>
           </span>
         </div>
 
@@ -498,13 +498,13 @@ export default function WelcomePage() {
         {step < 4 && (
           <>
             <div style={{ backgroundColor: "#1F2937", borderRadius: 99, height: 4, marginBottom: 16, overflow: "hidden" }}>
-              <div style={{ height: "100%", backgroundColor: "#064E3B", borderRadius: 99, width: `${progress}%`, transition: "width 0.4s ease" }} />
+              <div style={{ height: "100%", backgroundColor: "#1A3A8F", borderRadius: 99, width: `${progress}%`, transition: "width 0.4s ease" }} />
             </div>
             <div style={{ display: "flex", gap: 6, marginBottom: 20, justifyContent: "center" }}>
               {[1, 2, 3].map(s => (
                 <div key={s} style={{
                   width: 8, height: 8, borderRadius: "50%",
-                  backgroundColor: s <= step ? "#0A3323" : "#e8e4ce",
+                  backgroundColor: s <= step ? "#1A3A8F" : "#e8e4ce",
                   transition: "background 0.3s",
                 }} />
               ))}
@@ -562,7 +562,7 @@ export default function WelcomePage() {
                 onClick={handleNext}
                 disabled={saving || evaluating || !canProceed()}
                 style={{
-                  backgroundColor: canProceed() && !saving && !evaluating ? "#0A3323" : "#c8c4ae",
+                  backgroundColor: canProceed() && !saving && !evaluating ? "#1A3A8F" : "#c8c4ae",
                   color: "#F9FAFB", border: "none", borderRadius: 12,
                   padding: "12px 28px", fontSize: 14, fontWeight: 800,
                   cursor: canProceed() && !saving && !evaluating ? "pointer" : "default",

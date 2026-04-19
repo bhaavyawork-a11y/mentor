@@ -593,7 +593,7 @@ function InvitePanel({ communityId, userId }: { communityId: string; userId: str
                     fontWeight: 700,
                     backgroundColor:
                       inv.status === "pending" ? "rgba(245,158,11,0.15)" :
-                      inv.status === "used" ? "rgba(6,78,59,0.2)" : "rgba(239,68,68,0.12)",
+                      inv.status === "used" ? "rgba(26,58,143,0.2)" : "rgba(239,68,68,0.12)",
                     color:
                       inv.status === "pending" ? "#93B4FF" :
                       inv.status === "used" ? "#93B4FF" : "#FCA5A5",
@@ -861,7 +861,7 @@ function OnboardingModal({
                         padding: "12px",
                         borderRadius: 12,
                         border: isSelected ? "2px solid #1A3A8F" : "1.5px solid #1F2937",
-                        backgroundColor: isSelected ? "rgba(6,78,59,0.25)" : "#0F1117",
+                        backgroundColor: isSelected ? "rgba(26,58,143,0.25)" : "#0F1117",
                         cursor: "pointer",
                         fontFamily: "inherit",
                         textAlign: "center",
@@ -1126,7 +1126,7 @@ export default function CommunityPage() {
               display: "flex", alignItems: "center", gap: 10, width: "100%",
               padding: "9px 10px", borderRadius: 9, marginBottom: 2,
               border: "none", textAlign: "left", cursor: "pointer", fontFamily: "inherit",
-              backgroundColor: activeTab === ch.type ? "rgba(6,78,59,0.3)" : "transparent",
+              backgroundColor: activeTab === ch.type ? "rgba(26,58,143,0.3)" : "transparent",
               color: activeTab === ch.type ? "#F9FAFB" : "#9CA3AF",
               transition: "background 0.1s",
             }}>
@@ -1209,9 +1209,9 @@ export default function CommunityPage() {
             {CHANNELS.map(ch => (
               <button key={ch.type} onClick={() => { setActiveTab(ch.type); setShowMobileNav(false); }} style={{
                 padding: "7px 14px", borderRadius: 99, border: "1.5px solid",
-                borderColor: activeTab === ch.type ? "#0A3323" : "#e8e4ce",
-                backgroundColor: activeTab === ch.type ? "#0A3323" : "#fff",
-                color: activeTab === ch.type ? "#F7F4D5" : "#555",
+                borderColor: activeTab === ch.type ? "#1A3A8F" : "#1F2937",
+                backgroundColor: activeTab === ch.type ? "#1A3A8F" : "#0F1117",
+                color: activeTab === ch.type ? "#F9FAFB" : "#9CA3AF",
                 fontSize: 12, fontWeight: activeTab === ch.type ? 700 : 500,
                 cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap" as const,
                 display: "flex", alignItems: "center", gap: 5, flexShrink: 0,

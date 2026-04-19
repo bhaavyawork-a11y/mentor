@@ -157,28 +157,28 @@ export default function ChatPage() {
 
       {/* Header */}
       <div style={{ display:"flex", alignItems:"center", gap:12, padding:"12px 0 14px", borderBottom:"1px solid #1F2937", flexShrink:0 }}>
-        <Link href="/messages" style={{ fontSize:18, color:"#839958", textDecoration:"none", lineHeight:1 }}>←</Link>
+        <Link href="/messages" style={{ fontSize:18, color:"#9CA3AF", textDecoration:"none", lineHeight:1 }}>←</Link>
         <div style={{ width:38, height:38, borderRadius:"50%", backgroundColor:otherBg, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontWeight:800 }}>
           {initials(otherName)}
         </div>
         <div>
           <p style={{ fontSize:14, fontWeight:800, color:"#1a1a1a", margin:0 }}>{otherName}</p>
-          {otherUser?.current_job_role && <p style={{ fontSize:11, color:"#839958", margin:0 }}>{otherUser.current_job_role}</p>}
+          {otherUser?.current_job_role && <p style={{ fontSize:11, color:"#9CA3AF", margin:0 }}>{otherUser.current_job_role}</p>}
         </div>
         {otherUser && (
-          <Link href={`/profile/${otherUser.id}`} style={{ marginLeft:"auto", fontSize:11, fontWeight:600, color:"#839958", textDecoration:"none", border:"1px solid #1F2937", borderRadius:8, padding:"5px 12px" }}>View profile</Link>
+          <Link href={`/profile/${otherUser.id}`} style={{ marginLeft:"auto", fontSize:11, fontWeight:600, color:"#9CA3AF", textDecoration:"none", border:"1px solid #1F2937", borderRadius:8, padding:"5px 12px" }}>View profile</Link>
         )}
       </div>
 
       {/* Messages */}
       <div style={{ flex:1, overflowY:"auto", padding:"16px 0" }}>
         {loading ? (
-          <div style={{ textAlign:"center", padding:40 }}><p style={{ color:"#839958", fontSize:13 }}>Loading…</p></div>
+          <div style={{ textAlign:"center", padding:40 }}><p style={{ color:"#9CA3AF", fontSize:13 }}>Loading…</p></div>
         ) : messages.length===0 ? (
           <div style={{ textAlign:"center", padding:"48px 24px" }}>
             <div style={{ width:56, height:56, borderRadius:"50%", backgroundColor:otherBg, display:"flex", alignItems:"center", justifyContent:"center", fontSize:20, fontWeight:800, margin:"0 auto 12px" }}>{initials(otherName)}</div>
             <p style={{ fontSize:14, fontWeight:700, color:"#1a1a1a", margin:"0 0 6px" }}>{otherName}</p>
-            {otherUser?.current_job_role && <p style={{ fontSize:12, color:"#839958", margin:"0 0 16px" }}>{otherUser.current_job_role}</p>}
+            {otherUser?.current_job_role && <p style={{ fontSize:12, color:"#9CA3AF", margin:"0 0 16px" }}>{otherUser.current_job_role}</p>}
             <p style={{ fontSize:13, color:"#b0ab8c", margin:0 }}>Start the conversation</p>
           </div>
         ) : (
@@ -205,13 +205,13 @@ export default function ChatPage() {
                       {/* Shared post preview */}
                       {msg.shared_post_id && msg.shared_post && (
                         <div style={{ backgroundColor: isMe?"rgba(255,255,255,0.15)":"#0F1117", border:"1px solid #1F2937", borderRadius:10, padding:"8px 12px", marginBottom:4, fontSize:12 }}>
-                          <p style={{ fontSize:10, fontWeight:700, color:"#839958", margin:"0 0 4px", textTransform:"uppercase" }}>Shared post</p>
+                          <p style={{ fontSize:10, fontWeight:700, color:"#9CA3AF", margin:"0 0 4px", textTransform:"uppercase" }}>Shared post</p>
                           <p style={{ fontSize:12, color:"#333", margin:0, lineHeight:1.5 }}>{msg.shared_post.content.slice(0,100)}{msg.shared_post.content.length>100?"…":""}</p>
                         </div>
                       )}
                       {msg.content && (
                         <div style={{
-                          backgroundColor: isMe?"#0A3323":"#fff",
+                          backgroundColor: isMe?"#1A3A8F":"#fff",
                           color: isMe?"#F7F4D5":"#1a1a1a",
                           border: isMe?"none":"1px solid #1F2937",
                           borderRadius: isMe?"14px 14px 4px 14px":"4px 14px 14px 14px",
@@ -247,7 +247,7 @@ export default function ChatPage() {
             onClick={handleSend}
             disabled={!input.trim() || sending}
             style={{ width:40, height:40, borderRadius:10, flexShrink:0, border:"none", cursor:input.trim()&&!sending?"pointer":"default", fontSize:18, display:"flex", alignItems:"center", justifyContent:"center", transition:"background 0.15s",
-              backgroundColor: input.trim()&&!sending?"#0A3323":"#e8e4ce",
+              backgroundColor: input.trim()&&!sending?"#1A3A8F":"#e8e4ce",
               color: input.trim()&&!sending?"#F7F4D5":"#b0ab8c",
             }}
           >

@@ -122,80 +122,183 @@ export default function MessagesPage() {
     }
   };
 
+  const WA_HEADER = "#075E54";
+  const WA_GREEN  = "#25D366";
+  const WA_BG     = "#0D0F14";
+  const WA_CARD   = "#141720";
+  const WA_BORDER = "#1C2030";
+
   return (
-    <div style={{ maxWidth: 680, margin: "0 auto", padding: "8px 0 32px" }}>
-      {/* Header */}
-      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20 }}>
+    <div style={{ maxWidth: 680, margin: "0 auto", padding: "0 0 32px" }}>
+
+      {/* ── WhatsApp-style header ── */}
+      <div style={{
+        backgroundColor: WA_HEADER,
+        borderRadius: "16px 16px 0 0",
+        padding: "16px 20px 14px",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        marginBottom: 0,
+      }}>
         <div>
-          <h1 style={{ fontSize:20, fontWeight:800, color:"#0A3323", margin:0 }}>Messages</h1>
-          <p style={{ fontSize:12, color:"#839958", margin:"2px 0 0" }}>Direct messages with your connections</p>
+          <h1 style={{ fontSize: 18, fontWeight: 800, color: "#fff", margin: 0, letterSpacing: "-0.3px" }}>Messages</h1>
+          <p style={{ fontSize: 11, color: "rgba(255,255,255,0.55)", margin: "2px 0 0" }}>Direct messages with your connections</p>
         </div>
-        <button onClick={()=>setShowSearch(o=>!o)} style={{ fontSize:13, fontWeight:700, backgroundColor:"#0A3323", color:"#F7F4D5", border:"none", borderRadius:10, padding:"8px 18px", cursor:"pointer", fontFamily:"inherit" }}>
-          + New message
+        <button
+          onClick={() => setShowSearch(o => !o)}
+          style={{
+            fontSize: 12, fontWeight: 700, backgroundColor: WA_GREEN, color: "#fff",
+            border: "none", borderRadius: 10, padding: "8px 16px", cursor: "pointer",
+            fontFamily: "inherit", display: "flex", alignItems: "center", gap: 6,
+          }}
+        >
+          <span style={{ fontSize: 14, lineHeight: 1 }}>+</span> New message
         </button>
       </div>
 
-      {/* New message search */}
-      {showSearch && (
-        <div style={{ backgroundColor:"#fff", border:"1px solid #1F2937", borderRadius:14, padding:16, marginBottom:16 }}>
-          <p style={{ fontSize:12, fontWeight:700, color:"#839958", margin:"0 0 10px" }}>Search people</p>
+      {/* ── Search bar (inline, WhatsApp style) ── */}
+      <div style={{ backgroundColor: WA_CARD, padding: "10px 16px", borderBottom: `1px solid ${WA_BORDER}` }}>
+        <div style={{
+          display: "flex", alignItems: "center", gap: 8,
+          backgroundColor: WA_BG, borderRadius: 10, padding: "8px 12px",
+        }}>
+          <span style={{ fontSize: 13, color: "#6B7280" }}>🔍</span>
           <input
-            value={newSearch} onChange={e=>setNewSearch(e.target.value)}
-            placeholder="Type a name..."
-            autoFocus
-            style={{ width:"100%", boxSizing:"border-box", fontSize:13, border:"1px solid #1F2937", borderRadius:10, padding:"9px 12px", fontFamily:"inherit", outline:"none" }}
+            value={newSearch}
+            onChange={e => setNewSearch(e.target.value)}
+            onFocus={() => setShowSearch(true)}
+            placeholder="Search or start new chat"
+            style={{
+              flex: 1, background: "transparent", border: "none", outline: "none",
+              fontSize: 13, color: "#F9FAFB", fontFamily: "inherit",
+            }}
           />
-          {searchResults.length > 0 && (
-            <div style={{ marginTop:10, display:"flex", flexDirection:"column", gap:4 }}>
-              {searchResults.map(u => {
-                const name = u.full_name ?? "Member";
-                return (
-                  <button key={u.id} onClick={()=>startConversation(u.id)} style={{ display:"flex", alignItems:"center", gap:10, padding:"8px 10px", borderRadius:10, border:"1px solid #f5f0e8", backgroundColor:"#fff", cursor:"pointer", textAlign:"left", fontFamily:"inherit" }}>
-                    <div style={{ width:32, height:32, borderRadius:"50%", backgroundColor:avatarBg(u.id), display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, fontWeight:800, flexShrink:0 }}>{initials(name)}</div>
-                    <div>
-                      <p style={{ fontSize:13, fontWeight:700, color:"#1a1a1a", margin:0 }}>{name}</p>
-                      {u.current_job_role && <p style={{ fontSize:11, color:"#839958", margin:0 }}>{u.current_job_role}</p>}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          )}
+        </div>
+      </div>
+
+      {/* ── Search results dropdown ── */}
+      {showSearch && searchResults.length > 0 && (
+        <div style={{ backgroundColor: WA_CARD, borderBottom: `1px solid ${WA_BORDER}` }}>
+          {searchResults.map(u => {
+            const name = u.full_name ?? "Member";
+            return (
+              <button
+                key={u.id}
+                onClick={() => startConversation(u.id)}
+                style={{
+                  display: "flex", alignItems: "center", gap: 12,
+                  padding: "12px 20px", width: "100%",
+                  background: "none", border: "none", cursor: "pointer",
+                  textAlign: "left", fontFamily: "inherit",
+                  borderBottom: `1px solid ${WA_BORDER}`,
+                }}
+              >
+                <div style={{
+                  width: 40, height: 40, borderRadius: "50%",
+                  backgroundColor: avatarBg(u.id),
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 13, fontWeight: 800, flexShrink: 0, color: "#fff",
+                }}>
+                  {initials(name)}
+                </div>
+                <div>
+                  <p style={{ fontSize: 14, fontWeight: 700, color: "#F9FAFB", margin: 0 }}>{name}</p>
+                  {u.current_job_role && (
+                    <p style={{ fontSize: 11, color: "#6B7280", margin: 0 }}>{u.current_job_role}</p>
+                  )}
+                </div>
+              </button>
+            );
+          })}
         </div>
       )}
 
-      {/* Conversations list */}
-      <div style={{ backgroundColor:"#fff", border:"1px solid #1F2937", borderRadius:14, overflow:"hidden" }}>
+      {/* ── Conversation list ── */}
+      <div style={{ backgroundColor: WA_CARD, borderRadius: "0 0 16px 16px", overflow: "hidden" }}>
         {loading ? (
-          <div style={{ padding:40, textAlign:"center" }}><p style={{ color:"#839958", fontSize:13 }}>Loading…</p></div>
+          <div style={{ padding: 40, textAlign: "center" }}>
+            <p style={{ color: "#6B7280", fontSize: 13, margin: 0 }}>Loading…</p>
+          </div>
         ) : conversations.length === 0 ? (
-          <div style={{ padding:"48px 32px", textAlign:"center" }}>
-            <p style={{ fontSize:14, fontWeight:700, color:"#1a1a1a", margin:"0 0 12px", lineHeight:1.6 }}>No messages yet. Start a conversation to connect with peers in your network.</p>
-            <p style={{ fontSize:13, color:"#839958", margin:0 }}>Click <strong>+ New message</strong> above or share a post directly to someone.</p>
+          <div style={{ padding: "56px 32px", textAlign: "center" }}>
+            <div style={{ fontSize: 40, marginBottom: 16 }}>💬</div>
+            <p style={{ fontSize: 15, fontWeight: 700, color: "#F9FAFB", margin: "0 0 8px" }}>
+              No messages yet
+            </p>
+            <p style={{ fontSize: 13, color: "#6B7280", margin: 0, lineHeight: 1.6 }}>
+              Start a conversation with someone from your group. Use the search bar above.
+            </p>
           </div>
         ) : (
           conversations.map((conv, i) => {
             const user = conv.other_user;
             const name = user?.full_name ?? "Member";
-            const bg = user ? avatarBg(user.id) : "#e8e4ce";
+            const bg = user ? avatarBg(user.id) : "#1A3A8F";
+            const hasUnread = conv.unread_count > 0;
             return (
-              <Link key={conv.id} href={`/messages/${conv.id}`} style={{ display:"flex", alignItems:"center", gap:12, padding:"14px 18px", textDecoration:"none", borderBottom: i < conversations.length-1 ? "1px solid #f5f0e8" : "none", backgroundColor: conv.unread_count > 0 ? "#0F1117" : "#fff", transition:"background 0.1s" }}>
-                <div style={{ width:42, height:42, borderRadius:"50%", backgroundColor:bg, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:800, flexShrink:0, position:"relative" }}>
-                  {initials(name)}
-                  {conv.unread_count > 0 && (
-                    <div style={{ position:"absolute", top:-2, right:-2, width:16, height:16, borderRadius:"50%", backgroundColor:"#D3968C", border:"2px solid #fff", display:"flex", alignItems:"center", justifyContent:"center", fontSize:8, fontWeight:800, color:"#fff" }}>
+              <Link
+                key={conv.id}
+                href={`/messages/${conv.id}`}
+                style={{
+                  display: "flex", alignItems: "center", gap: 14,
+                  padding: "14px 20px", textDecoration: "none",
+                  borderBottom: i < conversations.length - 1 ? `1px solid ${WA_BORDER}` : "none",
+                  backgroundColor: hasUnread ? "rgba(37,211,102,0.04)" : "transparent",
+                  transition: "background 0.1s",
+                }}
+              >
+                {/* Avatar with online dot */}
+                <div style={{ position: "relative", flexShrink: 0 }}>
+                  <div style={{
+                    width: 46, height: 46, borderRadius: "50%", backgroundColor: bg,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 15, fontWeight: 800, color: "#fff",
+                  }}>
+                    {initials(name)}
+                  </div>
+                  {/* Online dot */}
+                  <div style={{
+                    position: "absolute", bottom: 1, right: 1,
+                    width: 11, height: 11, borderRadius: "50%",
+                    backgroundColor: WA_GREEN,
+                    border: `2px solid ${WA_CARD}`,
+                  }} />
+                  {/* Unread badge */}
+                  {hasUnread && (
+                    <div style={{
+                      position: "absolute", top: -2, right: -2,
+                      minWidth: 18, height: 18, borderRadius: 9,
+                      backgroundColor: WA_GREEN, border: `2px solid ${WA_CARD}`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 9, fontWeight: 800, color: "#fff", padding: "0 4px",
+                    }}>
                       {conv.unread_count > 9 ? "9+" : conv.unread_count}
                     </div>
                   )}
                 </div>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:3 }}>
-                    <p style={{ fontSize:14, fontWeight: conv.unread_count>0?800:600, color:"#1a1a1a", margin:0 }}>{name}</p>
-                    {conv.last_message_at && <span style={{ fontSize:10, color:"#b0ab8c" }}>{timeAgo(conv.last_message_at)}</span>}
+
+                {/* Text */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
+                    <p style={{ fontSize: 14, fontWeight: hasUnread ? 800 : 600, color: "#F9FAFB", margin: 0 }}>
+                      {name}
+                    </p>
+                    {conv.last_message_at && (
+                      <span style={{ fontSize: 10, color: hasUnread ? WA_GREEN : "#6B7280", fontWeight: hasUnread ? 700 : 400, flexShrink: 0 }}>
+                        {timeAgo(conv.last_message_at)}
+                      </span>
+                    )}
                   </div>
-                  <p style={{ fontSize:12, color: conv.unread_count>0?"#555":"#839958", margin:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", fontWeight: conv.unread_count>0?600:400 }}>
-                    {conv.last_message ?? "No messages yet"}
-                  </p>
+                  <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    {/* Double tick (sent indicator) */}
+                    <span style={{ fontSize: 11, color: hasUnread ? WA_GREEN : "#6B7280", flexShrink: 0 }}>✓✓</span>
+                    <p style={{
+                      fontSize: 12, color: hasUnread ? "#9CA3AF" : "#6B7280", margin: 0,
+                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                      fontWeight: hasUnread ? 600 : 400,
+                    }}>
+                      {conv.last_message ?? "No messages yet"}
+                    </p>
+                  </div>
                 </div>
               </Link>
             );

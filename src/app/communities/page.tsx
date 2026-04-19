@@ -298,104 +298,199 @@ function ApplyPanel({ community, onDone }: {
   );
 }
 
-// ─── Discover Card ────────────────────────────────────────────────────────────
-function DiscoverCard({ community, onApplied, atGroupCap }: {
-  community: Community;
+// ─── Spotlight Card (Layout D) ────────────────────────────────────────────────
+const FEATURES = [
+  { icon: "💬", label: "War Room discussions" },
+  { icon: "📚", label: "Curated library"       },
+  { icon: "🤝", label: "Warm intros & referrals" },
+  { icon: "🎯", label: "Verified open roles"    },
+];
+
+function SpotlightDiscover({ communities, onApplied, atGroupCap }: {
+  communities: Community[];
   onApplied: (communityId: string, status: "approved" | "rejected") => void;
   atGroupCap: boolean;
 }) {
+  const [idx, setIdx] = useState(0);
   const [applying, setApplying] = useState(false);
 
+  useEffect(() => { setApplying(false); }, [idx]);
+
+  if (communities.length === 0) return null;
+  const community = communities[idx];
+
   return (
-    <div style={{
-      backgroundColor: "#181C24", border: "1.5px solid #1F2937", borderRadius: 16,
-      overflow: "hidden", transition: "border-color 0.15s",
-    }}>
-      {/* Card header */}
-      <div style={{ padding: "18px 18px 14px", display: "flex", gap: 14 }}>
+    <div>
+      {/* ── Spotlight featured card ── */}
+      <div style={{
+        backgroundColor: "#141720",
+        border: "1.5px solid #1C2030",
+        borderRadius: 20,
+        overflow: "hidden",
+        marginBottom: 12,
+        position: "relative",
+      }}>
+        {/* Glow accent */}
         <div style={{
-          width: 48, height: 48, borderRadius: 12, flexShrink: 0,
-          backgroundColor: community.icon_color ?? "#FDE68A",
-          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24,
-        }}>
-          {groupEmoji(community.slug)}
-        </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 800, color: "#F9FAFB", margin: "0 0 4px" }}>{community.name}</h3>
-          {community.role_type && (
-            <span style={{ fontSize: 10, fontWeight: 600, backgroundColor: "#1F2937", color: "#6B7280", borderRadius: 99, padding: "2px 8px" }}>
-              {community.role_type}
-            </span>
-          )}
-        </div>
-      </div>
+          position: "absolute", top: 0, right: 0, width: 200, height: 200,
+          background: "radial-gradient(circle at 100% 0%, rgba(91,138,255,0.12) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }} />
 
-      {community.description && (
-        <p style={{
-          fontSize: 12, color: "#9CA3AF", margin: "0 18px 10px", lineHeight: 1.55,
-          display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as const, overflow: "hidden",
-        }}>
-          {community.description}
-        </p>
-      )}
-
-      <div style={{ display: "flex", gap: 16, padding: "0 18px 14px" }}>
-        <span style={{ fontSize: 11, color: "#6B7280" }}>{community.member_count.toLocaleString()} members</span>
-        {community.posts_this_week > 0 && (
-          <span style={{ fontSize: 11, color: "#6B7280" }}>{community.posts_this_week} posts/wk</span>
-        )}
-        {community.requires_verification && (
-          <span style={{ fontSize: 10, color: "#93B4FF", fontWeight: 600 }}>🔒 Verified only</span>
-        )}
-      </div>
-
-      {/* Channels preview */}
-      <div style={{ display: "flex", gap: 6, padding: "0 18px 14px", flexWrap: "wrap" }}>
-        {["💬 Discussions", "📚 Library", "🤝 Warm Intros", "💼 Open Roles"].map(ch => (
-          <span key={ch} style={{
-            fontSize: 10, padding: "3px 8px", borderRadius: 6,
-            backgroundColor: "#1F2937", color: "#6B7280", fontWeight: 500,
-          }}>
-            {ch}
-          </span>
-        ))}
-      </div>
-
-      {/* Apply button / group cap notice */}
-      {!applying && (
-        <div style={{ padding: "0 18px 18px" }}>
-          {atGroupCap ? (
-            <div style={{
-              padding: "10px 14px", borderRadius: 10,
-              backgroundColor: "rgba(180,83,9,0.1)", border: "1px solid rgba(180,83,9,0.3)",
-              fontSize: 12, color: "#93B4FF", lineHeight: 1.5,
-            }}>
-              You&apos;re already in 2 groups. Leave a group before joining another — Mentor limits membership to keep each community focused.
+        <div style={{ padding: "24px 24px 20px", position: "relative" }}>
+          {/* Top row: icon + name + nav */}
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
+            <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
+              <div style={{
+                width: 52, height: 52, borderRadius: 14, flexShrink: 0,
+                backgroundColor: community.icon_color ?? "#1A3A8F",
+                display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26,
+              }}>
+                {groupEmoji(community.slug)}
+              </div>
+              <div>
+                <h3 style={{ fontSize: 18, fontWeight: 900, color: "#F9FAFB", margin: "0 0 4px", letterSpacing: "-0.4px" }}>
+                  {community.name}
+                </h3>
+                {community.role_type && (
+                  <span style={{
+                    fontSize: 10, fontWeight: 700, backgroundColor: "rgba(91,138,255,0.12)",
+                    color: "#93B4FF", borderRadius: 99, padding: "2px 10px",
+                  }}>
+                    {community.role_type}
+                  </span>
+                )}
+              </div>
             </div>
-          ) : (
-            <button
-              onClick={() => setApplying(true)}
-              style={{
-                width: "100%", padding: "11px", borderRadius: 10, border: "1.5px solid #1A3A8F",
-                backgroundColor: "transparent", color: "#93B4FF",
-                fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
-                transition: "all 0.15s",
-              }}
-            >
-              Apply to join →
-            </button>
+
+            {/* Arrow nav */}
+            <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+              <button onClick={() => setIdx(i => Math.max(0, i - 1))} disabled={idx === 0} style={{
+                width: 30, height: 30, borderRadius: 8, border: "1px solid #2A3048",
+                backgroundColor: "transparent", color: idx === 0 ? "#374151" : "#9CA3AF",
+                cursor: idx === 0 ? "default" : "pointer", fontSize: 14, display: "flex",
+                alignItems: "center", justifyContent: "center",
+              }}>‹</button>
+              <button onClick={() => setIdx(i => Math.min(communities.length - 1, i + 1))} disabled={idx === communities.length - 1} style={{
+                width: 30, height: 30, borderRadius: 8, border: "1px solid #2A3048",
+                backgroundColor: "transparent", color: idx === communities.length - 1 ? "#374151" : "#9CA3AF",
+                cursor: idx === communities.length - 1 ? "default" : "pointer", fontSize: 14, display: "flex",
+                alignItems: "center", justifyContent: "center",
+              }}>›</button>
+            </div>
+          </div>
+
+          {/* Description */}
+          {community.description && (
+            <p style={{ fontSize: 13, color: "#9CA3AF", margin: "0 0 16px", lineHeight: 1.6 }}>
+              {community.description}
+            </p>
+          )}
+
+          {/* Stats row */}
+          <div style={{
+            display: "flex", gap: 20, padding: "12px 0",
+            borderTop: "1px solid #1C2030", borderBottom: "1px solid #1C2030",
+            marginBottom: 16,
+          }}>
+            {[
+              { v: community.member_count.toLocaleString(), l: "Members" },
+              { v: community.posts_this_week > 0 ? `${community.posts_this_week}` : "—", l: "Posts/wk" },
+              { v: "🔒", l: "Verified only" },
+            ].map(({ v, l }) => (
+              <div key={l}>
+                <div style={{ fontSize: 15, fontWeight: 800, color: "#F9FAFB", letterSpacing: "-0.3px" }}>{v}</div>
+                <div style={{ fontSize: 10, color: "#6B7280", fontWeight: 500 }}>{l}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* What's inside 2×2 grid */}
+          <p style={{ fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.8px", margin: "0 0 10px" }}>
+            What&apos;s inside
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 20 }}>
+            {FEATURES.map(f => (
+              <div key={f.label} style={{
+                display: "flex", alignItems: "center", gap: 8,
+                backgroundColor: "#0D0F14", borderRadius: 10, padding: "8px 12px",
+              }}>
+                <span style={{ fontSize: 14 }}>{f.icon}</span>
+                <span style={{ fontSize: 11, color: "#9CA3AF", fontWeight: 500 }}>{f.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Apply / cap notice */}
+          {!applying && (
+            atGroupCap ? (
+              <div style={{
+                padding: "10px 14px", borderRadius: 10, backgroundColor: "rgba(26,58,143,0.1)",
+                border: "1px solid rgba(26,58,143,0.25)", fontSize: 12, color: "#93B4FF", lineHeight: 1.5,
+              }}>
+                You&apos;re in 2 groups — the max. Leave one first to apply here.
+              </div>
+            ) : (
+              <button onClick={() => setApplying(true)} style={{
+                width: "100%", padding: "13px", borderRadius: 12,
+                backgroundColor: "#1A3A8F", color: "#fff",
+                fontSize: 14, fontWeight: 800, cursor: "pointer", fontFamily: "inherit",
+                border: "none", letterSpacing: "-0.2px", transition: "background 0.15s",
+              }}>
+                Apply to join →
+              </button>
+            )
+          )}
+
+          {/* Inline apply panel */}
+          {applying && (
+            <ApplyPanel community={community} onDone={r => { onApplied(community.id, r.status); setApplying(false); }} />
           )}
         </div>
-      )}
 
-      {/* Inline screening panel */}
-      {applying && (
-        <ApplyPanel
-          community={community}
-          onDone={r => {
-            onApplied(community.id, r.status);
-          }}
-        />
+        {/* Pagination dots */}
+        <div style={{ display: "flex", justifyContent: "center", gap: 6, padding: "0 0 16px" }}>
+          {communities.map((_, i) => (
+            <button key={i} onClick={() => setIdx(i)} style={{
+              width: i === idx ? 20 : 6, height: 6, borderRadius: 3,
+              backgroundColor: i === idx ? "#5B8AFF" : "#2A3048",
+              border: "none", cursor: "pointer", padding: 0, transition: "all 0.2s",
+            }} />
+          ))}
+        </div>
+      </div>
+
+      {/* ── Compact list (other groups at a glance) ── */}
+      {communities.length > 1 && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          {communities.filter((_, i) => i !== idx).slice(0, 4).map(c => (
+            <button
+              key={c.id}
+              onClick={() => setIdx(communities.indexOf(c))}
+              style={{
+                display: "flex", alignItems: "center", gap: 12,
+                backgroundColor: "#141720", border: "1px solid #1C2030", borderRadius: 12,
+                padding: "12px 16px", cursor: "pointer", textAlign: "left", fontFamily: "inherit",
+                transition: "border-color 0.15s",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = "#2A3048")}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = "#1C2030")}
+            >
+              <div style={{
+                width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+                backgroundColor: c.icon_color ?? "#1A3A8F",
+                display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18,
+              }}>
+                {groupEmoji(c.slug)}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#F9FAFB" }}>{c.name}</div>
+                <div style={{ fontSize: 11, color: "#6B7280" }}>{c.member_count.toLocaleString()} members</div>
+              </div>
+              <span style={{ fontSize: 12, color: "#5B8AFF", fontWeight: 700, flexShrink: 0 }}>View →</span>
+            </button>
+          ))}
+        </div>
       )}
     </div>
   );
@@ -559,17 +654,13 @@ export default function CommunitiesPage() {
         </div>
       )}
 
-      {/* Discover */}
+      {/* Discover — Spotlight layout */}
       {discoverGroups.length > 0 && (
         <section id="discover-section">
           <p style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 12px" }}>
             Discover Groups — Apply to Join
           </p>
-          <div className="communities-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16 }}>
-            {discoverGroups.map(c => (
-              <DiscoverCard key={c.id} community={c} onApplied={handleApplied} atGroupCap={approvedCount >= 2} />
-            ))}
-          </div>
+          <SpotlightDiscover communities={discoverGroups} onApplied={handleApplied} atGroupCap={approvedCount >= 2} />
         </section>
       )}
 

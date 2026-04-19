@@ -183,7 +183,7 @@ export default function ProfileForm({ profile, userId, memberSince, groupCount, 
             {form.skills.map((skill) => (
               <span key={skill} style={{
                 display: "inline-flex", alignItems: "center", gap: "6px",
-                backgroundColor: "rgba(6,78,59,0.2)", color: "#F9FAFB",
+                backgroundColor: "rgba(26,58,143,0.2)", color: "#F9FAFB",
                 fontSize: "11px", fontWeight: 600,
                 borderRadius: "99px", padding: "4px 10px",
               }}>
