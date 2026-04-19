@@ -377,7 +377,7 @@
   font-size: 56px; font-weight: 800; color: #F9FAFB;
   letter-spacing: -2px; line-height: 1.1; margin: 0 0 20px;
 }
-.landing-h1 span { color: #064E3B; }
+.landing-h1 span { color: #5B8AFF; }
 .landing-hero-sub { font-size: 16px; color: #9CA3AF; line-height: 1.75; max-width: 500px; margin: 0 auto 28px; }
 .landing-hero-ctas { display: flex; gap: 12px; justify-content: center; align-items: center; margin-bottom: 24px; flex-wrap: wrap; }
 .landing-proof { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }

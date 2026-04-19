@@ -15,7 +15,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#0A3323",
+  themeColor: "#1A3A8F",
   viewportFit: "cover", // enables safe-area-inset for iPhone notch
 };
 
@@ -57,7 +57,7 @@ export default function RootLayout({
     <html lang="en" className={`dark ${sora.variable}`}>
       <head>
         {/* MS Tile for Windows */}
-        <meta name="msapplication-TileColor" content="#0A3323" />
+        <meta name="msapplication-TileColor" content="#1A3A8F" />
         <meta name="msapplication-TileImage" content="/icons/icon-144.png" />
       </head>
       <body className={`${sora.className} bg-page text-dark antialiased`}>

@@ -27,7 +27,7 @@ interface Company {
 
 /* ─── Helpers ───────────────────────────────────── */
 const COMPANIES = companiesData as Company[];
-const PALETTE = ["#F7F4D5","#D3968C","#839958","#FFB5C8","#B5D5FF","#FFCBA4","#B5FFD9","#FFD9B5","#FFB5B5","#D5B5FF"];
+const PALETTE = ["#F7F4D5","#D3968C","#5B8AFF","#FFB5C8","#B5D5FF","#FFCBA4","#B5FFD9","#FFD9B5","#FFB5B5","#D5B5FF"];
 
 function companyColor(name: string, i: number) {
   let h = 0;
@@ -74,12 +74,12 @@ export default function CompaniesPage() {
         <input className="input" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search companies…" style={{ width: "100%", boxSizing: "border-box" }} />
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
           {["All","Series A","Series B","Series C","Growth","Pre-IPO","Listed"].map((s) => (
-            <button key={s} onClick={() => setStage(s)} style={{ fontSize: 12, fontWeight: stage === s ? 700 : 500, backgroundColor: stage === s ? "#0A3323" : "#e8e4ce", color: stage === s ? "#839958" : "#555", border: "none", borderRadius: 99, padding: "6px 14px", cursor: "pointer" }}>{s}</button>
+            <button key={s} onClick={() => setStage(s)} style={{ fontSize: 12, fontWeight: stage === s ? 700 : 500, backgroundColor: stage === s ? "#080B14" : "#e8e4ce", color: stage === s ? "#5B8AFF" : "#555", border: "none", borderRadius: 99, padding: "6px 14px", cursor: "pointer" }}>{s}</button>
           ))}
         </div>
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
           {["All","Fintech / Payments","E-Commerce","Quick Commerce","Developer Tools / SaaS","SaaS / Billing","Food & Logistics Tech"].map((i) => (
-            <button key={i} onClick={() => setIndustry(i)} style={{ fontSize: 12, fontWeight: industry === i ? 700 : 500, backgroundColor: industry === i ? "#0A3323" : "#e8e4ce", color: industry === i ? "#839958" : "#555", border: "none", borderRadius: 99, padding: "6px 14px", cursor: "pointer" }}>{i}</button>
+            <button key={i} onClick={() => setIndustry(i)} style={{ fontSize: 12, fontWeight: industry === i ? 700 : 500, backgroundColor: industry === i ? "#080B14" : "#e8e4ce", color: industry === i ? "#5B8AFF" : "#555", border: "none", borderRadius: 99, padding: "6px 14px", cursor: "pointer" }}>{i}</button>
           ))}
         </div>
       </div>

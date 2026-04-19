@@ -22,7 +22,7 @@ export default function BookingSuccessBanner() {
     <div style={{
       display: "flex", alignItems: "flex-start", gap: "12px",
       backgroundColor: "#181C24", border: "1px solid #1F2937",
-      borderLeft: "3px solid #839958",
+      borderLeft: "3px solid #5B8AFF",
       borderRadius: "12px", padding: "14px 16px",
       animation: "fadeUp 0.3s ease forwards",
     }}>

@@ -38,7 +38,7 @@ function ExpertSidebar() {
 
   return (
     <div style={{
-      width: 220, minHeight: "100vh", backgroundColor: "#064E3B",
+      width: 220, minHeight: "100vh", backgroundColor: "#1A3A8F",
       display: "flex", flexDirection: "column", flexShrink: 0,
     }}>
       {/* Logo */}
@@ -67,7 +67,7 @@ function ExpertSidebar() {
             }}>
               <span style={{ fontSize: 15 }}>{item.icon}</span>
               {item.label}
-              {active && <span style={{ marginLeft: "auto", width: 5, height: 5, borderRadius: "50%", backgroundColor: "#839958" }} />}
+              {active && <span style={{ marginLeft: "auto", width: 5, height: 5, borderRadius: "50%", backgroundColor: "#5B8AFF" }} />}
             </Link>
           );
         })}
@@ -84,7 +84,7 @@ function ExpertSidebar() {
         }}>
           <span style={{ fontSize: 14 }}>📹</span>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: googleConnected ? "#839958" : "#D3968C" }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: googleConnected ? "#5B8AFF" : "#D3968C" }}>
               {googleConnected ? "Google Meet ✓" : "Connect Google Meet"}
             </div>
             <div style={{ fontSize: 9, color: "rgba(247,244,213,0.35)" }}>

@@ -73,7 +73,7 @@ function MessageBubble({ message, isStreaming }: { message: Message; isStreaming
       {!isUser && (
         <div style={{
           width: 32, height: 32, borderRadius: "50%",
-          background: "linear-gradient(135deg, #0A3323 0%, #1a5c3a 100%)",
+          background: "linear-gradient(135deg, #080B14 0%, #1a5c3a 100%)",
           display: "flex", alignItems: "center", justifyContent: "center",
           fontSize: 14, flexShrink: 0, marginRight: 10, marginTop: 2,
           boxShadow: "0 2px 8px rgba(10,51,35,0.25)",
@@ -83,7 +83,7 @@ function MessageBubble({ message, isStreaming }: { message: Message; isStreaming
       )}
       <div style={{
         maxWidth: "78%",
-        backgroundColor: isUser ? "#0A3323" : "#fff",
+        backgroundColor: isUser ? "#080B14" : "#fff",
         color: isUser ? "#F7F4D5" : "#1a1a1a",
         border: isUser ? "none" : "1px solid #1F2937",
         borderRadius: isUser ? "14px 14px 4px 14px" : "4px 14px 14px 14px",
@@ -99,7 +99,7 @@ function MessageBubble({ message, isStreaming }: { message: Message; isStreaming
             {isStreaming && (
               <span style={{
                 display: "inline-block", width: 2, height: 14,
-                backgroundColor: "#839958", marginLeft: 2,
+                backgroundColor: "#5B8AFF", marginLeft: 2,
                 animation: "blink 0.8s step-end infinite", verticalAlign: "middle",
               }} />
             )}
@@ -117,7 +117,7 @@ function TypingIndicator() {
     <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
       <div style={{
         width: 32, height: 32, borderRadius: "50%",
-        background: "linear-gradient(135deg, #0A3323 0%, #1a5c3a 100%)",
+        background: "linear-gradient(135deg, #080B14 0%, #1a5c3a 100%)",
         display: "flex", alignItems: "center", justifyContent: "center",
         fontSize: 14, flexShrink: 0,
       }}>
@@ -130,7 +130,7 @@ function TypingIndicator() {
         <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
           {[0, 1, 2].map((i) => (
             <div key={i} style={{
-              width: 7, height: 7, borderRadius: "50%", backgroundColor: "#839958",
+              width: 7, height: 7, borderRadius: "50%", backgroundColor: "#5B8AFF",
               animation: "bounce 1.2s infinite", animationDelay: `${i * 0.2}s`,
             }} />
           ))}
@@ -257,7 +257,7 @@ export default function AssistantPage() {
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div style={{
             width: 40, height: 40, borderRadius: 12,
-            background: "linear-gradient(135deg, #0A3323 0%, #1a5c3a 100%)",
+            background: "linear-gradient(135deg, #080B14 0%, #1a5c3a 100%)",
             display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18,
             boxShadow: "0 2px 10px rgba(10,51,35,0.2)",
           }}>
@@ -271,12 +271,12 @@ export default function AssistantPage() {
           </div>
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
             {isStreaming && (
-              <span style={{ fontSize: 11, color: "#6B7280", backgroundColor: "rgba(6,78,59,0.2)", border: "1px solid #1F2937", borderRadius: 99, padding: "3px 10px", animation: "pulse 1.5s infinite" }}>
+              <span style={{ fontSize: 11, color: "#6B7280", backgroundColor: "rgba(26,58,143,0.2)", border: "1px solid #1F2937", borderRadius: 99, padding: "3px 10px", animation: "pulse 1.5s infinite" }}>
                 ● Thinking…
               </span>
             )}
             {profileContext && !isStreaming && (
-              <span style={{ fontSize: 10, color: "#6B7280", backgroundColor: "rgba(6,78,59,0.2)", border: "1px solid #1F2937", borderRadius: 8, padding: "4px 10px" }}>
+              <span style={{ fontSize: 10, color: "#6B7280", backgroundColor: "rgba(26,58,143,0.2)", border: "1px solid #1F2937", borderRadius: 8, padding: "4px 10px" }}>
                 Profile loaded ✓
               </span>
             )}
@@ -294,7 +294,7 @@ export default function AssistantPage() {
               <div style={{ display: "flex", gap: 12 }}>
                 <div style={{
                   width: 32, height: 32, borderRadius: "50%", flexShrink: 0,
-                  background: "linear-gradient(135deg, #0A3323 0%, #1a5c3a 100%)",
+                  background: "linear-gradient(135deg, #080B14 0%, #1a5c3a 100%)",
                   display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14,
                 }}>
                   ✨
@@ -327,7 +327,7 @@ export default function AssistantPage() {
                     cursor: "pointer", textAlign: "left", fontFamily: "inherit",
                     transition: "all 0.15s",
                   }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#0A3323"; (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#f9f9f7"; }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#080B14"; (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#f9f9f7"; }}
                   onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#e8e4ce"; (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#fff"; }}
                 >
                   <span style={{ fontSize: 20, flexShrink: 0 }}>{icon}</span>
@@ -401,7 +401,7 @@ export default function AssistantPage() {
               backgroundColor: busy ? "#f9f9f7" : "#fff",
               color: "#F9FAFB", transition: "border-color 0.15s",
             }}
-            onFocus={(e) => { e.target.style.borderColor = "#0A3323"; }}
+            onFocus={(e) => { e.target.style.borderColor = "#080B14"; }}
             onBlur={(e) => { e.target.style.borderColor = "#e8e4ce"; }}
           />
           <button
@@ -409,7 +409,7 @@ export default function AssistantPage() {
             disabled={!input.trim() || busy}
             style={{
               width: 44, height: 44, borderRadius: 10, flexShrink: 0,
-              backgroundColor: input.trim() && !busy ? "#0A3323" : "#e8e4ce",
+              backgroundColor: input.trim() && !busy ? "#080B14" : "#e8e4ce",
               color: input.trim() && !busy ? "#F7F4D5" : "#b0ab8c",
               border: "none", cursor: input.trim() && !busy ? "pointer" : "default",
               fontSize: 20, display: "flex", alignItems: "center", justifyContent: "center",

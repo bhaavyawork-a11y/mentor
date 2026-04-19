@@ -44,12 +44,12 @@ function timeAgo(iso: string) {
   return `${Math.floor(h / 24)}d`;
 }
 
-const AVATAR_PAL = ["#F7F4D5","#D3968C","#839958","#105666","#B5D5FF","#FFB5C8"];
+const AVATAR_PAL = ["#F7F4D5","#D3968C","#5B8AFF","#105666","#B5D5FF","#FFB5C8"];
 function avatarBg(id: string) { let h=0; for(const c of id) h=(h*31+c.charCodeAt(0))&0xfffff; return AVATAR_PAL[h%AVATAR_PAL.length]; }
 function initials(name: string) { return name.split(" ").map(n=>n[0]).slice(0,2).join("").toUpperCase(); }
 
 const TYPE_STYLE: Record<string, {bg:string; color:string; label:string}> = {
-  "Discussion":  { bg:"#e8e4ce",   color:"#839958", label:"Discussion"  },
+  "Discussion":  { bg:"#e8e4ce",   color:"#5B8AFF", label:"Discussion"  },
   "Resource":    { bg:"#B5D5FF33", color:"#105666", label:"Resource 🔗" },
   "Job referral":{ bg:"#D3968C22", color:"#a05a44", label:"Referral 🤝" },
   "Referral":    { bg:"#FFE4F0",   color:"#c04080", label:"Referral 🤝" },
@@ -57,7 +57,7 @@ const TYPE_STYLE: Record<string, {bg:string; color:string; label:string}> = {
   "Event":       { bg:"#FDE8C8",   color:"#a07020", label:"Event 📅"    },
   "Poll":        { bg:"#D3E4FF",   color:"#2060a0", label:"Poll 📊"     },
   "Course":      { bg:"#D3F4E8",   color:"#0A7050", label:"Course 📚"   },
-  "Repost":      { bg:"#83995822", color:"#0A3323", label:"Repost 🔁"   },
+  "Repost":      { bg:"#5B8AFF22", color:"#080B14", label:"Repost 🔁"   },
 };
 
 const CHANNEL_LABELS: Record<string, string> = {
@@ -135,7 +135,7 @@ function ShareModal({ post, currentUserId, onClose }: { post: Post; currentUserI
       <div style={{ backgroundColor:"#fff", borderRadius:16, padding:24, width:380, maxHeight:"80vh", display:"flex", flexDirection:"column", gap:14 }} onClick={e=>e.stopPropagation()}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
           <p style={{ fontSize:15, fontWeight:800, color:"#1a1a1a", margin:0 }}>Share post</p>
-          <button onClick={onClose} style={{ background:"none", border:"none", fontSize:20, cursor:"pointer", color:"#839958" }}>×</button>
+          <button onClick={onClose} style={{ background:"none", border:"none", fontSize:20, cursor:"pointer", color:"#5B8AFF" }}>×</button>
         </div>
         <input
           value={search} onChange={e=>setSearch(e.target.value)}
@@ -152,14 +152,14 @@ function ShareModal({ post, currentUserId, onClose }: { post: Post; currentUserI
                 <div style={{ width:34, height:34, borderRadius:"50%", backgroundColor:bg, display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:800, flexShrink:0 }}>{initials(name)}</div>
                 <div style={{ flex:1 }}>
                   <p style={{ fontSize:13, fontWeight:700, color:"#1a1a1a", margin:0 }}>{name}</p>
-                  {u.current_job_role && <p style={{ fontSize:11, color:"#839958", margin:0 }}>{u.current_job_role}</p>}
+                  {u.current_job_role && <p style={{ fontSize:11, color:"#5B8AFF", margin:0 }}>{u.current_job_role}</p>}
                 </div>
                 <button
                   onClick={() => !isSent && handleSend(u.id)}
                   disabled={isSent || sending === u.id}
                   style={{ fontSize:11, fontWeight:700, border:"none", borderRadius:8, padding:"6px 14px", cursor: isSent ? "default":"pointer", fontFamily:"inherit",
-                    backgroundColor: isSent ? "#83995833" : "#0A3323",
-                    color: isSent ? "#0A3323" : "#F7F4D5",
+                    backgroundColor: isSent ? "#5B8AFF33" : "#080B14",
+                    color: isSent ? "#080B14" : "#F7F4D5",
                   }}
                 >
                   {isSent ? "Sent ✓" : sending===u.id ? "…" : "Send"}
@@ -171,7 +171,7 @@ function ShareModal({ post, currentUserId, onClose }: { post: Post; currentUserI
         <div style={{ borderTop:"1px solid #1F2937", paddingTop:12 }}>
           <button
             onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/communities/${post.community?.slug ?? ""}`); }}
-            style={{ width:"100%", fontSize:12, fontWeight:700, color:"#839958", background:"#0F1117", border:"1px solid #1F2937", borderRadius:10, padding:"9px 0", cursor:"pointer", fontFamily:"inherit" }}
+            style={{ width:"100%", fontSize:12, fontWeight:700, color:"#5B8AFF", background:"#0F1117", border:"1px solid #1F2937", borderRadius:10, padding:"9px 0", cursor:"pointer", fontFamily:"inherit" }}
           >
             📋 Copy link
           </button>
@@ -242,7 +242,7 @@ function PostCard({
             <Link href={`/profile/${post.user_id}`} style={{ fontSize:14, fontWeight:700, color:"#1a1a1a", textDecoration:"none" }}>{authorName}</Link>
             <span style={{ fontSize:11, backgroundColor:typeStyle.bg, color:typeStyle.color, borderRadius:99, padding:"2px 8px", fontWeight:600 }}>{typeStyle.label}</span>
           </div>
-          <div style={{ fontSize:11, color:"#839958", marginTop:2, display:"flex", gap:4, alignItems:"center", flexWrap:"wrap" }}>
+          <div style={{ fontSize:11, color:"#5B8AFF", marginTop:2, display:"flex", gap:4, alignItems:"center", flexWrap:"wrap" }}>
             {authorRole && <span>{authorRole}</span>}
             {authorRole && <span>·</span>}
             <span>{timeAgo(post.created_at)}</span>
@@ -252,7 +252,7 @@ function PostCard({
             )}
             {post.channel_type && CHANNEL_LABELS[post.channel_type] && (
               <><span>·</span>
-              <span style={{ color:"#839958" }}>{CHANNEL_LABELS[post.channel_type]}</span></>
+              <span style={{ color:"#5B8AFF" }}>{CHANNEL_LABELS[post.channel_type]}</span></>
             )}
           </div>
         </div>
@@ -262,7 +262,7 @@ function PostCard({
       {post.type === "Job referral" && post.referral_company && (
         <div style={{ backgroundColor:"#D3968C11", border:"1px solid #D3968C33", borderRadius:8, padding:"8px 12px", marginBottom:10 }}>
           <span style={{ fontSize:13, fontWeight:700, color:"#a05a44" }}>🤝 Can refer at {post.referral_company}</span>
-          {post.referral_role && <span style={{ fontSize:12, color:"#839958", marginLeft:8 }}>· {post.referral_role}</span>}
+          {post.referral_role && <span style={{ fontSize:12, color:"#5B8AFF", marginLeft:8 }}>· {post.referral_role}</span>}
         </div>
       )}
 
@@ -278,7 +278,7 @@ function PostCard({
       {post.content && (
         <p style={{ fontSize:14, color:"#333", lineHeight:1.65, margin:"0 0 10px", whiteSpace:"pre-wrap" }}>
           {display}
-          {long && <button onClick={()=>setExpanded(o=>!o)} style={{ background:"none", border:"none", cursor:"pointer", color:"#839958", fontSize:13, fontWeight:600, padding:0, marginLeft:4 }}>{expanded?" Show less":" …more"}</button>}
+          {long && <button onClick={()=>setExpanded(o=>!o)} style={{ background:"none", border:"none", cursor:"pointer", color:"#5B8AFF", fontSize:13, fontWeight:600, padding:0, marginLeft:4 }}>{expanded?" Show less":" …more"}</button>}
         </p>
       )}
 
@@ -292,28 +292,28 @@ function PostCard({
       {/* Action bar */}
       <div style={{ display:"flex", gap:2, borderTop:"1px solid #f5f0e8", paddingTop:10, flexWrap:"wrap" }}>
         {/* Like */}
-        <button onClick={()=>onLike(post.id)} style={{ display:"flex", alignItems:"center", gap:5, fontSize:12, fontWeight: isLiked?700:400, color:isLiked?"#0A3323":"#839958", background: isLiked?"#F7F4D5":"none", border:"none", cursor:"pointer", padding:"5px 10px", borderRadius:8, fontFamily:"inherit", transition:"all 0.15s" }}>
+        <button onClick={()=>onLike(post.id)} style={{ display:"flex", alignItems:"center", gap:5, fontSize:12, fontWeight: isLiked?700:400, color:isLiked?"#080B14":"#5B8AFF", background: isLiked?"#F7F4D5":"none", border:"none", cursor:"pointer", padding:"5px 10px", borderRadius:8, fontFamily:"inherit", transition:"all 0.15s" }}>
           👍 {post.helpful_count > 0 && <span>{post.helpful_count}</span>}
           <span>Helpful</span>
         </button>
 
         {/* Reply */}
-        <button style={{ display:"flex", alignItems:"center", gap:5, fontSize:12, color:"#839958", background:"none", border:"none", cursor:"pointer", padding:"5px 10px", borderRadius:8, fontFamily:"inherit" }}>
+        <button style={{ display:"flex", alignItems:"center", gap:5, fontSize:12, color:"#5B8AFF", background:"none", border:"none", cursor:"pointer", padding:"5px 10px", borderRadius:8, fontFamily:"inherit" }}>
           💬 {post.reply_count > 0 && <span>{post.reply_count}</span>} <span>Reply</span>
         </button>
 
         {/* Repost */}
-        <button onClick={()=>onRepost(post)} style={{ display:"flex", alignItems:"center", gap:5, fontSize:12, color:"#839958", background:"none", border:"none", cursor:"pointer", padding:"5px 10px", borderRadius:8, fontFamily:"inherit" }}>
+        <button onClick={()=>onRepost(post)} style={{ display:"flex", alignItems:"center", gap:5, fontSize:12, color:"#5B8AFF", background:"none", border:"none", cursor:"pointer", padding:"5px 10px", borderRadius:8, fontFamily:"inherit" }}>
           🔁 Repost
         </button>
 
         {/* Save */}
-        <button onClick={()=>onSave(post.id)} style={{ display:"flex", alignItems:"center", gap:5, fontSize:12, fontWeight:isSaved?700:400, color:isSaved?"#105666":"#839958", background:isSaved?"#B5D5FF22":"none", border:"none", cursor:"pointer", padding:"5px 10px", borderRadius:8, fontFamily:"inherit", transition:"all 0.15s" }}>
+        <button onClick={()=>onSave(post.id)} style={{ display:"flex", alignItems:"center", gap:5, fontSize:12, fontWeight:isSaved?700:400, color:isSaved?"#105666":"#5B8AFF", background:isSaved?"#B5D5FF22":"none", border:"none", cursor:"pointer", padding:"5px 10px", borderRadius:8, fontFamily:"inherit", transition:"all 0.15s" }}>
           {isSaved?"🔖":"🔖"} <span>{isSaved?"Saved":"Save"}</span>
         </button>
 
         {/* Share */}
-        <button onClick={()=>onShare(post)} style={{ display:"flex", alignItems:"center", gap:5, fontSize:12, color:"#839958", background:"none", border:"none", cursor:"pointer", padding:"5px 10px", borderRadius:8, fontFamily:"inherit", marginLeft:"auto" }}>
+        <button onClick={()=>onShare(post)} style={{ display:"flex", alignItems:"center", gap:5, fontSize:12, color:"#5B8AFF", background:"none", border:"none", cursor:"pointer", padding:"5px 10px", borderRadius:8, fontFamily:"inherit", marginLeft:"auto" }}>
           ↗ Share
         </button>
       </div>
@@ -321,7 +321,7 @@ function PostCard({
       {/* Request referral CTA */}
       {post.type === "Job referral" && !isOwnPost && (
         <div style={{ marginTop:10 }}>
-          <button onClick={()=>onShare(post)} style={{ width:"100%", fontSize:12, fontWeight:700, color:"#0A3323", backgroundColor:"#F7F4D5", border:"1px solid #1F2937", borderRadius:8, padding:"9px 0", cursor:"pointer", fontFamily:"inherit" }}>
+          <button onClick={()=>onShare(post)} style={{ width:"100%", fontSize:12, fontWeight:700, color:"#080B14", backgroundColor:"#F7F4D5", border:"1px solid #1F2937", borderRadius:8, padding:"9px 0", cursor:"pointer", fontFamily:"inherit" }}>
             Request referral via DM →
           </button>
         </div>
@@ -397,7 +397,7 @@ function PostComposer({ userId, userInitials, userAvatarBg, communities, onPoste
       {!open ? (
         <div style={{ display:"flex", gap:10, alignItems:"center" }}>
           <div style={{ width:36, height:36, borderRadius:"50%", backgroundColor:userAvatarBg, display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:800, flexShrink:0 }}>{userInitials}</div>
-          <button onClick={()=>setOpen(true)} style={{ flex:1, textAlign:"left", background:"#0F1117", border:"1px solid #1F2937", borderRadius:20, padding:"10px 16px", fontSize:13, color:"#839958", cursor:"pointer", fontFamily:"inherit" }}>
+          <button onClick={()=>setOpen(true)} style={{ flex:1, textAlign:"left", background:"#0F1117", border:"1px solid #1F2937", borderRadius:20, padding:"10px 16px", fontSize:13, color:"#5B8AFF", cursor:"pointer", fontFamily:"inherit" }}>
             Share a win, question, or referral offer...
           </button>
           <button onClick={()=>setOpen(true)} style={{ fontSize:20, background:"none", border:"none", cursor:"pointer" }} title="Add photo/video">📷</button>
@@ -409,7 +409,7 @@ function PostComposer({ userId, userInitials, userAvatarBg, communities, onPoste
             {/* Type pills */}
             <div style={{ display:"flex", gap:6 }}>
               {(["Discussion","Resource","Job referral"] as const).map(t => (
-                <button key={t} onClick={()=>setType(t)} style={{ fontSize:11, fontWeight:type===t?700:500, border:"none", borderRadius:99, cursor:"pointer", padding:"4px 12px", backgroundColor:type===t?"#0A3323":"#e8e4ce", color:type===t?"#F7F4D5":"#839958" }}>{t}</button>
+                <button key={t} onClick={()=>setType(t)} style={{ fontSize:11, fontWeight:type===t?700:500, border:"none", borderRadius:99, cursor:"pointer", padding:"4px 12px", backgroundColor:type===t?"#080B14":"#e8e4ce", color:type===t?"#F7F4D5":"#5B8AFF" }}>{t}</button>
               ))}
             </div>
 
@@ -455,8 +455,8 @@ function PostComposer({ userId, userInitials, userAvatarBg, communities, onPoste
               <button onClick={()=>fileInputRef.current?.click()} title="Add photo/video" style={{ fontSize:18, background:"none", border:"none", cursor:"pointer", padding:4 }}>📷</button>
               <input ref={fileInputRef} type="file" accept="image/*,video/*" multiple style={{ display:"none" }} onChange={handleFileSelect} />
               <span style={{ fontSize:11, color:"#b0ab8c", flex:1 }}>Photos & videos (up to 4)</span>
-              <button onClick={()=>{ setOpen(false); setContent(""); setMediaFiles([]); setMediaPreviews([]); }} style={{ fontSize:12, color:"#839958", background:"none", border:"none", cursor:"pointer" }}>Cancel</button>
-              <button onClick={handlePost} disabled={posting||!content.trim()} style={{ fontSize:12, fontWeight:700, backgroundColor:"#0A3323", color:"#F7F4D5", border:"none", borderRadius:8, padding:"8px 20px", cursor:"pointer", opacity:posting||!content.trim()?0.6:1 }}>
+              <button onClick={()=>{ setOpen(false); setContent(""); setMediaFiles([]); setMediaPreviews([]); }} style={{ fontSize:12, color:"#5B8AFF", background:"none", border:"none", cursor:"pointer" }}>Cancel</button>
+              <button onClick={handlePost} disabled={posting||!content.trim()} style={{ fontSize:12, fontWeight:700, backgroundColor:"#080B14", color:"#F7F4D5", border:"none", borderRadius:8, padding:"8px 20px", cursor:"pointer", opacity:posting||!content.trim()?0.6:1 }}>
                 {posting?"Posting…":"Post"}
               </button>
             </div>
@@ -477,23 +477,23 @@ function ProfileCard({ displayName, role, targetRole, circlesCount, followersCou
   const inits = initials(displayName);
   return (
     <div style={{ backgroundColor:"#fff", border:"1px solid #1F2937", borderRadius:14, overflow:"hidden", marginBottom:10 }}>
-      <div style={{ height:52, background:"linear-gradient(135deg, #0A3323 0%, #105666 100%)" }} />
+      <div style={{ height:52, background:"linear-gradient(135deg, #080B14 0%, #105666 100%)" }} />
       <div style={{ padding:"0 16px 16px", position:"relative" }}>
         <div style={{ width:50, height:50, borderRadius:"50%", backgroundColor:bg, border:"3px solid #fff", display:"flex", alignItems:"center", justifyContent:"center", fontSize:17, fontWeight:800, position:"absolute", top:-25 }}>{inits}</div>
         <div style={{ paddingTop:28 }}>
           <p style={{ fontSize:14, fontWeight:800, color:"#1a1a1a", margin:"0 0 2px" }}>{displayName}</p>
-          {role && <p style={{ fontSize:11, color:"#839958", margin:"0 0 2px" }}>{role}</p>}
+          {role && <p style={{ fontSize:11, color:"#5B8AFF", margin:"0 0 2px" }}>{role}</p>}
           {targetRole && <p style={{ fontSize:11, color:"#105666", margin:0 }}>→ {targetRole}</p>}
         </div>
         <div style={{ borderTop:"1px solid #f5f0e8", marginTop:10, paddingTop:10, display:"grid", gridTemplateColumns:"1fr 1fr 1fr", textAlign:"center", gap:4 }}>
           {[["circles", circlesCount], ["followers", followersCount], ["following", followingCount]].map(([label, val]) => (
             <div key={label as string}>
-              <p style={{ fontSize:15, fontWeight:800, color:"#0A3323", margin:0 }}>{val}</p>
-              <p style={{ fontSize:9, color:"#839958", margin:0, textTransform:"uppercase", letterSpacing:"0.3px" }}>{label}</p>
+              <p style={{ fontSize:15, fontWeight:800, color:"#080B14", margin:0 }}>{val}</p>
+              <p style={{ fontSize:9, color:"#5B8AFF", margin:0, textTransform:"uppercase", letterSpacing:"0.3px" }}>{label}</p>
             </div>
           ))}
         </div>
-        <Link href="/profile" style={{ display:"block", textAlign:"center", fontSize:11, fontWeight:700, color:"#839958", textDecoration:"none", marginTop:10 }}>Edit profile →</Link>
+        <Link href="/profile" style={{ display:"block", textAlign:"center", fontSize:11, fontWeight:700, color:"#5B8AFF", textDecoration:"none", marginTop:10 }}>Edit profile →</Link>
       </div>
     </div>
   );
@@ -506,7 +506,7 @@ function RightSidebar({ communities, myCommIds }: {
 }) {
   const myComms = communities.filter(c=>myCommIds.has(c.id)).slice(0,4);
   const suggestedComms = communities.filter(c=>!myCommIds.has(c.id)).slice(0,3);
-  const PAL = ["#F7F4D5","#D3968C","#839958","#B5D5FF","#FFB5C8"];
+  const PAL = ["#F7F4D5","#D3968C","#5B8AFF","#B5D5FF","#FFB5C8"];
   function commBg(id:string){ let h=0; for(const c of id) h=(h*31+c.charCodeAt(0))&0xfffff; return PAL[h%PAL.length]; }
 
   return (
@@ -514,42 +514,42 @@ function RightSidebar({ communities, myCommIds }: {
       {/* My circles */}
       {myComms.length > 0 && (
         <div style={{ backgroundColor:"#fff", border:"1px solid #1F2937", borderRadius:14, padding:16 }}>
-          <p style={{ fontSize:10, fontWeight:700, color:"#839958", textTransform:"uppercase", letterSpacing:"0.5px", margin:"0 0 12px" }}>My circles</p>
+          <p style={{ fontSize:10, fontWeight:700, color:"#5B8AFF", textTransform:"uppercase", letterSpacing:"0.5px", margin:"0 0 12px" }}>My circles</p>
           {myComms.map(c => (
             <Link key={c.id} href={`/communities/${c.slug}`} style={{ display:"flex", alignItems:"center", gap:10, textDecoration:"none", padding:"7px 0", borderBottom:"1px solid #f5f0e8" }}>
               <div style={{ width:28, height:28, borderRadius:8, backgroundColor:commBg(c.id), display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, fontWeight:800, flexShrink:0 }}>{c.name[0]}</div>
               <div style={{ flex:1, minWidth:0 }}>
-                <p style={{ fontSize:12, fontWeight:700, color:"#0A3323", margin:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.name}</p>
-                <p style={{ fontSize:10, color:"#839958", margin:0 }}>{c.posts_this_week} posts/week</p>
+                <p style={{ fontSize:12, fontWeight:700, color:"#080B14", margin:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.name}</p>
+                <p style={{ fontSize:10, color:"#5B8AFF", margin:0 }}>{c.posts_this_week} posts/week</p>
               </div>
             </Link>
           ))}
-          <Link href="/communities" style={{ display:"block", fontSize:11, fontWeight:600, color:"#839958", textDecoration:"none", marginTop:10 }}>Browse all →</Link>
+          <Link href="/communities" style={{ display:"block", fontSize:11, fontWeight:600, color:"#5B8AFF", textDecoration:"none", marginTop:10 }}>Browse all →</Link>
         </div>
       )}
 
       {/* Suggested circles */}
       {suggestedComms.length > 0 && (
         <div style={{ backgroundColor:"#fff", border:"1px solid #1F2937", borderRadius:14, padding:16 }}>
-          <p style={{ fontSize:10, fontWeight:700, color:"#839958", textTransform:"uppercase", letterSpacing:"0.5px", margin:"0 0 12px" }}>Circles to join</p>
+          <p style={{ fontSize:10, fontWeight:700, color:"#5B8AFF", textTransform:"uppercase", letterSpacing:"0.5px", margin:"0 0 12px" }}>Circles to join</p>
           {suggestedComms.map(c => (
             <div key={c.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"7px 0", borderBottom:"1px solid #f5f0e8" }}>
               <div style={{ width:28, height:28, borderRadius:8, backgroundColor:commBg(c.id), display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, fontWeight:800, flexShrink:0 }}>{c.name[0]}</div>
               <div style={{ flex:1, minWidth:0 }}>
-                <p style={{ fontSize:12, fontWeight:700, color:"#0A3323", margin:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.name}</p>
-                <p style={{ fontSize:10, color:"#839958", margin:0 }}>{c.member_count.toLocaleString("en-IN")} members</p>
+                <p style={{ fontSize:12, fontWeight:700, color:"#080B14", margin:0, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{c.name}</p>
+                <p style={{ fontSize:10, color:"#5B8AFF", margin:0 }}>{c.member_count.toLocaleString("en-IN")} members</p>
               </div>
-              <Link href={`/communities/${c.slug}`} style={{ fontSize:10, fontWeight:700, color:"#0A3323", textDecoration:"none", backgroundColor:"#F7F4D5", border:"1px solid #1F2937", borderRadius:6, padding:"3px 8px", whiteSpace:"nowrap" }}>Join</Link>
+              <Link href={`/communities/${c.slug}`} style={{ fontSize:10, fontWeight:700, color:"#080B14", textDecoration:"none", backgroundColor:"#F7F4D5", border:"1px solid #1F2937", borderRadius:6, padding:"3px 8px", whiteSpace:"nowrap" }}>Join</Link>
             </div>
           ))}
         </div>
       )}
 
       {/* Assistant promo */}
-      <div style={{ backgroundColor:"#0A3323", borderRadius:14, padding:16 }}>
+      <div style={{ backgroundColor:"#080B14", borderRadius:14, padding:16 }}>
         <p style={{ fontSize:13, fontWeight:800, color:"#F7F4D5", margin:"0 0 6px" }}>✨ Career Assistant</p>
         <p style={{ fontSize:11, color:"rgba(247,244,213,0.6)", margin:"0 0 12px", lineHeight:1.5 }}>Salary intel · Interview prep · Offer evaluation</p>
-        <Link href="/assistant" style={{ display:"block", textAlign:"center", fontSize:12, fontWeight:700, color:"#0A3323", backgroundColor:"#F7F4D5", borderRadius:8, padding:"8px 0", textDecoration:"none" }}>Open Assistant →</Link>
+        <Link href="/assistant" style={{ display:"block", textAlign:"center", fontSize:12, fontWeight:700, color:"#080B14", backgroundColor:"#F7F4D5", borderRadius:8, padding:"8px 0", textDecoration:"none" }}>Open Assistant →</Link>
       </div>
     </div>
   );
@@ -731,7 +731,7 @@ export default function FeedPage() {
               ["job_board","💼 Jobs"],
               ["saved","🔖 Saved"],
             ] as const).map(([key,label]) => (
-              <button key={key} onClick={()=>setFilter(key)} style={{ fontSize:11, fontWeight:filter===key?700:500, border:"none", cursor:"pointer", padding:"6px 14px", borderRadius:20, backgroundColor:filter===key?"#0A3323":"#e8e4ce", color:filter===key?"#F7F4D5":"#839958", fontFamily:"inherit", whiteSpace:"nowrap", flexShrink:0 }}>
+              <button key={key} onClick={()=>setFilter(key)} style={{ fontSize:11, fontWeight:filter===key?700:500, border:"none", cursor:"pointer", padding:"6px 14px", borderRadius:20, backgroundColor:filter===key?"#080B14":"#e8e4ce", color:filter===key?"#F7F4D5":"#5B8AFF", fontFamily:"inherit", whiteSpace:"nowrap", flexShrink:0 }}>
                 {label}
               </button>
             ))}
@@ -741,16 +741,16 @@ export default function FeedPage() {
           {!sessionLoading && !userId && (
             <div style={{ backgroundColor:"#fff", border:"1px solid #1F2937", borderRadius:16, padding:"40px 24px", textAlign:"center", marginBottom:12 }}>
               <div style={{ fontSize:40, marginBottom:12 }}>👋</div>
-              <p style={{ fontSize:16, fontWeight:800, color:"#0A3323", margin:"0 0 8px" }}>
+              <p style={{ fontSize:16, fontWeight:800, color:"#080B14", margin:"0 0 8px" }}>
                 Welcome to Mentor
               </p>
-              <p style={{ fontSize:13, color:"#839958", margin:"0 0 24px", lineHeight:1.6 }}>
+              <p style={{ fontSize:13, color:"#5B8AFF", margin:"0 0 24px", lineHeight:1.6 }}>
                 The career community for early-career professionals in India.<br/>
                 Sign in to see posts from your circles, get referrals, and book expert sessions.
               </p>
               <Link href="/auth/login" style={{
                 display:"inline-block", fontSize:13, fontWeight:700,
-                backgroundColor:"#0A3323", color:"#F7F4D5",
+                backgroundColor:"#080B14", color:"#F7F4D5",
                 borderRadius:10, padding:"12px 28px", textDecoration:"none",
               }}>
                 Sign in with LinkedIn →
@@ -763,7 +763,7 @@ export default function FeedPage() {
 
           {loading ? (
             <div style={{ backgroundColor:"#fff", border:"1px solid #1F2937", borderRadius:14, padding:32, textAlign:"center" }}>
-              <p style={{ color:"#839958", fontSize:13 }}>Loading your feed…</p>
+              <p style={{ color:"#5B8AFF", fontSize:13 }}>Loading your feed…</p>
             </div>
           ) : !userId ? null : myCommIds.size === 0 ? (
             // No approved group memberships — prompt to join
@@ -771,10 +771,10 @@ export default function FeedPage() {
               <p style={{ fontSize:14, fontWeight:700, color:"#1a1a1a", margin:"0 0 12px", lineHeight:1.6 }}>
                 Your feed is quiet because it only shows posts from groups you're a member of. That's by design — no noise, just signal from verified peers.
               </p>
-              <p style={{ fontSize:13, color:"#839958", margin:"0 0 24px", lineHeight:1.6 }}>
+              <p style={{ fontSize:13, color:"#5B8AFF", margin:"0 0 24px", lineHeight:1.6 }}>
                 Apply to a group to start seeing relevant posts.
               </p>
-              <Link href="/communities" style={{ display:"inline-block", fontSize:13, fontWeight:700, backgroundColor:"#0A3323", color:"#F7F4D5", borderRadius:10, padding:"12px 28px", textDecoration:"none" }}>
+              <Link href="/communities" style={{ display:"inline-block", fontSize:13, fontWeight:700, backgroundColor:"#080B14", color:"#F7F4D5", borderRadius:10, padding:"12px 28px", textDecoration:"none" }}>
                 Browse Groups →
               </Link>
             </div>
@@ -786,11 +786,11 @@ export default function FeedPage() {
               <p style={{ fontSize:14, fontWeight:700, color:"#1a1a1a", margin:"0 0 8px" }}>
                 {filter==="saved" ? "No saved posts yet" : "Nothing here yet"}
               </p>
-              <p style={{ fontSize:13, color:"#839958", margin:"0 0 20px" }}>
+              <p style={{ fontSize:13, color:"#5B8AFF", margin:"0 0 20px" }}>
                 {filter==="saved" ? "Save posts to read later by clicking 🔖" : "Be the first to post in this channel."}
               </p>
               {filter!=="saved" && (
-                <Link href="/communities" style={{ display:"inline-block", fontSize:13, fontWeight:700, backgroundColor:"#0A3323", color:"#F7F4D5", borderRadius:10, padding:"10px 24px", textDecoration:"none" }}>
+                <Link href="/communities" style={{ display:"inline-block", fontSize:13, fontWeight:700, backgroundColor:"#080B14", color:"#F7F4D5", borderRadius:10, padding:"10px 24px", textDecoration:"none" }}>
                   Go to your groups →
                 </Link>
               )}

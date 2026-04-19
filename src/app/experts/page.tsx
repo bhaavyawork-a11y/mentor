@@ -58,14 +58,14 @@ function formatDate(iso: string) {
   return d.toLocaleDateString("en-IN", { day: "numeric", month: "short" }) + ` · ${d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}`;
 }
 
-const PALETTE = ["#F7F4D5", "#D3968C", "#839958", "#B5D5FF", "#FFCBA4", "#FFB5C8"];
+const PALETTE = ["#F7F4D5", "#D3968C", "#5B8AFF", "#B5D5FF", "#FFCBA4", "#FFB5C8"];
 function avatarBg(id: string) {
   let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) & 0xfffff;
   return PALETTE[h % PALETTE.length];
 }
 
 const STATUS_STYLE: Record<string, { bg: string; color: string; label: string }> = {
-  confirmed: { bg: "#83995822", color: "#F9FAFB", label: "Confirmed" },
+  confirmed: { bg: "#5B8AFF22", color: "#F9FAFB", label: "Confirmed" },
   pending:   { bg: "#FFF3CC",   color: "#8a6200", label: "Pending" },
   completed: { bg: "#f0f0f0",   color: "#9CA3AF",    label: "Completed" },
   cancelled: { bg: "#fee2e2",   color: "#dc2626", label: "Cancelled" },
@@ -85,7 +85,7 @@ function BookButton({ serviceId, expertId, label, price }: { serviceId: string; 
   };
   return (
     <button onClick={handleBook} disabled={loading} style={{
-      backgroundColor: "#064E3B", color: "#6B7280",
+      backgroundColor: "#1A3A8F", color: "#6B7280",
       border: "none", borderRadius: 8, padding: "7px 14px",
       fontSize: 12, fontWeight: 700, cursor: loading ? "default" : "pointer",
       opacity: loading ? 0.7 : 1, whiteSpace: "nowrap",
@@ -222,7 +222,7 @@ function MySessionsPanel({ bookings, loading }: { bookings: Booking[]; loading: 
         <div style={{ padding: "20px 20px 16px", borderBottom: "1px solid #1F2937" }}>
           <p style={{ fontSize: 10, fontWeight: 700, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.6px", margin: "0 0 10px" }}>Next up</p>
           <div style={{
-            background: "linear-gradient(135deg, #0A3323 0%, #1a5c3a 100%)",
+            background: "linear-gradient(135deg, #080B14 0%, #1a5c3a 100%)",
             borderRadius: 14, padding: 16,
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
@@ -239,7 +239,7 @@ function MySessionsPanel({ bookings, loading }: { bookings: Booking[]; loading: 
             </p>
             {next.meeting_url ? (
               <a href={next.meeting_url} target="_blank" rel="noopener noreferrer" style={{
-                display: "block", textAlign: "center", backgroundColor: "#839958",
+                display: "block", textAlign: "center", backgroundColor: "#5B8AFF",
                 color: "#F9FAFB", borderRadius: 9, padding: "9px 0",
                 fontSize: 13, fontWeight: 800, textDecoration: "none",
               }}>
@@ -402,7 +402,7 @@ export default function SessionsPage() {
       {/* ── Sign-in banner for unauthenticated users ── */}
       {!session && (
         <div style={{
-          backgroundColor: "#064E3B", borderRadius: 12,
+          backgroundColor: "#1A3A8F", borderRadius: 12,
           padding: "16px 20px", margin: "16px 0 4px",
           display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap",
         }}>
@@ -416,7 +416,7 @@ export default function SessionsPage() {
           </div>
           <Link href="/auth/login?next=/experts" style={{
             fontSize: 12, fontWeight: 700, color: "#F9FAFB",
-            backgroundColor: "rgba(6,78,59,0.2)", borderRadius: 8,
+            backgroundColor: "rgba(26,58,143,0.2)", borderRadius: 8,
             padding: "8px 16px", textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0,
           }}>
             Sign in →
@@ -442,7 +442,7 @@ export default function SessionsPage() {
                 backgroundColor: "#181C24", outline: "none", marginBottom: 10,
                 fontFamily: "inherit", color: "#F9FAFB",
               }}
-              onFocus={e => (e.target.style.borderColor = "#0A3323")}
+              onFocus={e => (e.target.style.borderColor = "#080B14")}
               onBlur={e => (e.target.style.borderColor = "#e8e4ce")}
             />
 
@@ -451,8 +451,8 @@ export default function SessionsPage() {
               {["All", ...allAreas].map(area => (
                 <button key={area} onClick={() => setActiveFilter(area)} style={{
                   fontSize: 11, fontWeight: activeFilter === area ? 700 : 500,
-                  backgroundColor: activeFilter === area ? "#0A3323" : "#f5f5f0",
-                  color: activeFilter === area ? "#839958" : "#666",
+                  backgroundColor: activeFilter === area ? "#080B14" : "#f5f5f0",
+                  color: activeFilter === area ? "#5B8AFF" : "#666",
                   border: "none", borderRadius: 99, padding: "5px 12px",
                   cursor: "pointer", transition: "all 0.12s",
                 }}>
@@ -493,7 +493,7 @@ export default function SessionsPage() {
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <p style={{ fontSize: 14, fontWeight: 800, color: "#F9FAFB", margin: 0 }}>My Sessions</p>
               {upcomingCount > 0 && (
-                <span style={{ fontSize: 10, fontWeight: 700, backgroundColor: "#064E3B", color: "#6B7280", borderRadius: 99, padding: "2px 8px" }}>
+                <span style={{ fontSize: 10, fontWeight: 700, backgroundColor: "#1A3A8F", color: "#6B7280", borderRadius: 99, padding: "2px 8px" }}>
                   {upcomingCount} upcoming
                 </span>
               )}

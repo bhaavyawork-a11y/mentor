@@ -33,7 +33,7 @@ export default function BookingButton({
       <button onClick={handleCheckout} disabled={loading}
         style={{
           display: "inline-flex", alignItems: "center", gap: "6px",
-          backgroundColor: "#064E3B", color: "#6B7280",
+          backgroundColor: "#1A3A8F", color: "#6B7280",
           fontSize: fz, fontWeight: 700,
           borderRadius: "8px", padding: pad,
           border: "none", cursor: "pointer", opacity: loading ? 0.7 : 1,

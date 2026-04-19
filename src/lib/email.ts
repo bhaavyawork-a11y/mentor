@@ -9,8 +9,8 @@ const FROM = "Mentor <hello@mentorapp.in>";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://mentorapp.in";
 
 // ─── Brand colours ────────────────────────────────────────────────────────────
-const GREEN  = "#0A3323";
-const SAGE   = "#839958";
+const GREEN  = "#080B14";
+const SAGE   = "#5B8AFF";
 const CREAM  = "#F7F4D5";
 const SALMON = "#D3968C";
 

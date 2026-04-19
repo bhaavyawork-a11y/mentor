@@ -24,13 +24,13 @@ export default function GuestBanner() {
       <div style={{ display: "flex", gap: 10, alignItems: "center", flexShrink: 0 }}>
         <Link
           href="/auth/login"
-          style={{ fontSize: 12, fontWeight: 800, backgroundColor: "#0A3323", color: "#839958", borderRadius: 8, padding: "8px 16px", textDecoration: "none", whiteSpace: "nowrap" }}
+          style={{ fontSize: 12, fontWeight: 800, backgroundColor: "#080B14", color: "#5B8AFF", borderRadius: 8, padding: "8px 16px", textDecoration: "none", whiteSpace: "nowrap" }}
         >
           Sign up free →
         </Link>
         <Link
           href="/auth/login"
-          style={{ fontSize: 12, fontWeight: 600, color: "#839958", textDecoration: "none", whiteSpace: "nowrap" }}
+          style={{ fontSize: 12, fontWeight: 600, color: "#5B8AFF", textDecoration: "none", whiteSpace: "nowrap" }}
         >
           Sign in
         </Link>

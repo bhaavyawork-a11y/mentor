@@ -175,8 +175,8 @@ export default function ExpertEarningsPage() {
         {(["overview", "payout"] as const).map(t => (
           <button key={t} onClick={() => setTab(t)} style={{
             padding: "7px 18px", borderRadius: 99, fontSize: 12, fontWeight: tab === t ? 700 : 500,
-            backgroundColor: tab === t ? "#0A3323" : "#f5f5f0",
-            color: tab === t ? "#839958" : "#666",
+            backgroundColor: tab === t ? "#080B14" : "#f5f5f0",
+            color: tab === t ? "#5B8AFF" : "#666",
             border: "none", cursor: "pointer", fontFamily: "inherit",
           }}>
             {t === "overview" ? "Earnings history" : "Request payout"}
@@ -247,8 +247,8 @@ export default function ExpertEarningsPage() {
             {(["upi", "bank_transfer"] as const).map(m => (
               <button key={m} onClick={() => setMethod(m)} style={{
                 padding: "8px 16px", borderRadius: 99, fontSize: 12, fontWeight: method === m ? 700 : 500,
-                backgroundColor: method === m ? "#0A3323" : "#f5f5f0",
-                color: method === m ? "#839958" : "#666",
+                backgroundColor: method === m ? "#080B14" : "#f5f5f0",
+                color: method === m ? "#5B8AFF" : "#666",
                 border: "none", cursor: "pointer", fontFamily: "inherit",
               }}>
                 {m === "upi" ? "UPI" : "Bank Transfer"}
@@ -289,7 +289,7 @@ export default function ExpertEarningsPage() {
           {reqSuccess && <p style={{ fontSize: 12, color: "#1b5e20", marginBottom: 14, backgroundColor: "#e8f5e9", padding: "8px 12px", borderRadius: 8 }}>✓ Payout request submitted! We'll process it within 3–5 business days.</p>}
 
           <button onClick={requestPayout} disabled={requesting || !payoutAmt || availablePayout === 0} style={{
-            backgroundColor: "#064E3B", color: "#F9FAFB", border: "none",
+            backgroundColor: "#1A3A8F", color: "#F9FAFB", border: "none",
             borderRadius: 12, padding: "12px 24px", fontSize: 13, fontWeight: 800,
             cursor: requesting || !payoutAmt || availablePayout === 0 ? "default" : "pointer",
             opacity: !payoutAmt || availablePayout === 0 ? 0.6 : 1,

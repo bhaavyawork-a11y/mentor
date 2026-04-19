@@ -105,8 +105,8 @@ export default function ExpertBookingsPage() {
         {(["upcoming", "past", "all"] as const).map(f => (
           <button key={f} onClick={() => setFilter(f)} style={{
             padding: "7px 16px", borderRadius: 99, fontSize: 12, fontWeight: filter === f ? 700 : 500,
-            backgroundColor: filter === f ? "#0A3323" : "#f5f5f0",
-            color: filter === f ? "#839958" : "#666",
+            backgroundColor: filter === f ? "#080B14" : "#f5f5f0",
+            color: filter === f ? "#5B8AFF" : "#666",
             border: "none", cursor: "pointer", fontFamily: "inherit", textTransform: "capitalize",
           }}>
             {f === "upcoming" ? "Upcoming" : f === "past" ? "Past" : "All"}
@@ -129,14 +129,14 @@ export default function ExpertBookingsPage() {
             return (
               <div key={b.id} style={{
                 backgroundColor: "#181C24",
-                border: `1px solid ${isNext ? "#839958" : "#e8e4ce"}`,
+                border: `1px solid ${isNext ? "#5B8AFF" : "#e8e4ce"}`,
                 borderRadius: 16, padding: "18px 20px",
                 boxShadow: isNext ? "0 2px 12px rgba(131,153,88,0.12)" : "none",
               }}>
                 <div style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
                   {/* Avatar */}
                   <div style={{
-                    width: 42, height: 42, borderRadius: 12, backgroundColor: "rgba(6,78,59,0.2)",
+                    width: 42, height: 42, borderRadius: 12, backgroundColor: "rgba(26,58,143,0.2)",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     fontSize: 15, fontWeight: 800, color: "#F9FAFB", flexShrink: 0,
                   }}>
@@ -178,7 +178,7 @@ export default function ExpertBookingsPage() {
                       onClick={() => updateBooking(b.id, { status: "confirmed" })}
                       disabled={actionLoading === b.id}
                       style={{
-                        fontSize: 12, fontWeight: 700, backgroundColor: "#064E3B", color: "#6B7280",
+                        fontSize: 12, fontWeight: 700, backgroundColor: "#1A3A8F", color: "#6B7280",
                         border: "none", borderRadius: 8, padding: "7px 14px", cursor: "pointer", fontFamily: "inherit",
                       }}>
                       {actionLoading === b.id ? "…" : "✓ Confirm booking"}

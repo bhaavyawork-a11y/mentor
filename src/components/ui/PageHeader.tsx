@@ -9,7 +9,7 @@ export function PageHeader({ title, subtitle, action }: PageHeaderProps) {
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "16px", marginBottom: "24px" }}>
       <div>
         <h1 style={{ fontSize: "24px", fontWeight: 800, color: "#1a1a1a", margin: 0 }}>{title}</h1>
-        {subtitle && <p style={{ fontSize: "13px", color: "#839958", marginTop: "4px" }}>{subtitle}</p>}
+        {subtitle && <p style={{ fontSize: "13px", color: "#5B8AFF", marginTop: "4px" }}>{subtitle}</p>}
       </div>
       {action && <div style={{ flexShrink: 0 }}>{action}</div>}
     </div>

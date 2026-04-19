@@ -38,7 +38,7 @@ function Stars({ rating, size = 13 }: { rating: number; size?: number }) {
 }
 
 const OUTCOME_STYLE: Record<string, { bg: string; color: string }> = {
-  "Got offer":  { bg: "#83995822", color: "#F9FAFB" },
+  "Got offer":  { bg: "#5B8AFF22", color: "#F9FAFB" },
   "Rejected":   { bg: "#ff6b6b22", color: "#cc0000" },
   "Withdrew":   { bg: "#e8e4ce",   color: "#6B7280" },
   "No decision":{ bg: "#F7F4D522", color: "#8a7200" },
@@ -188,7 +188,7 @@ export default function CompanyPage() {
     <div style={{ maxWidth: 900, margin: "0 auto", padding: "32px 0" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 28 }}>
-        <div style={{ width: 60, height: 60, borderRadius: 14, backgroundColor: "rgba(6,78,59,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, fontWeight: 800, color: "#F9FAFB", flexShrink: 0 }}>
+        <div style={{ width: 60, height: 60, borderRadius: 14, backgroundColor: "rgba(26,58,143,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, fontWeight: 800, color: "#F9FAFB", flexShrink: 0 }}>
           {company.name[0]}
         </div>
         <div>
@@ -207,7 +207,7 @@ export default function CompanyPage() {
       {/* Tabs */}
       <div style={{ display: "flex", gap: 4, backgroundColor: "#f5f5f5", padding: 4, borderRadius: 12, marginBottom: 28, overflowX: "auto" }}>
         {TABS.map(({ id, label }) => (
-          <button key={id} onClick={() => setTab(id)} style={{ fontSize: 12, fontWeight: tab === id ? 700 : 500, color: tab === id ? "#1a1a1a" : "#839958", backgroundColor: tab === id ? "#fff" : "transparent", border: "none", borderRadius: 10, padding: "8px 16px", cursor: "pointer", boxShadow: tab === id ? "0 1px 4px rgba(0,0,0,0.08)" : "none", whiteSpace: "nowrap" }}>
+          <button key={id} onClick={() => setTab(id)} style={{ fontSize: 12, fontWeight: tab === id ? 700 : 500, color: tab === id ? "#1a1a1a" : "#5B8AFF", backgroundColor: tab === id ? "#fff" : "transparent", border: "none", borderRadius: 10, padding: "8px 16px", cursor: "pointer", boxShadow: tab === id ? "0 1px 4px rgba(0,0,0,0.08)" : "none", whiteSpace: "nowrap" }}>
             {label}
           </button>
         ))}
@@ -230,7 +230,7 @@ export default function CompanyPage() {
               </div>
             ))}
           </div>
-          <div style={{ backgroundColor: "#064E3B", borderRadius: 14, padding: "18px 20px" }}>
+          <div style={{ backgroundColor: "#1A3A8F", borderRadius: 14, padding: "18px 20px" }}>
             <p style={{ fontSize: 22, fontWeight: 800, color: "#6B7280", margin: "0 0 4px" }}>{company.recommend}%</p>
             <p style={{ fontSize: 13, color: "#ffffff88", margin: 0 }}>of reviewers would recommend to a friend</p>
           </div>
@@ -329,7 +329,7 @@ export default function CompanyPage() {
                     <Stars rating={r.overall_rating} />
                     {(r.title || r.tenure) && <p style={{ fontSize: 12, color: "#6B7280", margin: "4px 0 0" }}>{[r.title, r.tenure].filter(Boolean).join(" · ")}</p>}
                   </div>
-                  {r.recommend && <span style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#83995822", color: "#F9FAFB", borderRadius: 99, padding: "3px 10px" }}>Recommends ✓</span>}
+                  {r.recommend && <span style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#5B8AFF22", color: "#F9FAFB", borderRadius: 99, padding: "3px 10px" }}>Recommends ✓</span>}
                 </div>
                 {r.pros && <p style={{ fontSize: 13, color: "#F9FAFB", margin: "0 0 8px" }}><strong>Pros:</strong> {r.pros}</p>}
                 {r.cons && <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}><strong>Cons:</strong> {r.cons}</p>}
@@ -356,7 +356,7 @@ export default function CompanyPage() {
                   ))}
                 </div>
                 <p style={{ fontSize: 13, color: "#9CA3AF", lineHeight: 1.5, margin: "0 0 12px" }}>{job.description}</p>
-                <Link href="/jobs" style={{ fontSize: 12, fontWeight: 700, backgroundColor: "#064E3B", color: "#6B7280", borderRadius: 8, padding: "8px 16px", textDecoration: "none" }}>Apply now →</Link>
+                <Link href="/jobs" style={{ fontSize: 12, fontWeight: 700, backgroundColor: "#1A3A8F", color: "#6B7280", borderRadius: 8, padding: "8px 16px", textDecoration: "none" }}>Apply now →</Link>
               </div>
             ))
           )}

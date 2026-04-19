@@ -70,7 +70,7 @@ const BTN_PRIMARY: React.CSSProperties = {
   padding: "12px 28px",
   borderRadius: 10,
   border: "none",
-  backgroundColor: "#064E3B",
+  backgroundColor: "#1A3A8F",
   color: "#F9FAFB",
   fontSize: 14,
   fontWeight: 700,
@@ -107,7 +107,7 @@ function Steps({ current, total }: { current: number; total: number }) {
       {Array.from({ length: total }).map((_, i) => (
         <div key={i} style={{
           flex: 1, height: 4, borderRadius: 99,
-          backgroundColor: i < current ? "#064E3B" : "#1F2937",
+          backgroundColor: i < current ? "#1A3A8F" : "#1F2937",
         }} />
       ))}
     </div>
@@ -221,7 +221,7 @@ function EmployerWall({ onVerified }: { onVerified: () => void }) {
         {/* Trust callout */}
         <div style={{
           marginTop: 20, padding: "12px 14px",
-          backgroundColor: "rgba(6,78,59,0.15)", border: "1px solid rgba(6,78,59,0.4)",
+          backgroundColor: "rgba(26,58,143,0.15)", border: "1px solid rgba(26,58,143,0.4)",
           borderRadius: 10,
         }}>
           <div style={{ fontSize: 12, color: "#6EE7B7", fontWeight: 700, marginBottom: 4 }}>
@@ -538,7 +538,7 @@ function PostJobInner() {
               <input
                 type="checkbox" checked={role.remote_ok}
                 onChange={e => setRole({ ...role, remote_ok: e.target.checked })}
-                style={{ width: 16, height: 16, accentColor: "#064E3B" }}
+                style={{ width: 16, height: 16, accentColor: "#1A3A8F" }}
               />
               Remote OK
             </label>
@@ -578,7 +578,7 @@ function PostJobInner() {
 
           {recommended.length > 0 && recommended[0].id !== targetGroupId && (
             <div style={{
-              backgroundColor: "rgba(6,78,59,0.15)", border: "1px solid rgba(6,78,59,0.4)",
+              backgroundColor: "rgba(26,58,143,0.15)", border: "1px solid rgba(26,58,143,0.4)",
               borderRadius: 10, padding: "10px 14px", marginBottom: 16,
               fontSize: 12, color: "#6EE7B7",
             }}>
@@ -602,8 +602,8 @@ function PostJobInner() {
                   style={{
                     display: "flex", alignItems: "center", gap: 14,
                     padding: "14px 16px", borderRadius: 12, cursor: "pointer",
-                    border: `1.5px solid ${selected ? "#064E3B" : "#1F2937"}`,
-                    backgroundColor: selected ? "rgba(6,78,59,0.2)" : "#0F1117",
+                    border: `1.5px solid ${selected ? "#1A3A8F" : "#1F2937"}`,
+                    backgroundColor: selected ? "rgba(26,58,143,0.2)" : "#0F1117",
                     fontFamily: "inherit", textAlign: "left", width: "100%",
                     transition: "all 0.15s",
                   }}
@@ -656,15 +656,15 @@ function PostJobInner() {
                 style={{
                   display: "flex", alignItems: "flex-start", gap: 12,
                   padding: "14px 16px", borderRadius: 12, cursor: "pointer",
-                  border: `1.5px solid ${appMethod === opt.id ? "#064E3B" : "#1F2937"}`,
-                  backgroundColor: appMethod === opt.id ? "rgba(6,78,59,0.2)" : "#0F1117",
+                  border: `1.5px solid ${appMethod === opt.id ? "#1A3A8F" : "#1F2937"}`,
+                  backgroundColor: appMethod === opt.id ? "rgba(26,58,143,0.2)" : "#0F1117",
                   fontFamily: "inherit", textAlign: "left", width: "100%",
                 }}
               >
                 <div style={{
                   width: 20, height: 20, borderRadius: 99, flexShrink: 0, marginTop: 1,
-                  border: `2px solid ${appMethod === opt.id ? "#064E3B" : "#374151"}`,
-                  backgroundColor: appMethod === opt.id ? "#064E3B" : "transparent",
+                  border: `2px solid ${appMethod === opt.id ? "#1A3A8F" : "#374151"}`,
+                  backgroundColor: appMethod === opt.id ? "#1A3A8F" : "transparent",
                 }} />
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: "#F9FAFB" }}>{opt.label}</div>
@@ -731,7 +731,7 @@ function PostJobInner() {
 
             {/* Target group */}
             {selectedGroup && (
-              <div style={{ backgroundColor: "rgba(6,78,59,0.15)", border: "1px solid rgba(6,78,59,0.4)", borderRadius: 12, padding: "14px 16px" }}>
+              <div style={{ backgroundColor: "rgba(26,58,143,0.15)", border: "1px solid rgba(26,58,143,0.4)", borderRadius: 12, padding: "14px 16px" }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#6EE7B7", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Posting to</div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "#F9FAFB" }}>
                   {groupEmoji(selectedGroup.slug)} {selectedGroup.name}

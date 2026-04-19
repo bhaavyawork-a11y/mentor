@@ -73,7 +73,7 @@ export function PWAInstallBanner() {
   return (
     <div style={{
       position: "fixed", bottom: 80, left: 12, right: 12,
-      backgroundColor: "#0A3323", borderRadius: 16, padding: "14px 16px",
+      backgroundColor: "#080B14", borderRadius: 16, padding: "14px 16px",
       display: "flex", alignItems: "center", gap: 12,
       boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
       zIndex: 1000,
@@ -95,7 +95,7 @@ export function PWAInstallBanner() {
         <p style={{ fontSize: 13, fontWeight: 700, color: "#F7F4D5", margin: "0 0 2px" }}>
           Add Mentor to Home Screen
         </p>
-        <p style={{ fontSize: 11, color: "#839958", margin: 0 }}>
+        <p style={{ fontSize: 11, color: "#5B8AFF", margin: 0 }}>
           Instant access, works offline
         </p>
       </div>
@@ -109,7 +109,7 @@ export function PWAInstallBanner() {
           ×
         </button>
         <button onClick={install} style={{
-          backgroundColor: "#839958", color: "#0A3323",
+          backgroundColor: "#5B8AFF", color: "#080B14",
           border: "none", borderRadius: 9, padding: "8px 14px",
           fontSize: 12, fontWeight: 800, cursor: "pointer", fontFamily: "inherit",
           whiteSpace: "nowrap",

@@ -156,7 +156,7 @@ export default function ReapplyPage() {
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
             <span style={{ fontSize: 32 }}>{ok ? "🎉" : "😔"}</span>
             <div>
-              <h2 style={{ fontSize: 18, fontWeight: 800, color: ok ? "#0A3323" : "#c0714a", margin: 0 }}>
+              <h2 style={{ fontSize: 18, fontWeight: 800, color: ok ? "#080B14" : "#c0714a", margin: 0 }}>
                 {ok ? `Welcome to ${community.name}!` : "Application not approved"}
               </h2>
               <p style={{ fontSize: 13, color: "#6B7280", margin: "4px 0 0" }}>AI score: {result.score}/100</p>
@@ -169,7 +169,7 @@ export default function ReapplyPage() {
 
           {ok ? (
             <Link href={`/communities/${community.slug}`} style={{
-              display: "inline-block", padding: "11px 22px", backgroundColor: "#064E3B",
+              display: "inline-block", padding: "11px 22px", backgroundColor: "#1A3A8F",
               color: "#F9FAFB", borderRadius: 10, fontSize: 13, fontWeight: 700,
               textDecoration: "none",
             }}>
@@ -232,7 +232,7 @@ export default function ReapplyPage() {
                 display: "inline-block",
                 fontSize: 14,
                 fontWeight: 800,
-                color: prevApp.ai_score && prevApp.ai_score >= 70 ? "#0A3323" : "#c0714a",
+                color: prevApp.ai_score && prevApp.ai_score >= 70 ? "#080B14" : "#c0714a",
               }}>
                 Score: {prevApp.ai_score ?? "—"}/100
               </span>
@@ -280,7 +280,7 @@ export default function ReapplyPage() {
                 />
                 <div style={{
                   fontSize: 11,
-                  color: isSufficient ? "#839958" : charCount > 0 ? "#c0714a" : "#b0ab8c",
+                  color: isSufficient ? "#5B8AFF" : charCount > 0 ? "#c0714a" : "#b0ab8c",
                   marginTop: 6,
                   fontWeight: 500,
                 }}>
@@ -304,7 +304,7 @@ export default function ReapplyPage() {
             disabled={!canSubmit || submitting}
             style={{
               padding: "11px 22px", borderRadius: 10, border: "none",
-              backgroundColor: canSubmit && !submitting ? "#0A3323" : "#c8c4ae",
+              backgroundColor: canSubmit && !submitting ? "#080B14" : "#c8c4ae",
               color: "#F9FAFB", fontSize: 13, fontWeight: 700,
               cursor: canSubmit && !submitting ? "pointer" : "default",
               fontFamily: "inherit",

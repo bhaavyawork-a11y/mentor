@@ -5,7 +5,7 @@ import Link from "next/link";
 // ─── Proof avatars ─────────────────────────────────────────────────────────────
 const PROOF = [
   { initials: "R", bg: "#D3968C" },
-  { initials: "K", bg: "#839958" },
+  { initials: "K", bg: "#5B8AFF" },
   { initials: "A", bg: "#1A3A8F" },
   { initials: "S", bg: "#105666" },
 ];

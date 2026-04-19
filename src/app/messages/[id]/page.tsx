@@ -19,7 +19,7 @@ interface Message {
 
 interface OtherUser { id: string; full_name: string | null; current_job_role: string | null }
 
-const AVATAR_PAL = ["#F7F4D5","#D3968C","#839958","#105666","#B5D5FF","#FFB5C8"];
+const AVATAR_PAL = ["#F7F4D5","#D3968C","#5B8AFF","#105666","#B5D5FF","#FFB5C8"];
 function avatarBg(id: string) { let h=0; for(const c of id) h=(h*31+c.charCodeAt(0))&0xfffff; return AVATAR_PAL[h%AVATAR_PAL.length]; }
 function initials(name: string) { return name.split(" ").map(n=>n[0]).slice(0,2).join("").toUpperCase(); }
 function timeStr(iso: string) {

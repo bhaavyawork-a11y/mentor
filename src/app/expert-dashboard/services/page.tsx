@@ -137,7 +137,7 @@ export default function ExpertServicesPage() {
           <p style={{ fontSize: 13, color: "#6B7280", margin: 0 }}>What you offer and at what price. Only active services appear to mentees.</p>
         </div>
         <button onClick={() => openNew()} style={{
-          backgroundColor: "#064E3B", color: "#6B7280", border: "none",
+          backgroundColor: "#1A3A8F", color: "#6B7280", border: "none",
           borderRadius: 10, padding: "10px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer",
         }}>
           + Add service
@@ -157,7 +157,7 @@ export default function ExpertServicesPage() {
                 padding: "14px 16px", textAlign: "left", cursor: "pointer", fontFamily: "inherit",
                 transition: "border-color 0.15s",
               }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = "#0A3323")}
+                onMouseEnter={e => (e.currentTarget.style.borderColor = "#080B14")}
                 onMouseLeave={e => (e.currentTarget.style.borderColor = "#e8e4ce")}
               >
                 <div style={{ fontSize: 20, marginBottom: 8 }}>{p.icon}</div>
@@ -223,7 +223,7 @@ export default function ExpertServicesPage() {
 
           <div style={{ display: "flex", gap: 10 }}>
             <button onClick={save} disabled={saving || !form.title} style={{
-              backgroundColor: "#064E3B", color: "#F9FAFB", border: "none",
+              backgroundColor: "#1A3A8F", color: "#F9FAFB", border: "none",
               borderRadius: 10, padding: "10px 20px", fontSize: 13, fontWeight: 700,
               cursor: saving || !form.title ? "default" : "pointer", opacity: !form.title ? 0.6 : 1,
             }}>

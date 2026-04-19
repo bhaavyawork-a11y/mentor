@@ -20,7 +20,7 @@ export interface JobRow {
 }
 
 /* ─── Helpers ───────────────────────────────────── */
-const COMPANY_COLORS = ["#F7F4D5", "#D3968C", "#839958", "#FFB5C8", "#B5D5FF", "#FFCBA4", "#B5FFD9", "#FFB5B5"];
+const COMPANY_COLORS = ["#F7F4D5", "#D3968C", "#5B8AFF", "#FFB5C8", "#B5D5FF", "#FFCBA4", "#B5FFD9", "#FFB5B5"];
 
 function companyColor(name: string) {
   let h = 0;
@@ -114,7 +114,7 @@ function JobCard({
   const salary = extractSalary(job.description_snippet);
 
   const matchColor =
-    score >= 80 ? "#839958" :
+    score >= 80 ? "#5B8AFF" :
     score >= 50 ? "#D3968C" :
     "#aaa";
 
@@ -166,7 +166,7 @@ function JobCard({
           </span>
         ))}
         {salary && (
-          <span style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#0A332311", color: "#F9FAFB", borderRadius: 99, padding: "4px 10px" }}>
+          <span style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#080B1411", color: "#F9FAFB", borderRadius: 99, padding: "4px 10px" }}>
             {salary}
           </span>
         )}
@@ -184,7 +184,7 @@ function JobCard({
         <button
           onClick={toggleSave}
           disabled={saving}
-          style={{ fontSize: 11, fontWeight: 700, backgroundColor: "transparent", color: saved ? "#0A3323" : "#839958", border: `1px solid ${saved ? "#0A3323" : "#ddd"}`, borderRadius: 8, padding: "7px 14px", cursor: "pointer" }}
+          style={{ fontSize: 11, fontWeight: 700, backgroundColor: "transparent", color: saved ? "#080B14" : "#5B8AFF", border: `1px solid ${saved ? "#080B14" : "#ddd"}`, borderRadius: 8, padding: "7px 14px", cursor: "pointer" }}
         >
           {saved ? "✓ Saved" : "♡ Save"}
         </button>
@@ -192,7 +192,7 @@ function JobCard({
           href={job.apply_url}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#064E3B", color: "#F9FAFB", borderRadius: 8, padding: "7px 14px", textDecoration: "none", display: "inline-block" }}
+          style={{ fontSize: 11, fontWeight: 700, backgroundColor: "#1A3A8F", color: "#F9FAFB", borderRadius: 8, padding: "7px 14px", textDecoration: "none", display: "inline-block" }}
         >
           Apply now →
         </a>
@@ -209,7 +209,7 @@ function PillRow({ options, value, onChange }: { options: string[]; value: strin
         <button
           key={opt}
           onClick={() => onChange(opt)}
-          style={{ fontSize: 12, fontWeight: value === opt ? 700 : 500, backgroundColor: value === opt ? "#0A3323" : "#e8e4ce", color: value === opt ? "#839958" : "#555", border: "none", borderRadius: 99, padding: "6px 14px", cursor: "pointer", transition: "all 0.15s" }}
+          style={{ fontSize: 12, fontWeight: value === opt ? 700 : 500, backgroundColor: value === opt ? "#080B14" : "#e8e4ce", color: value === opt ? "#5B8AFF" : "#555", border: "none", borderRadius: 99, padding: "6px 14px", cursor: "pointer", transition: "all 0.15s" }}
         >
           {opt}
         </button>

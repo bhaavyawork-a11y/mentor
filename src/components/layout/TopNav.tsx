@@ -85,7 +85,7 @@ export default function TopNav() {
               style={{
                 fontSize: "13px",
                 fontWeight: active ? 700 : 500,
-                color: active ? "#0A3323" : "#839958",
+                color: active ? "#080B14" : "#5B8AFF",
                 textDecoration: "none",
                 padding: "6px 12px",
                 borderRadius: "8px",
@@ -103,7 +103,7 @@ export default function TopNav() {
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
         {/* Level pill */}
         <div style={{
-          backgroundColor: "#0A3323",
+          backgroundColor: "#080B14",
           color: "#F7F4D5",
           fontSize: "11px",
           fontWeight: 800,
@@ -122,7 +122,7 @@ export default function TopNav() {
             width: "32px", height: "32px",
             borderRadius: "99px",
             backgroundColor: "#F7F4D5",
-            color: "#0A3323",
+            color: "#080B14",
             fontSize: "11px",
             fontWeight: 800,
             border: "none",

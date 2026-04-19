@@ -145,8 +145,8 @@ export default function ExpertProfilePage() {
             <button key={opt} onClick={() => toggle(field, opt)} style={{
               padding: "6px 14px", borderRadius: 99, fontSize: 12, cursor: "pointer",
               fontWeight: active ? 700 : 500, fontFamily: "inherit",
-              backgroundColor: active ? "#0A3323" : "#f5f5f0",
-              color: active ? "#839958" : "#555",
+              backgroundColor: active ? "#080B14" : "#f5f5f0",
+              color: active ? "#5B8AFF" : "#555",
               border: "none", transition: "all 0.12s",
             }}>
               {opt}
@@ -183,7 +183,7 @@ export default function ExpertProfilePage() {
         )}
 
         <button onClick={save} disabled={saving || !form.full_name} style={{
-          backgroundColor: saving ? "#839958" : "#0A3323", color: "#F9FAFB",
+          backgroundColor: saving ? "#5B8AFF" : "#080B14", color: "#F9FAFB",
           border: "none", borderRadius: 12, padding: "12px 28px",
           fontSize: 13, fontWeight: 800, cursor: saving || !form.full_name ? "default" : "pointer",
           opacity: !form.full_name ? 0.6 : 1,

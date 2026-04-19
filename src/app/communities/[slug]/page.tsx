@@ -98,7 +98,7 @@ function groupEmoji(slug: string): string {
   return map[slug] ?? "👥";
 }
 
-const PALETTE = ["#F7F4D5", "#D3968C", "#839958", "#FFB5C8", "#B5D5FF", "#FFCBA4"];
+const PALETTE = ["#F7F4D5", "#D3968C", "#5B8AFF", "#FFB5C8", "#B5D5FF", "#FFCBA4"];
 function avatarBg(id: string) {
   let h = 0;
   for (const c of id) h = (h * 31 + c.charCodeAt(0)) & 0xfffff;
