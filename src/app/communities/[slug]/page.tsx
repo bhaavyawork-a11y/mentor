@@ -6,15 +6,13 @@ import { useParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import BottomNav from "@/components/layout/BottomNav";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 interface Community {
   id: string; slug: string; name: string;
   description: string | null; role_type: string | null;
   member_count: number; posts_this_week: number;
 }
-interface Member { user_id: string; profile?: { full_name: string | null } | null; }
+interface Member { user_id: string; }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 const EMOJI: Record<string, string> = {
   "product-managers": "📦", "early-engineers": "⚙️", "founders-office": "🚀",
   "vc-investing": "💹", "growth-marketing": "📈", "data-ai": "🤖",
@@ -23,15 +21,21 @@ const EMOJI: Record<string, string> = {
 function groupEmoji(slug: string) { return EMOJI[slug] ?? "👥"; }
 
 const CHANNELS = [
-  { icon: "💬", name: "Discussions" },
-  { icon: "📚", name: "Library" },
-  { icon: "🤝", name: "Warm Intros" },
-  { icon: "🎯", name: "Open Roles" },
+  { icon: "💬", name: "Discussions",  path: "discussions" },
+  { icon: "📚", name: "Library",      path: "discussions" },
+  { icon: "🤝", name: "Warm Intros",  path: "warm-intros" },
+  { icon: "🎯", name: "Open Roles",   path: "discussions" },
 ];
 
 const AVATAR_COLORS = ["#1A3A8F","#16A34A","#DC2626","#D97706","#7C3AED","#0891B2"];
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+function getLocalMembership(slug: string): boolean {
+  try {
+    const joined: string[] = JSON.parse(localStorage.getItem("joined_communities") ?? "[]");
+    return joined.includes(slug);
+  } catch { return false; }
+}
+
 export default function GroupDetailPage() {
   const params   = useParams();
   const router   = useRouter();
@@ -45,6 +49,10 @@ export default function GroupDetailPage() {
 
   useEffect(() => {
     if (!slug) return;
+
+    // Check localStorage immediately for instant render
+    if (getLocalMembership(slug)) setIsMember(true);
+
     (async () => {
       const { data: c } = await supabase
         .from("communities")
@@ -54,7 +62,7 @@ export default function GroupDetailPage() {
       if (!c) { setLoading(false); return; }
       setCommunity(c);
 
-      // Check membership
+      // Check membership in DB
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const { data: mem } = await supabase
@@ -64,10 +72,12 @@ export default function GroupDetailPage() {
           .eq("user_id", user.id)
           .eq("status", "active")
           .maybeSingle();
-        setIsMember(!!mem);
+        if (mem) setIsMember(true);
       }
 
-      // Fetch some member avatars
+      // Re-check localStorage (slug from DB)
+      if (getLocalMembership(c.slug)) setIsMember(true);
+
       const { data: mems } = await supabase
         .from("community_members")
         .select("user_id")
@@ -88,42 +98,39 @@ export default function GroupDetailPage() {
     );
   }
 
-  const online = Math.floor(community.member_count * 0.026);
+  const online = Math.max(1, Math.floor(community.member_count * 0.026));
 
   return (
     <div style={{ minHeight: "100dvh", backgroundColor: "#FAFAFA", display: "flex", flexDirection: "column", fontFamily: "var(--font-sora), Inter, sans-serif" }}>
 
       {/* ── Dark hero ── */}
       <div style={{ backgroundColor: "#0A0A0A", padding: "0 20px 20px", flexShrink: 0 }}>
-        {/* Status bar */}
-        <div style={{ display: "flex", justifyContent: "space-between", padding: "16px 0 12px", fontSize: 13, fontWeight: 800, color: "rgba(255,255,255,0.5)" }}>
-          <span>9:41</span>
-          <span style={{ fontSize: 11 }}>●●● 🔋</span>
-        </div>
 
         {/* Back arrow */}
-        <button
-          onClick={() => router.back()}
-          style={{ background: "none", border: "none", color: "#555", fontSize: 22, cursor: "pointer", padding: "0 0 10px", fontFamily: "inherit" }}
-        >
-          ←
-        </button>
+        <div style={{ paddingTop: 16, paddingBottom: 4 }}>
+          <button
+            onClick={() => router.back()}
+            style={{ background: "none", border: "none", color: "rgba(255,255,255,0.4)", fontSize: 22, cursor: "pointer", padding: 0, fontFamily: "inherit" }}
+          >
+            ←
+          </button>
+        </div>
 
         {/* Group icon + name */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-          <div style={{ width: 46, height: 46, background: "#1A1A1A", borderRadius: 13, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 18 }}>
+          <div style={{ width: 46, height: 46, background: "#1A1A1A", borderRadius: 13, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0, border: "1px solid #2A2A2A" }}>
             {groupEmoji(slug)}
           </div>
           <div>
             <div style={{ fontSize: 20, fontWeight: 900, color: "#FAFAFA", letterSpacing: "-0.5px" }}>{community.name}</div>
-            <div style={{ fontSize: 10, color: "#5B8AFF", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", marginTop: 3 }}>
+            <div style={{ fontSize: 10, color: "#5B8AFF", fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.2px", marginTop: 3 }}>
               {community.role_type ?? "Professional"}
             </div>
           </div>
         </div>
 
         {/* Stats */}
-        <div style={{ display: "flex", gap: 24 }}>
+        <div style={{ display: "flex", gap: 28 }}>
           {[
             { v: community.member_count.toLocaleString(), l: "Members" },
             { v: community.posts_this_week,               l: "Posts/wk" },
@@ -152,14 +159,14 @@ export default function GroupDetailPage() {
           {CHANNELS.map(ch => (
             <div
               key={ch.name}
-              onClick={() => isMember ? router.push(`/communities/${slug}/${ch.name.toLowerCase().replace(" ", "-")}`) : undefined}
+              onClick={() => router.push(`/communities/${slug}/${ch.path}`)}
               style={{
                 display: "flex", alignItems: "center", gap: 10,
-                padding: "11px 14px",
+                padding: "12px 14px",
                 background: "#FFFFFF",
                 border: "1.5px solid #EBEBEB",
                 borderRadius: 10,
-                cursor: isMember ? "pointer" : "default",
+                cursor: "pointer",
               }}
             >
               <span style={{ fontSize: 16 }}>{ch.icon}</span>
@@ -170,8 +177,8 @@ export default function GroupDetailPage() {
         </div>
 
         {/* Member avatars */}
-        <div style={{ display: "flex", marginBottom: 24 }}>
-          {(members.length > 0 ? members : [0,1,2,3]).map((m, i) => (
+        <div style={{ display: "flex", alignItems: "center", marginBottom: 24 }}>
+          {(members.length > 0 ? members : [0, 1, 2, 3]).map((_, i) => (
             <div
               key={i}
               style={{
@@ -180,8 +187,8 @@ export default function GroupDetailPage() {
                 background: AVATAR_COLORS[i % AVATAR_COLORS.length],
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontSize: 10, fontWeight: 700, color: "#fff",
-                marginLeft: i > 0 ? -8 : 0,
-                position: "relative", zIndex: 10 - i,
+                marginLeft: i > 0 ? -8 : 0, zIndex: 10 - i,
+                position: "relative",
               }}
             >
               {String.fromCharCode(65 + i)}
@@ -192,9 +199,9 @@ export default function GroupDetailPage() {
             border: "2.5px solid #FAFAFA", background: "#F5F5F5",
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 9, fontWeight: 700, color: "#888",
-            marginLeft: -8,
+            marginLeft: -8, position: "relative",
           }}>
-            +{(community.member_count - 4).toLocaleString()}
+            +{Math.max(0, community.member_count - 4).toLocaleString()}
           </div>
         </div>
 
@@ -202,14 +209,14 @@ export default function GroupDetailPage() {
         {isMember ? (
           <Link
             href={`/communities/${slug}/discussions`}
-            style={{ display: "block", width: "100%", padding: "15px", background: "#0A0A0A", color: "#FAFAFA", fontSize: 15, fontWeight: 900, borderRadius: 12, textDecoration: "none", textAlign: "center", letterSpacing: "-0.2px" }}
+            style={{ display: "block", width: "100%", padding: "15px", background: "#0A0A0A", color: "#FAFAFA", fontSize: 15, fontWeight: 900, borderRadius: 12, textDecoration: "none", textAlign: "center", letterSpacing: "-0.2px", boxSizing: "border-box" }}
           >
             Enter group →
           </Link>
         ) : (
           <Link
             href={`/communities/${slug}/apply`}
-            style={{ display: "block", width: "100%", padding: "15px", background: "#0A0A0A", color: "#FAFAFA", fontSize: 15, fontWeight: 900, borderRadius: 12, textDecoration: "none", textAlign: "center", letterSpacing: "-0.2px" }}
+            style={{ display: "block", width: "100%", padding: "15px", background: "#0A0A0A", color: "#FAFAFA", fontSize: 15, fontWeight: 900, borderRadius: 12, textDecoration: "none", textAlign: "center", letterSpacing: "-0.2px", boxSizing: "border-box" }}
           >
             Apply to join →
           </Link>

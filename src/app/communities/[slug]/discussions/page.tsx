@@ -7,20 +7,20 @@ import BottomNav from "@/components/layout/BottomNav";
 
 const INK = "#0A0A0A"; const MID = "#888"; const LIGHT = "#EBEBEB";
 const BG = "#FAFAFA"; const WHITE = "#FFFFFF"; const NAVY = "#1A3A8F";
+const NAVYL = "#5B8AFF";
 
 interface Post {
   id: string; content: string; type: string; channel_type: string;
   reply_count: number; helpful_count: number; created_at: string;
-  author?: { full_name: string | null; };
+  author?: { full_name: string | null };
 }
-
 interface Community { id: string; name: string; slug: string; member_count: number; }
 
-const POST_TYPE_TAGS: Record<string, { emoji: string; color: string; bg: string }> = {
-  question:  { emoji: "❓", color: NAVY, bg: "#EEF2FF" },
-  resource:  { emoji: "📎", color: "#065F46", bg: "#ECFDF5" },
-  referral:  { emoji: "🤝", color: "#7C2D12", bg: "#FFF7ED" },
-  discussion:{ emoji: "💬", color: MID, bg: "#F5F5F5" },
+const POST_TYPE_TAGS: Record<string, { emoji: string; label: string; color: string; bg: string }> = {
+  question:   { emoji: "❓", label: "Question",   color: NAVY,      bg: "#EEF2FF" },
+  resource:   { emoji: "📎", label: "Resource",   color: "#065F46", bg: "#ECFDF5" },
+  referral:   { emoji: "🤝", label: "Referral",   color: "#7C2D12", bg: "#FFF7ED" },
+  discussion: { emoji: "💬", label: "Discussion", color: MID,       bg: "#F5F5F5" },
 };
 
 const AVATAR_COLORS = ["#16A34A","#D97706","#1A3A8F","#DC2626","#7C3AED","#0891B2"];
@@ -30,12 +30,11 @@ const TABS = ["Discussions", "Library", "Warm Intros", "Open Roles"];
 function timeAgo(ts: string) {
   const d = (Date.now() - new Date(ts).getTime()) / 1000;
   if (d < 60) return "just now";
-  if (d < 3600) return `${Math.floor(d / 60)}m ago`;
-  if (d < 86400) return `${Math.floor(d / 3600)}h ago`;
-  return `${Math.floor(d / 86400)}d ago`;
+  if (d < 3600) return `${Math.floor(d / 60)}m`;
+  if (d < 86400) return `${Math.floor(d / 3600)}h`;
+  return `${Math.floor(d / 86400)}d`;
 }
 
-// Fallback demo posts
 const DEMO_POSTS: Post[] = [
   { id: "1", content: "PM interview Notion template — helped me land 3 offers. Free to copy.", type: "resource",  channel_type: "discussions", reply_count: 28, helpful_count: 14, created_at: new Date(Date.now() - 1800000).toISOString(), author: { full_name: "Kavya S." } },
   { id: "2", content: "How long until you stopped feeling like an imposter as a PM?",              type: "question",  channel_type: "discussions", reply_count: 41, helpful_count: 8,  created_at: new Date(Date.now() - 7200000).toISOString(), author: { full_name: "Arjun K." } },
@@ -60,7 +59,7 @@ export default function DiscussionsPage() {
     if (!slug) return;
     (async () => {
       const { data: c } = await supabase.from("communities").select("id,name,slug,member_count").eq("slug", slug).single();
-      if (c) { setCommunity(c); setOnline(Math.floor(c.member_count * 0.026)); }
+      if (c) { setCommunity(c); setOnline(Math.max(1, Math.floor(c.member_count * 0.026))); }
 
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
@@ -84,48 +83,53 @@ export default function DiscussionsPage() {
   }, [slug]); // eslint-disable-line
 
   const filteredPosts = filter === "All" ? posts : posts.filter(p => {
-    if (filter.includes("Question"))  return p.type === "question";
-    if (filter.includes("Resource"))  return p.type === "resource";
-    if (filter.includes("Referral"))  return p.type === "referral";
+    if (filter.includes("Question")) return p.type === "question";
+    if (filter.includes("Resource")) return p.type === "resource";
+    if (filter.includes("Referral")) return p.type === "referral";
     return true;
   });
 
   return (
-    <div style={{ minHeight: "100dvh", backgroundColor: BG, display: "flex", flexDirection: "column", fontFamily: "var(--font-sora),Inter,sans-serif" }}>
+    <div style={{ minHeight: "100dvh", backgroundColor: BG, display: "flex", flexDirection: "column", fontFamily: "var(--font-sora),Inter,sans-serif", paddingBottom: 64 }}>
 
       {/* ── Dark group header ── */}
-      <div style={{ backgroundColor: INK, flexShrink: 0 }}>
-        {/* Status bar */}
-        <div style={{ display: "flex", justifyContent: "space-between", padding: "16px 16px 0", fontSize: 13, fontWeight: 800, color: "rgba(255,255,255,0.5)" }}>
-          <span>9:41</span><span style={{ fontSize: 11 }}>●●● 🔋</span>
-        </div>
+      <div style={{ backgroundColor: INK, flexShrink: 0, position: "sticky", top: 0, zIndex: 100 }}>
 
-        {/* Group name row */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 16px 0" }}>
+        {/* Top bar: back + name + badge */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px 8px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <button onClick={() => router.back()} style={{ background: "none", border: "none", color: "#555", fontSize: 20, cursor: "pointer", padding: 0, lineHeight: 1 }}>←</button>
-            <span style={{ fontSize: 16, fontWeight: 900, color: "#FAFAFA", letterSpacing: "-0.4px" }}>{community?.name ?? "Group"}</span>
+            <button
+              onClick={() => router.back()}
+              style={{ background: "none", border: "none", color: "rgba(255,255,255,0.5)", fontSize: 20, cursor: "pointer", padding: "0 4px 0 0", lineHeight: 1 }}
+              aria-label="Back"
+            >
+              ←
+            </button>
+            <span style={{ fontSize: 15, fontWeight: 900, color: "#FAFAFA", letterSpacing: "-0.3px" }}>
+              {community?.name ?? "Group"}
+            </span>
           </div>
-          <span style={{ fontSize: 10, color: "#5B8AFF", background: "rgba(91,138,255,0.15)", padding: "3px 8px", borderRadius: 4, fontWeight: 700 }}>
+          <span style={{ fontSize: 10, color: NAVYL, background: "rgba(91,138,255,0.15)", padding: "4px 9px", borderRadius: 6, fontWeight: 700, letterSpacing: "0.3px" }}>
             ✓ {online} online
           </span>
         </div>
 
         {/* Channel tabs */}
-        <div style={{ display: "flex", overflowX: "auto", padding: "0 12px" }}>
+        <div style={{ display: "flex", overflowX: "auto", padding: "0 8px", scrollbarWidth: "none" }}>
           {TABS.map(tab => (
             <button
               key={tab}
               onClick={() => {
                 if (tab === "Warm Intros") router.push(`/communities/${slug}/warm-intros`);
-                else if (tab !== "Discussions") router.push(`/communities/${slug}`);
+                else if (tab === "Library")   router.push(`/communities/${slug}/discussions`);
+                else if (tab === "Open Roles") router.push(`/communities/${slug}/discussions`);
               }}
               style={{
                 background: "none", border: "none", cursor: "pointer",
-                fontSize: 12, fontWeight: 700, padding: "10px 13px", whiteSpace: "nowrap" as const,
-                color: tab === "Discussions" ? "#FAFAFA" : "rgba(255,255,255,0.4)",
+                fontSize: 12, fontWeight: 700, padding: "8px 14px", whiteSpace: "nowrap" as const,
+                color: tab === "Discussions" ? "#FAFAFA" : "rgba(255,255,255,0.38)",
                 borderBottom: tab === "Discussions" ? "2px solid #FAFAFA" : "2px solid transparent",
-                fontFamily: "inherit",
+                fontFamily: "inherit", transition: "color 0.1s",
               }}
             >
               {tab}
@@ -135,7 +139,7 @@ export default function DiscussionsPage() {
       </div>
 
       {/* ── Post type filter ── */}
-      <div style={{ display: "flex", gap: 6, padding: "10px 14px", overflowX: "auto", borderBottom: `1px solid ${LIGHT}`, flexShrink: 0, backgroundColor: WHITE }}>
+      <div style={{ display: "flex", gap: 6, padding: "10px 14px", overflowX: "auto", scrollbarWidth: "none", borderBottom: `1px solid ${LIGHT}`, flexShrink: 0, backgroundColor: WHITE }}>
         {FILTERS.map(f => (
           <button
             key={f}
@@ -144,7 +148,7 @@ export default function DiscussionsPage() {
               padding: "5px 12px", borderRadius: 99, whiteSpace: "nowrap" as const,
               border: `1.5px solid ${filter === f ? INK : LIGHT}`,
               background: filter === f ? INK : "transparent",
-              color: filter === f ? BG : MID,
+              color: filter === f ? "#FAFAFA" : MID,
               fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
               transition: "all 0.12s",
             }}
@@ -155,7 +159,7 @@ export default function DiscussionsPage() {
       </div>
 
       {/* ── Feed ── */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "10px 14px 8px", backgroundColor: BG }}>
+      <div style={{ flex: 1, padding: "10px 14px 8px", backgroundColor: BG }}>
         {filteredPosts.map((post, i) => {
           const tag = POST_TYPE_TAGS[post.type] ?? POST_TYPE_TAGS.discussion;
           const name = (post.author as { full_name: string | null } | null)?.full_name ?? "Member";
@@ -164,35 +168,34 @@ export default function DiscussionsPage() {
             <div
               key={post.id}
               style={{
-                background: WHITE, border: `1.5px solid ${LIGHT}`, borderRadius: 12,
-                padding: "11px 13px", marginBottom: 8, cursor: "pointer",
+                background: WHITE, border: `1.5px solid ${LIGHT}`, borderRadius: 14,
+                padding: "12px 14px", marginBottom: 9, cursor: "pointer",
               }}
-              onClick={() => {}}
             >
               {/* Author row */}
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 7 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                 <div style={{
-                  width: 26, height: 26, borderRadius: "50%", flexShrink: 0,
+                  width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
                   background: AVATAR_COLORS[i % AVATAR_COLORS.length],
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 10, fontWeight: 700, color: "#fff",
+                  fontSize: 11, fontWeight: 700, color: "#fff",
                 }}>
                   {initial}
                 </div>
-                <span style={{ fontSize: 12, fontWeight: 700, color: INK, flex: 1 }}>{name}</span>
-                <span style={{ fontSize: 10, color: tag.color, background: tag.bg, padding: "2px 7px", borderRadius: 4, fontWeight: 600 }}>
-                  {tag.emoji} {post.type.charAt(0).toUpperCase() + post.type.slice(1)}
+                <span style={{ fontSize: 12, fontWeight: 800, color: INK, flex: 1 }}>{name}</span>
+                <span style={{ fontSize: 10, color: tag.color, background: tag.bg, padding: "2px 7px", borderRadius: 5, fontWeight: 700 }}>
+                  {tag.emoji} {tag.label}
                 </span>
               </div>
 
               {/* Content */}
-              <p style={{ fontSize: 13, color: MID, lineHeight: 1.55, margin: "0 0 8px" }}>{post.content}</p>
+              <p style={{ fontSize: 13, color: "#444", lineHeight: 1.55, margin: "0 0 9px" }}>{post.content}</p>
 
-              {/* Actions */}
-              <div style={{ display: "flex", gap: 14 }}>
-                <span style={{ fontSize: 11, color: "#CCCCCC", fontWeight: 600 }}>{post.reply_count} replies</span>
-                <span style={{ fontSize: 11, color: "#CCCCCC", fontWeight: 600 }}>💾 {post.helpful_count}</span>
-                <span style={{ fontSize: 11, color: "#CCCCCC", fontWeight: 600 }}>{timeAgo(post.created_at)}</span>
+              {/* Footer */}
+              <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+                <span style={{ fontSize: 11, color: "#BBBBBB", fontWeight: 600 }}>💬 {post.reply_count}</span>
+                <span style={{ fontSize: 11, color: "#BBBBBB", fontWeight: 600 }}>💾 {post.helpful_count}</span>
+                <span style={{ fontSize: 11, color: "#CCCCCC", marginLeft: "auto" }}>{timeAgo(post.created_at)}</span>
               </div>
             </div>
           );
@@ -200,25 +203,30 @@ export default function DiscussionsPage() {
       </div>
 
       {/* ── Composer ── */}
-      <div style={{ display: "flex", gap: 8, padding: "10px 14px", borderTop: `1.5px solid ${LIGHT}`, backgroundColor: WHITE, alignItems: "center", flexShrink: 0 }}>
+      <div style={{
+        display: "flex", gap: 9, padding: "10px 14px",
+        borderTop: `1.5px solid ${LIGHT}`, backgroundColor: WHITE,
+        alignItems: "center", flexShrink: 0,
+        position: "fixed", bottom: 64, left: 0, right: 0, zIndex: 50,
+      }}>
         <div style={{
-          width: 30, height: 30, borderRadius: "50%", background: INK,
+          width: 32, height: 32, borderRadius: "50%", background: INK, flexShrink: 0,
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 12, fontWeight: 700, color: BG, flexShrink: 0,
+          fontSize: 13, fontWeight: 700, color: BG,
         }}>
           {userInitial}
         </div>
-        <div style={{ flex: 1, background: "#F5F5F5", borderRadius: 99, padding: "8px 14px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ flex: 1, background: "#F3F4F6", borderRadius: 99, padding: "9px 14px", display: "flex", alignItems: "center", gap: 10 }}>
           <input
             value={draft}
             onChange={e => setDraft(e.target.value)}
             placeholder="Post something…"
-            style={{ background: "none", border: "none", outline: "none", fontSize: 13, color: draft ? INK : "#CCCCCC", fontFamily: "inherit", flex: 1 }}
+            style={{ background: "none", border: "none", outline: "none", fontSize: 13, color: draft ? INK : "#AAAAAA", fontFamily: "inherit", flex: 1, minWidth: 0 }}
           />
-          <div style={{ display: "flex", gap: 8, fontSize: 14 }}>
-            <span style={{ cursor: "pointer", opacity: 0.5 }}>❓</span>
-            <span style={{ cursor: "pointer", opacity: 0.5 }}>📎</span>
-            <span style={{ cursor: "pointer", opacity: 0.5 }}>🤝</span>
+          <div style={{ display: "flex", gap: 10, fontSize: 15, flexShrink: 0 }}>
+            <span style={{ cursor: "pointer", opacity: 0.45 }}>❓</span>
+            <span style={{ cursor: "pointer", opacity: 0.45 }}>📎</span>
+            <span style={{ cursor: "pointer", opacity: 0.45 }}>🤝</span>
           </div>
         </div>
       </div>

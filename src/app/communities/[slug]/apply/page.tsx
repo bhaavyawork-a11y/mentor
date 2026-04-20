@@ -180,9 +180,17 @@ export default function ApplyPage() {
         body: JSON.stringify({ community_id: community?.id, answers: [roleCompany, linkedin, years, reason] }),
       });
       const data = await res.json();
-      setApproved(data.status === "approved");
+      const isApproved = data.status === "approved";
+      setApproved(isApproved);
       setScore(data.ai_score ?? 0);
       setFeedback(data.ai_feedback ?? "");
+      // Persist membership locally so group detail shows "Enter group →" on return
+      if (isApproved && slug) {
+        try {
+          const joined: string[] = JSON.parse(localStorage.getItem("joined_communities") ?? "[]");
+          if (!joined.includes(slug)) localStorage.setItem("joined_communities", JSON.stringify([...joined, slug]));
+        } catch { /* ignore */ }
+      }
     } catch {
       setApproved(false);
       setScore(42);

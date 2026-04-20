@@ -1,4 +1,4 @@
-import AppLayout from "@/components/layout/AppLayout";
+// Pass children through directly — each communities page handles its own layout/nav
 export default function CommunitiesLayout({ children }: { children: React.ReactNode }) {
-  return <AppLayout>{children}</AppLayout>;
+  return <>{children}</>;
 }
