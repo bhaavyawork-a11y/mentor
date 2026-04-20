@@ -22,6 +22,7 @@ interface Profile {
   linkedin_url: string | null; bio: string | null; created_at: string | null;
 }
 interface CommunityChip { name: string; slug: string; }
+interface TimelineItem { role: string; company: string; period: string; current: boolean; }
 
 const DEMO_CHIPS: CommunityChip[] = [
   { name: "Product Managers", slug: "product-managers" },
@@ -29,11 +30,29 @@ const DEMO_CHIPS: CommunityChip[] = [
   { name: "Data & AI",        slug: "data-ai"          },
 ];
 
-const DEMO_TIMELINE = [
-  { role: "Product Manager II", company: "Razorpay", period: "Mar 2024 – Present",    current: true  },
-  { role: "Associate PM",       company: "Meesho",   period: "Jun 2022 – Feb 2024",   current: false },
-  { role: "Business Analyst",   company: "Deloitte", period: "Aug 2021 – May 2022",   current: false },
-];
+function buildTimeline(profile: Profile, groups: CommunityChip[]): TimelineItem[] {
+  const items: TimelineItem[] = [];
+  if (profile.current_title || profile.company) {
+    const joinedAt = profile.created_at ? new Date(profile.created_at) : new Date();
+    const month = joinedAt.toLocaleString("en-US", { month: "short", year: "numeric" });
+    items.push({
+      role:    profile.current_title ?? "Professional",
+      company: profile.company ?? "",
+      period:  `${month} – Present`,
+      current: true,
+    });
+  }
+  // Show first joined group as a milestone if we have it
+  if (groups.length > 0 && groups[0].name) {
+    items.push({
+      role:    `Joined ${groups[0].name}`,
+      company: "mentor. community",
+      period:  "Verified member",
+      current: false,
+    });
+  }
+  return items;
+}
 
 function avatarColor(name: string) {
   let h = 0;
@@ -84,10 +103,10 @@ export default function ProfilePage() {
       } catch { /* ignore */ }
       setGroups(chips.length > 0 ? chips : DEMO_CHIPS);
 
-      // Stats
+      // Stats — event types match what's actually inserted elsewhere in the app
       const { count: gCount } = await supabase.from("community_members").select("id", { count: "exact" }).eq("user_id", user.id).eq("status", "active");
-      const { count: rCount } = await supabase.from("career_events").select("id", { count: "exact" }).eq("user_id", user.id).eq("event_type", "referral");
-      const { count: iCount } = await supabase.from("career_events").select("id", { count: "exact" }).eq("user_id", user.id).eq("event_type", "intro");
+      const { count: rCount } = await supabase.from("career_events").select("id", { count: "exact" }).eq("user_id", user.id).eq("event_type", "referral_post");
+      const { count: iCount } = await supabase.from("career_events").select("id", { count: "exact" }).eq("user_id", user.id).eq("event_type", "intro_requested");
       const localG = (() => { try { return JSON.parse(localStorage.getItem("joined_communities") ?? "[]").length; } catch { return 0; } })();
       setStats({ referrals: rCount ?? 0, intros: iCount ?? 0, signal: rCount ? Math.min(99, (rCount ?? 0) * 17) : 0, groups: Math.max(gCount ?? 0, localG) });
       setLoading(false);
@@ -107,6 +126,7 @@ export default function ProfilePage() {
   const initial   = name[0]?.toUpperCase() ?? "?";
   const bgColor   = avatarColor(name);
   const titleLine = [profile.current_title, profile.company].filter(Boolean).join(" · ") || "Add your role";
+  const timeline  = buildTimeline(profile, groups);
 
   return (
     <div style={{ minHeight: "100dvh", backgroundColor: BG, display: "flex", flexDirection: "column", fontFamily: "var(--font-sora),Inter,sans-serif", paddingBottom: 64 }}>
@@ -167,17 +187,27 @@ export default function ProfilePage() {
         {/* Career Timeline */}
         <div style={{ marginBottom: 24 }}>
           <div style={{ fontSize: 10, fontWeight: 700, color: "#CCCCCC", textTransform: "uppercase", letterSpacing: "2px", marginBottom: 14 }}>Career Timeline</div>
-          <div style={{ position: "relative", paddingLeft: 22 }}>
-            <div style={{ position: "absolute", left: 6, top: 6, bottom: 6, width: 1.5, background: NAVYXL }} />
-            {DEMO_TIMELINE.map((item, i) => (
-              <div key={i} style={{ position: "relative", marginBottom: i < DEMO_TIMELINE.length - 1 ? 20 : 0 }}>
-                <div style={{ position: "absolute", left: -22, top: 3, width: 11, height: 11, borderRadius: "50%", background: item.current ? NAVY : NAVYXL, border: `2px solid ${item.current ? NAVYL : LIGHT}` }} />
-                <div style={{ fontSize: 13, fontWeight: 800, color: INK, marginBottom: 2 }}>{item.role}</div>
-                <div style={{ fontSize: 11, color: MID, fontWeight: 500 }}>{item.company}</div>
-                <div style={{ fontSize: 10, color: "#CCCCCC", marginTop: 1 }}>{item.period}</div>
-              </div>
-            ))}
-          </div>
+          {timeline.length > 0 ? (
+            <div style={{ position: "relative", paddingLeft: 22 }}>
+              <div style={{ position: "absolute", left: 6, top: 6, bottom: 6, width: 1.5, background: NAVYXL }} />
+              {timeline.map((item, i) => (
+                <div key={i} style={{ position: "relative", marginBottom: i < timeline.length - 1 ? 20 : 0 }}>
+                  <div style={{ position: "absolute", left: -22, top: 3, width: 11, height: 11, borderRadius: "50%", background: item.current ? NAVY : NAVYXL, border: `2px solid ${item.current ? NAVYL : LIGHT}` }} />
+                  <div style={{ fontSize: 13, fontWeight: 800, color: INK, marginBottom: 2 }}>{item.role}</div>
+                  {item.company && <div style={{ fontSize: 11, color: MID, fontWeight: 500 }}>{item.company}</div>}
+                  <div style={{ fontSize: 10, color: "#CCCCCC", marginTop: 1 }}>{item.period}</div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <button
+              onClick={() => router.push("/settings/profile")}
+              style={{ width: "100%", padding: "14px 16px", background: "#F8F9FF", border: `1.5px dashed ${NAVYXL}`, borderRadius: 12, textAlign: "left", cursor: "pointer", fontFamily: "inherit" }}
+            >
+              <div style={{ fontSize: 12, fontWeight: 700, color: NAVY }}>Add your current role</div>
+              <div style={{ fontSize: 11, color: NAVYL, marginTop: 2 }}>Complete your profile to appear in member search →</div>
+            </button>
+          )}
         </div>
 
         {/* Signal CTA */}

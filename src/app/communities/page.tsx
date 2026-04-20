@@ -47,18 +47,44 @@ const FALLBACK: Community[] = [
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function CommunitiesPage() {
   const supabase = createClient();
-  const [communities, setCommunities] = useState<Community[]>([]);
-  const [idx, setIdx]                 = useState(0);
+  const [communities,   setCommunities]   = useState<Community[]>([]);
+  const [joinedSlugs,   setJoinedSlugs]   = useState<Set<string>>(new Set());
+  const [idx, setIdx]                     = useState(0);
   const touchStartX = useRef<number | null>(null);
 
   useEffect(() => {
-    supabase
-      .from("communities")
-      .select("id, slug, name, description, role_type, member_count, posts_this_week")
-      .order("member_count", { ascending: false })
-      .then(({ data }) => {
-        setCommunities((data && data.length > 0) ? data : FALLBACK);
-      });
+    // Load joined slugs from localStorage immediately
+    try {
+      const local: string[] = JSON.parse(localStorage.getItem("joined_communities") ?? "[]");
+      if (local.length > 0) setJoinedSlugs(new Set(local));
+    } catch { /* ignore */ }
+
+    // Also check DB membership
+    (async () => {
+      const { data: commData } = await supabase
+        .from("communities")
+        .select("id, slug, name, description, role_type, member_count, posts_this_week")
+        .order("member_count", { ascending: false });
+      setCommunities((commData && commData.length > 0) ? commData : FALLBACK);
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: mems } = await supabase
+          .from("community_members")
+          .select("communities(slug)")
+          .eq("user_id", user.id)
+          .eq("status", "active");
+        if (mems && mems.length > 0) {
+          const dbSlugs = mems
+            .map((m: { communities: unknown }) => {
+              const c = Array.isArray(m.communities) ? m.communities[0] : m.communities;
+              return (c as { slug: string })?.slug;
+            })
+            .filter(Boolean) as string[];
+          setJoinedSlugs(prev => new Set([...Array.from(prev), ...dbSlugs]));
+        }
+      }
+    })();
   }, []); // eslint-disable-line
 
   const total = communities.length;
@@ -165,26 +191,48 @@ export default function CommunitiesPage() {
             ))}
           </div>
 
-          {/* Apply button */}
-          <Link
-            href={`/communities/${c.slug}/apply`}
-            style={{
-              display: "block",
-              marginTop: 16,
-              width: "100%",
-              padding: "13px",
-              background: "#FAFAFA",
-              color: "#0A0A0A",
-              fontSize: 14,
-              fontWeight: 900,
-              textAlign: "center",
-              borderRadius: 12,
-              textDecoration: "none",
-              letterSpacing: "-0.2px",
-            }}
-          >
-            Apply to join →
-          </Link>
+          {/* CTA button — Enter if member, Apply if not */}
+          {joinedSlugs.has(c.slug) ? (
+            <Link
+              href={`/communities/${c.slug}/discussions`}
+              style={{
+                display: "block",
+                marginTop: 16,
+                width: "100%",
+                padding: "13px",
+                background: "#FAFAFA",
+                color: "#0A0A0A",
+                fontSize: 14,
+                fontWeight: 900,
+                textAlign: "center",
+                borderRadius: 12,
+                textDecoration: "none",
+                letterSpacing: "-0.2px",
+              }}
+            >
+              Enter group →
+            </Link>
+          ) : (
+            <Link
+              href={`/communities/${c.slug}/apply`}
+              style={{
+                display: "block",
+                marginTop: 16,
+                width: "100%",
+                padding: "13px",
+                background: "#FAFAFA",
+                color: "#0A0A0A",
+                fontSize: 14,
+                fontWeight: 900,
+                textAlign: "center",
+                borderRadius: 12,
+                textDecoration: "none",
+                letterSpacing: "-0.2px",
+              }}
+            >
+              Apply to join →
+            </Link>
+          )}
         </div>
 
         {/* Pagination dots */}

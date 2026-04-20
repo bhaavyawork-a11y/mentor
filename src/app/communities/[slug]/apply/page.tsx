@@ -154,13 +154,24 @@ export default function ApplyPage() {
       // Load community
       const { data: c } = await supabase.from("communities").select("id,slug,name,role_type,member_count,posts_this_week,screening_questions,requires_verification").eq("slug", slug).single();
       if (c) setCommunity(c);
-      // Pre-fill role/company from profile
+
+      // Check localStorage first — instant redirect for returning members
+      try {
+        const joined: string[] = JSON.parse(localStorage.getItem("joined_communities") ?? "[]");
+        if (joined.includes(slug)) { router.replace(`/communities/${slug}/discussions`); return; }
+      } catch { /* ignore */ }
+
+      // Check DB membership
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const { data: p } = await supabase.from("profiles").select("current_title,company,linkedin_url").eq("id", user.id).maybeSingle();
         if (p) {
           if (p.current_title && p.company) setRoleCompany(`${p.current_title} @ ${p.company}`);
           if (p.linkedin_url) setLinkedin(p.linkedin_url.replace("https://linkedin.com/in/", "").replace("https://www.linkedin.com/in/", ""));
+        }
+        if (c) {
+          const { data: mem } = await supabase.from("community_members").select("user_id").eq("community_id", c.id).eq("user_id", user.id).eq("status", "active").maybeSingle();
+          if (mem) { router.replace(`/communities/${slug}/discussions`); return; }
         }
       }
     })();
