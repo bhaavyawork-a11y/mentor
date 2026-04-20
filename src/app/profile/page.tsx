@@ -5,8 +5,14 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import BottomNav from "@/components/layout/BottomNav";
 
-const INK = "#0A0A0A"; const MID = "#888"; const LIGHT = "#EBEBEB";
-const BG = "#FAFAFA"; const WHITE = "#FFFFFF"; const NAVY = "#1A3A8F"; const NAVYL = "#5B8AFF"; const NAVYXL = "#EEF2FF";
+const NAVY   = "#1A3A8F";
+const NAVYL  = "#5B8AFF";
+const NAVYXL = "#EEF2FF";
+const WHITE  = "#FFFFFF";
+const BG     = "#FAFAFA";
+const INK    = "#0A0A0A";
+const MID    = "#888";
+const LIGHT  = "#EBEBEB";
 
 const AVATAR_COLORS = ["#1A3A8F","#16A34A","#DC2626","#D97706","#7C3AED","#0891B2"];
 
@@ -15,7 +21,6 @@ interface Profile {
   company: string | null; function: string | null; years_experience: string | null;
   linkedin_url: string | null; bio: string | null; created_at: string | null;
 }
-
 interface CommunityChip { name: string; slug: string; }
 
 const DEMO_CHIPS: CommunityChip[] = [
@@ -25,9 +30,9 @@ const DEMO_CHIPS: CommunityChip[] = [
 ];
 
 const DEMO_TIMELINE = [
-  { role: "Product Manager II", company: "Razorpay", period: "Mar 2024 – Present", current: true },
-  { role: "Associate PM",       company: "Meesho",   period: "Jun 2022 – Feb 2024", current: false },
-  { role: "Business Analyst",   company: "Deloitte", period: "Aug 2021 – May 2022", current: false },
+  { role: "Product Manager II", company: "Razorpay", period: "Mar 2024 – Present",    current: true  },
+  { role: "Associate PM",       company: "Meesho",   period: "Jun 2022 – Feb 2024",   current: false },
+  { role: "Business Analyst",   company: "Deloitte", period: "Aug 2021 – May 2022",   current: false },
 ];
 
 function avatarColor(name: string) {
@@ -37,20 +42,19 @@ function avatarColor(name: string) {
 }
 
 export default function ProfilePage() {
-  const router  = useRouter();
+  const router   = useRouter();
   const supabase = createClient();
 
-  const [profile,  setProfile]  = useState<Profile | null>(null);
-  const [groups,   setGroups]   = useState<CommunityChip[]>([]);
-  const [loading,  setLoading]  = useState(true);
-  const [stats,    setStats]    = useState({ referrals: 0, intros: 0, signal: 0, groups: 0 });
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [groups,  setGroups]  = useState<CommunityChip[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [stats,   setStats]   = useState({ referrals: 0, intros: 0, signal: 0, groups: 0 });
 
   useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { router.replace("/auth/login"); return; }
 
-      // Load profile
       const { data: p } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
       setProfile(p ?? {
         id: user.id,
@@ -60,48 +64,32 @@ export default function ProfilePage() {
         created_at: new Date().toISOString(),
       });
 
-      // Load joined communities (DB first, then localStorage)
-      let joinedGroups: CommunityChip[] = [];
-      const { data: memberships } = await supabase
-        .from("community_members")
-        .select("community_id, communities(name, slug)")
-        .eq("user_id", user.id)
-        .eq("status", "active")
-        .limit(8);
-      if (memberships && memberships.length > 0) {
-        joinedGroups = memberships.map((m: {communities: unknown}) => {
+      // Communities
+      let chips: CommunityChip[] = [];
+      const { data: mems } = await supabase.from("community_members").select("community_id, communities(name, slug)").eq("user_id", user.id).eq("status", "active").limit(8);
+      if (mems && mems.length > 0) {
+        chips = mems.map((m: { communities: unknown }) => {
           const c = Array.isArray(m.communities) ? m.communities[0] : m.communities;
-          return { name: (c as {name:string;slug:string})?.name ?? "", slug: (c as {name:string;slug:string})?.slug ?? "" };
+          return { name: (c as { name: string; slug: string })?.name ?? "", slug: (c as { name: string; slug: string })?.slug ?? "" };
         }).filter(g => g.name);
       }
-
-      // Merge localStorage memberships
       try {
         const localSlugs: string[] = JSON.parse(localStorage.getItem("joined_communities") ?? "[]");
-        for (const slug of localSlugs) {
-          if (!joinedGroups.find(g => g.slug === slug)) {
-            const { data: comm } = await supabase.from("communities").select("name,slug").eq("slug", slug).maybeSingle();
-            if (comm) joinedGroups.push({ name: comm.name, slug: comm.slug });
+        for (const s of localSlugs) {
+          if (!chips.find(g => g.slug === s)) {
+            const { data: comm } = await supabase.from("communities").select("name,slug").eq("slug", s).maybeSingle();
+            if (comm) chips.push({ name: comm.name, slug: comm.slug });
           }
         }
       } catch { /* ignore */ }
-
-      setGroups(joinedGroups.length > 0 ? joinedGroups : DEMO_CHIPS);
+      setGroups(chips.length > 0 ? chips : DEMO_CHIPS);
 
       // Stats
-      const { count: groupCount }   = await supabase.from("community_members").select("id", { count: "exact" }).eq("user_id", user.id).eq("status", "active");
-      const { count: referralCount } = await supabase.from("career_events").select("id", { count: "exact" }).eq("user_id", user.id).eq("event_type", "referral");
-      const { count: introCount }   = await supabase.from("career_events").select("id", { count: "exact" }).eq("user_id", user.id).eq("event_type", "intro");
-
-      const localGroupCount = (() => { try { return JSON.parse(localStorage.getItem("joined_communities") ?? "[]").length; } catch { return 0; } })();
-
-      setStats({
-        referrals: referralCount ?? 0,
-        intros:    introCount    ?? 0,
-        signal:    referralCount ? Math.min(99, (referralCount ?? 0) * 17) : 0,
-        groups:    Math.max(groupCount ?? 0, localGroupCount),
-      });
-
+      const { count: gCount } = await supabase.from("community_members").select("id", { count: "exact" }).eq("user_id", user.id).eq("status", "active");
+      const { count: rCount } = await supabase.from("career_events").select("id", { count: "exact" }).eq("user_id", user.id).eq("event_type", "referral");
+      const { count: iCount } = await supabase.from("career_events").select("id", { count: "exact" }).eq("user_id", user.id).eq("event_type", "intro");
+      const localG = (() => { try { return JSON.parse(localStorage.getItem("joined_communities") ?? "[]").length; } catch { return 0; } })();
+      setStats({ referrals: rCount ?? 0, intros: iCount ?? 0, signal: rCount ? Math.min(99, (rCount ?? 0) * 17) : 0, groups: Math.max(gCount ?? 0, localG) });
       setLoading(false);
     })();
   }, []); // eslint-disable-line
@@ -109,44 +97,43 @@ export default function ProfilePage() {
   if (loading || !profile) {
     return (
       <div style={{ minHeight: "100dvh", background: BG, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ width: 28, height: 28, border: `3px solid ${LIGHT}`, borderTop: `3px solid ${INK}`, borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+        <div style={{ width: 28, height: 28, border: `3px solid ${LIGHT}`, borderTop: `3px solid ${NAVY}`, borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
         <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
       </div>
     );
   }
 
-  const name    = profile.full_name ?? "You";
-  const initial = name[0]?.toUpperCase() ?? "?";
-  const bgColor = avatarColor(name);
+  const name      = profile.full_name ?? "You";
+  const initial   = name[0]?.toUpperCase() ?? "?";
+  const bgColor   = avatarColor(name);
   const titleLine = [profile.current_title, profile.company].filter(Boolean).join(" · ") || "Add your role";
-
-  const timeline = DEMO_TIMELINE;
 
   return (
     <div style={{ minHeight: "100dvh", backgroundColor: BG, display: "flex", flexDirection: "column", fontFamily: "var(--font-sora),Inter,sans-serif", paddingBottom: 64 }}>
 
-      {/* ── Dark hero ── */}
-      <div style={{ backgroundColor: INK, padding: "24px 20px 22px", flexShrink: 0 }}>
+      {/* ── Navy hero ── */}
+      <div style={{ backgroundColor: NAVY, padding: "28px 20px 24px", flexShrink: 0 }}>
+
         {/* Avatar */}
-        <div style={{ width: 64, height: 64, borderRadius: "50%", background: bgColor, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, fontWeight: 900, color: WHITE, marginBottom: 14, border: "2px solid rgba(255,255,255,0.12)" }}>
+        <div style={{ width: 64, height: 64, borderRadius: "50%", background: bgColor, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, fontWeight: 900, color: WHITE, marginBottom: 14, border: "3px solid rgba(255,255,255,0.2)" }}>
           {initial}
         </div>
 
-        {/* Name */}
-        <h1 style={{ fontSize: 24, fontWeight: 900, color: "#FAFAFA", margin: "0 0 4px", letterSpacing: "-0.6px" }}>{name}</h1>
-        <p style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", margin: "0 0 20px", fontWeight: 500 }}>{titleLine}</p>
+        {/* Name + title */}
+        <h1 style={{ fontSize: 24, fontWeight: 900, color: WHITE, margin: "0 0 4px", letterSpacing: "-0.6px" }}>{name}</h1>
+        <p style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", margin: "0 0 22px", fontWeight: 500 }}>{titleLine}</p>
 
         {/* Stats row */}
-        <div style={{ display: "flex", gap: 0, borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 16 }}>
+        <div style={{ display: "flex", borderTop: "1px solid rgba(255,255,255,0.15)", paddingTop: 18 }}>
           {[
-            { v: stats.referrals, l: "Referrals" },
-            { v: stats.intros,    l: "Intros" },
-            { v: stats.signal ? `${stats.signal}` : "–", l: "Signal" },
-            { v: stats.groups,    l: "Groups" },
+            { v: stats.referrals,                          l: "Referrals" },
+            { v: stats.intros,                             l: "Intros"    },
+            { v: stats.signal ? `${stats.signal}` : "–",  l: "Signal"    },
+            { v: stats.groups,                             l: "Groups"    },
           ].map((s, i) => (
-            <div key={s.l} style={{ flex: 1, textAlign: "center", borderLeft: i > 0 ? "1px solid rgba(255,255,255,0.07)" : "none", padding: "0 4px" }}>
-              <div style={{ fontSize: 20, fontWeight: 900, color: "#FAFAFA" }}>{s.v}</div>
-              <div style={{ fontSize: 9, color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: "1px", marginTop: 3 }}>{s.l}</div>
+            <div key={s.l} style={{ flex: 1, textAlign: "center", borderLeft: i > 0 ? "1px solid rgba(255,255,255,0.15)" : "none" }}>
+              <div style={{ fontSize: 22, fontWeight: 900, color: WHITE }}>{s.v}</div>
+              <div style={{ fontSize: 9, color: "rgba(255,255,255,0.45)", textTransform: "uppercase", letterSpacing: "1px", marginTop: 3 }}>{s.l}</div>
             </div>
           ))}
         </div>
@@ -155,7 +142,7 @@ export default function ProfilePage() {
       {/* ── White body ── */}
       <div style={{ flex: 1, padding: "20px 20px 16px" }}>
 
-        {/* Groups */}
+        {/* My Groups */}
         <div style={{ marginBottom: 24 }}>
           <div style={{ fontSize: 10, fontWeight: 700, color: "#CCCCCC", textTransform: "uppercase", letterSpacing: "2px", marginBottom: 10 }}>My Groups</div>
           <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 7 }}>
@@ -163,35 +150,28 @@ export default function ProfilePage() {
               <button
                 key={g.slug}
                 onClick={() => router.push(`/communities/${g.slug}`)}
-                style={{ padding: "7px 13px", borderRadius: 99, background: NAVYXL, color: NAVY, fontSize: 11, fontWeight: 700, border: "none", cursor: "pointer", fontFamily: "inherit" }}
+                style={{ padding: "7px 14px", borderRadius: 99, background: NAVYXL, color: NAVY, fontSize: 11, fontWeight: 700, border: "none", cursor: "pointer", fontFamily: "inherit" }}
               >
                 {g.name}
               </button>
             ))}
             <button
               onClick={() => router.push("/communities")}
-              style={{ padding: "7px 13px", borderRadius: 99, background: "transparent", color: MID, fontSize: 11, fontWeight: 600, border: `1.5px solid ${LIGHT}`, cursor: "pointer", fontFamily: "inherit" }}
+              style={{ padding: "7px 14px", borderRadius: 99, background: "transparent", color: MID, fontSize: 11, fontWeight: 600, border: `1.5px solid ${LIGHT}`, cursor: "pointer", fontFamily: "inherit" }}
             >
-              + Explore groups
+              + Explore
             </button>
           </div>
         </div>
 
         {/* Career Timeline */}
         <div style={{ marginBottom: 24 }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: "#CCCCCC", textTransform: "uppercase", letterSpacing: "2px", marginBottom: 12 }}>Career Timeline</div>
-          <div style={{ position: "relative", paddingLeft: 20 }}>
-            {/* Vertical line */}
-            <div style={{ position: "absolute", left: 6, top: 8, bottom: 8, width: 1.5, background: LIGHT }} />
-            {timeline.map((item, i) => (
-              <div key={i} style={{ position: "relative", marginBottom: i < timeline.length - 1 ? 18 : 0 }}>
-                {/* Dot */}
-                <div style={{
-                  position: "absolute", left: -20, top: 3,
-                  width: 10, height: 10, borderRadius: "50%",
-                  background: item.current ? NAVY : LIGHT,
-                  border: `2px solid ${item.current ? NAVYL : "#CCCCCC"}`,
-                }} />
+          <div style={{ fontSize: 10, fontWeight: 700, color: "#CCCCCC", textTransform: "uppercase", letterSpacing: "2px", marginBottom: 14 }}>Career Timeline</div>
+          <div style={{ position: "relative", paddingLeft: 22 }}>
+            <div style={{ position: "absolute", left: 6, top: 6, bottom: 6, width: 1.5, background: NAVYXL }} />
+            {DEMO_TIMELINE.map((item, i) => (
+              <div key={i} style={{ position: "relative", marginBottom: i < DEMO_TIMELINE.length - 1 ? 20 : 0 }}>
+                <div style={{ position: "absolute", left: -22, top: 3, width: 11, height: 11, borderRadius: "50%", background: item.current ? NAVY : NAVYXL, border: `2px solid ${item.current ? NAVYL : LIGHT}` }} />
                 <div style={{ fontSize: 13, fontWeight: 800, color: INK, marginBottom: 2 }}>{item.role}</div>
                 <div style={{ fontSize: 11, color: MID, fontWeight: 500 }}>{item.company}</div>
                 <div style={{ fontSize: 10, color: "#CCCCCC", marginTop: 1 }}>{item.period}</div>
@@ -202,13 +182,7 @@ export default function ProfilePage() {
 
         {/* Signal CTA */}
         {stats.referrals === 0 && (
-          <button
-            style={{
-              width: "100%", padding: "14px 16px", background: NAVYXL, border: `1.5px solid ${NAVYL}`,
-              borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "space-between",
-              cursor: "pointer", fontFamily: "inherit",
-            }}
-          >
+          <button style={{ width: "100%", padding: "14px 16px", background: NAVYXL, border: `1.5px solid rgba(91,138,255,0.3)`, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer", fontFamily: "inherit", marginBottom: 12 }}>
             <div style={{ textAlign: "left" }}>
               <div style={{ fontSize: 12, fontWeight: 800, color: NAVY }}>Give a referral to unlock Signal</div>
               <div style={{ fontSize: 11, color: NAVYL, marginTop: 2 }}>Your credibility score. Visible to recruiters.</div>
@@ -217,14 +191,9 @@ export default function ProfilePage() {
           </button>
         )}
 
-        {/* Edit / LinkedIn */}
+        {/* LinkedIn */}
         {profile.linkedin_url && (
-          <a
-            href={`https://linkedin.com/in/${profile.linkedin_url}`}
-            target="_blank"
-            rel="noreferrer"
-            style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 0", textDecoration: "none", marginTop: 12, borderTop: `1px solid ${LIGHT}` }}
-          >
+          <a href={`https://linkedin.com/in/${profile.linkedin_url}`} target="_blank" rel="noreferrer" style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 0", textDecoration: "none", borderTop: `1px solid ${LIGHT}` }}>
             <span style={{ fontSize: 14, color: NAVY }}>🔗</span>
             <span style={{ fontSize: 12, color: NAVY, fontWeight: 600 }}>View LinkedIn profile</span>
           </a>
@@ -233,7 +202,7 @@ export default function ProfilePage() {
         {/* Sign out */}
         <button
           onClick={async () => { await supabase.auth.signOut(); router.replace("/"); }}
-          style={{ width: "100%", marginTop: 20, padding: "12px 0", background: "transparent", border: `1.5px solid ${LIGHT}`, borderRadius: 10, color: MID, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+          style={{ width: "100%", marginTop: 16, padding: "12px 0", background: "transparent", border: `1.5px solid ${LIGHT}`, borderRadius: 10, color: MID, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
         >
           Sign out
         </button>
