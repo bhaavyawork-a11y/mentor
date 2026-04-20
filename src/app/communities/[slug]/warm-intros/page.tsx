@@ -4,10 +4,11 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import BottomNav from "@/components/layout/BottomNav";
 
+const DARK   = "#0A0A0A";   // header bg — matches discussions
 const NAVY   = "#1A3A8F";
 const NAVYXL = "#EEF2FF";
 const WHITE  = "#FFFFFF";
-const BG     = "#F4F6FB";   // very light blue-tinted bg
+const BG     = "#FAFAFA";
 const LIGHT  = "#EBEBEB";
 const INK    = "#0A0A0A";
 const MID    = "#888";
@@ -42,23 +43,25 @@ export default function WarmIntrosPage() {
   return (
     <div style={{ minHeight: "100dvh", backgroundColor: BG, display: "flex", flexDirection: "column", fontFamily: "var(--font-sora),Inter,sans-serif", paddingBottom: 64 }}>
 
-      {/* ── Navy header ── */}
-      <div style={{ backgroundColor: NAVY, flexShrink: 0, position: "sticky", top: 0, zIndex: 100 }}>
+      {/* ── Dark header — matches discussions exactly ── */}
+      <div style={{ backgroundColor: DARK, flexShrink: 0, position: "sticky", top: 0, zIndex: 100 }}>
 
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", padding: "14px 16px 6px" }}>
-          <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-            <button
-              onClick={() => router.back()}
-              style={{ background: "none", border: "none", color: "rgba(255,255,255,0.55)", fontSize: 20, cursor: "pointer", padding: "2px 4px 0 0", lineHeight: 1 }}
-              aria-label="Back"
-            >
-              ←
-            </button>
-            <span style={{ fontSize: 18, fontWeight: 900, color: WHITE, letterSpacing: "-0.5px", lineHeight: 1.2 }}>{groupName}</span>
-          </div>
+        {/* Row 1: back | name | (no badge here, no online count on warm intros) */}
+        <div style={{ display: "flex", alignItems: "flex-start", padding: "16px 16px 0", gap: 10 }}>
+          <button
+            onClick={() => router.back()}
+            style={{ background: "none", border: "none", color: "rgba(255,255,255,0.45)", fontSize: 22, cursor: "pointer", padding: 0, lineHeight: 1, marginTop: 4, flexShrink: 0 }}
+            aria-label="Back"
+          >
+            ←
+          </button>
+          <span style={{ fontSize: 26, fontWeight: 900, color: WHITE, letterSpacing: "-0.7px", lineHeight: 1.15, flex: 1 }}>
+            {groupName}
+          </span>
         </div>
 
-        <div style={{ display: "flex", overflowX: "auto", padding: "0 8px", scrollbarWidth: "none" as const }}>
+        {/* Row 2: tabs */}
+        <div style={{ display: "flex", overflowX: "auto", padding: "10px 8px 0", scrollbarWidth: "none" as const }}>
           {TABS.map(tab => (
             <button
               key={tab}
@@ -67,11 +70,11 @@ export default function WarmIntrosPage() {
                 else if (tab === "Library" || tab === "Open Roles") router.push(`/communities/${slug}/discussions`);
               }}
               style={{
-                background: "none", border: "none", cursor: "pointer",
-                fontSize: 12, fontWeight: 700, padding: "8px 14px 10px", whiteSpace: "nowrap" as const,
-                color: tab === "Warm Intros" ? WHITE : "rgba(255,255,255,0.45)",
-                borderBottom: tab === "Warm Intros" ? `2px solid ${WHITE}` : "2px solid transparent",
-                fontFamily: "inherit",
+                background: "none", border: "none", cursor: "pointer", fontFamily: "inherit",
+                fontSize: 13, fontWeight: tab === "Warm Intros" ? 800 : 500,
+                padding: "0 14px 10px", whiteSpace: "nowrap" as const,
+                color: tab === "Warm Intros" ? WHITE : "rgba(255,255,255,0.4)",
+                borderBottom: tab === "Warm Intros" ? `2.5px solid ${WHITE}` : "2.5px solid transparent",
               }}
             >
               {tab}
